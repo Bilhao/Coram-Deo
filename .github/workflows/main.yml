@@ -23,7 +23,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v0.9.7
         env:
           GITCONFIG_GLOBAL_USERNAME: ${{ github.actor }}
-          GITCONFIG_GLOBAL_EMAIL: ${{ github.actor }}@users.noreply.github.com
+          GITCONFIG_GLOBAL_EMAIL: ${{ github.email }}
       - name: Create version.txt with nuGetVersion
         run: echo ${{ steps.gitversion.outputs.nuGetVersion  }} > version.txt
       - name: Upload version.txt
