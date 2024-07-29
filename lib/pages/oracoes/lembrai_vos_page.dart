@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+
+class LembraiVosPage extends StatefulWidget {
+  const LembraiVosPage({super.key});
+
+  @override
+  State<LembraiVosPage> createState() => _LembraiVosPageState();
+}
+
+class _LembraiVosPageState extends State<LembraiVosPage> {
+  double fontSize = 18.0;
+  String language = "pt";
+
+  void decreaseFontSize() {
+    setState(() {
+      fontSize --;
+    });
+  }
+
+  void increaseFontSize() {
+    setState(() {
+      fontSize ++;
+    });
+  }
+
+  void toggleLanguage(String value) {
+    setState(() {
+      language = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Lembrai-Vos"),
+        actions: [
+          IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: const Icon(Icons.language), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
+          IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
+        ],
+      ),
+      body: SafeArea(
+        child: SelectionArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: ListView(
+              children: [
+                Text(language == "pt" ? "Lembrai-Vos" : "Memoráre", textAlign: TextAlign.center, style: TextStyle(fontSize: fontSize + 6, fontWeight: FontWeight.bold)),
+                const Divider(height: 15, color: Colors.transparent),
+                Text(
+                  language == "pt"
+                    ? "Lembrai-vos, ó piíssima Virgem Maria, de que nunca se ouviu dizer que algum daqueles que têm recorrido à Vossa protecção, implorado a Vossa assistência e reclamado o Vosso socorro, fosse por Vós desamparado."
+                    : "Memoráre, o piíssima Virgo Maria, non esse audítum a sǽculo, quemquam ad tua curréntem præsídia, tua implorántem auxilia, tua peténtem suffrágia, esse derelíctum.",
+                  style: TextStyle(fontSize: fontSize)
+                ),
+                Text(
+                  language == "pt"
+                    ? "\nAnimado eu, pois, de igual confiança, a Vós, Virgem entre todas singular, como a Mãe recorro, de Vós me valho, e, gemendo sob o peso dos meus pecados, me prostro a Vossos pés. Não desprezeis as minhas súplicas, ó Mãe do Filho de Deus humanado, mas dignai-Vos de as ouvir propícia e de me alcançar o que Vos rogo."
+                    : "\nEgo tali animátus confidéntia, ad te, Virgo Vírginum, Mater, curro, ad te vénio, coram te gemens peccátor assísto. Noli, Mater Verbi, verba mea despícere; sed áudi propítia et exáudi.",
+                  style: TextStyle(fontSize: fontSize)
+                ),
+                Text(
+                  language == "pt"
+                    ? "\nAmém." 
+                    : "\nAmen.",
+                  style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)
+                ),
+              ]
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
