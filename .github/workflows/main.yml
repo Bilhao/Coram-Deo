@@ -44,7 +44,7 @@ jobs:
         run: flutter build apk --split-per-abi --obfuscate --split-debug-info=./folder --build-name "${{ steps.version.outputs.content }}" --build-number "${{ github.run_number }}"
 
       - name: Upload Android Release
-        uses: nciopollo/release-action@v1
+        uses: ncipollo/release-action@v1
         with:
           artifacts: 'build/app/outputs/apk/release/*.apk'
           tag: v0.0.${{ github.run_number }}
