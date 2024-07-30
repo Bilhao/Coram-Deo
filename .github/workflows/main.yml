@@ -16,7 +16,8 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.22.0' # Substitua pela versão do Flutter que deseja usar
+        channel: stable
+        flutter-version-file: pubspec.yaml
 
     - name: Read version from version.txt
       id: read_version
@@ -36,7 +37,7 @@ jobs:
         echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
         echo "storeFile=/tmp/upload-keystore.jks" >> android/key.properties
 
-    - name: Build APK with split-per-abi
+    - name: Build APK
       run: flutter build apk --release --split-per-abi
 
     - name: Create GitHub Release
