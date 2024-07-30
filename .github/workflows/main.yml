@@ -40,10 +40,10 @@ jobs:
         echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
         echo "storeFile=/tmp/upload-keystore.jks" >> android/key.properties
     - uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: "12.x"
-          cache: gradle
+      with:
+        distribution: 'zulu'
+        java-version: "12.x"
+        cache: gradle
 
     - name: Get dependencies
       run: flutter pub get
