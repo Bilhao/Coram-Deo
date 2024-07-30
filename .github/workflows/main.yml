@@ -72,7 +72,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-        asset_name: app-armeabi-v7a-release-${{ env.VERSION }}.apk
+        asset_name: Coram-Deo-armeabi-v7a-${{ env.VERSION }}.apk
         asset_content_type: application/vnd.android.package-archive
 
     - name: Upload APKs to Release
@@ -82,7 +82,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-        asset_name: app-arm64-v8a-release-${{ env.VERSION }}.apk
+        asset_name: Coram-Deo-arm64-v8a-${{ env.VERSION }}.apk
         asset_content_type: application/vnd.android.package-archive
 
     - name: Upload APKs to Release
@@ -92,5 +92,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: build/app/outputs/flutter-apk/app-x86_64-release.apk
-        asset_name: app-x86_64-release-${{ env.VERSION }}.apk
+        asset_name: Coram-Deo-x86_64-${{ env.VERSION }}.apk
         asset_content_type: application/vnd.android.package-archive
