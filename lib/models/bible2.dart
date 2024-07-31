@@ -1,60 +1,42 @@
-import 'package:http/http.dart' as http;
-import 'package:html/dom.dart';
-import 'package:html/parser.dart' show parse;
-
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class Bible {
-  Document? data;
+  Future initDb() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'bible_data.db');
 
-  Future<void> initBible({required String language, required int bookid, required int chapter}) async {
-    try {
-      var baseurl = "https://beblia.com/";
-      var response = await http.get(Uri.parse('$baseurl/Bible?Language=$language&Book=$bookid&Chapter=$chapter'));
-      if (response.statusCode == 200) {
-        data = parse(response.body);
-      } else {
-        throw Exception();
-      }
-    } catch (_) {
-      data = null;
+    final exist = await databaseExists(path);
+
+    if (exist) {
+      return await openDatabase(path);
+    } else {
+      try {
+        await Directory(dirname(path)).create(recursive: true);
+      } catch (_) {}
+
+      ByteData data = await rootBundle.load(join("assets", "biblia_data.db"));
+      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+
+      await File(path).writeAsBytes(bytes, flush: true);
+      
+      return await openDatabase(path);
     }
   }
 
-  Map<String, String> getAvailableLanguagesAndLinks() {
-    Map<String, String> result = {};
-    List<String> langs = data?.querySelectorAll('.subNav_Versions_Button').map((element) => element.attributes['title'].toString()).toList() ?? [];
-    List<String> link = data?.querySelectorAll('.subNav_Versions_Button').map((element) => element.attributes['href'].toString()).toList() ?? [];
-    RegExp regExp = RegExp(r"Language=([^&]+)");
-    for (String lang in langs) {
-      result.addAll({lang: regExp.firstMatch(link[langs.indexOf(lang)])?.group(1) ?? ""});
-    }
-    return result;
+  Future<List<String>> getversionNames() async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.query('bible');
+    return List.generate(maps.length, (i) {
+      return maps[i]['versionName'];
+    });
   }
 
-  String getCurrentLanguage() {
-    return data?.querySelectorAll('#regions_Sub_Lang_Button')[0].text ?? "Portugues";
-  }
-
-  Map<int, String> getBookIdAndNames() {
-    Map<int, String> result = {};
-    List<String> names = data?.querySelectorAll('#old_New_Testament_Div a').map((element) => element.text).toList() ?? [];
-    for (int i = 0; i < names.length; i++) {
-      result.addAll({i + 1: names[i]});
-    }
-    return result;
-  }
-
-  List<int> getNumberOfChapters() {
-    List<int> chapters = data?.querySelectorAll('.subNav_Versions_Button').map((element) => int.parse(element.text)).toList() ?? [];
-    return chapters;
-  }
-
-  List<String> getVersesId() {
-    return data?.querySelectorAll('.verseTextButton').map((element) => element.text).toList() ?? [];
-  }
-  List<String> getVersesText() {
-    return data?.querySelectorAll('.verseTextText').map((element) => element.text).toList() ?? [];
+  Future<String> getxmlLink(String versionName) async {
+    final db = await initDb();
+    final maps = await db.rawQuery('SELECT xmlLink FROM bible WHERE versionName = ?', [versionName]);
+    return maps[0]['xmlLink'];
   }
 }
-
-
