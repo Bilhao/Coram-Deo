@@ -113,17 +113,17 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                         Text.rich(
                           TextSpan(
                             children: [
-                              TextSpan(text: "V.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "℣.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Rainha do céu, alegrai-Vos, aleluia." : "Regína Cæli, lætáre, alleluia.", style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: "\nR.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "\n℟.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Porque quem merecestes trazer em vosso seio, aleluia." : "Quia quem meruísti portáre, alleluia", style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: "\n\nV.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "\n\n℣.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Ressuscitou como disse, aleluia." : "Resurréxit, sicut dixit, alleluia.", style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: "\nR.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "\nR℟.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Rogai a Deus por nós, aleluia." : "Ora pro nóbis Deum, alleluia.", style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: "\n\nV.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "\n\n℣.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Exultai e alegrai-Vos, ó Virgem Maria, aleluia." : "Gaude et lætáre, Virgo Maria, alleluia.", style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: "\nR.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+                              TextSpan(text: "\n℟.  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
                               TextSpan(text: language == "pt" ? "Porque o Senhor ressuscitou verdadeiramente, aleluia." : "Quia surréxit Dóminus vere, alleluia.", style: TextStyle(fontSize: fontSize)),
                               TextSpan(text: language == "pt" ? "\n\nOremos:" : "\n\nOremus:", style: TextStyle(fontSize: fontSize+2, fontWeight: FontWeight.bold)),
                               TextSpan(
