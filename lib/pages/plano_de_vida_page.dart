@@ -102,27 +102,30 @@ class _TodosOsItensState extends State<TodosOsItens> {
                   ),
                   const Divider(height: 15, color: Colors.transparent),
                   for (int i = 0; i < provider.titles.length; i++)
-                    ListTile(
-                      title: Text(provider.titles[i], style: const TextStyle(fontSize: 18)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          provider.titlesIsCustom.contains(provider.titles[i])
-                            ? IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                provider.removeItem(provider.titles[i]);
+                    InkWell(
+                      child: ListTile(
+                        title: Text(provider.titles[i], style: const TextStyle(fontSize: 18)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            provider.titlesIsCustom.contains(provider.titles[i])
+                              ? IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  provider.removeItem(provider.titles[i]);
+                                },
+                              ) 
+                              : Container(),
+                            Checkbox(
+                              value: provider.titlesIsSelected.contains(provider.titles[i]),
+                              onChanged: (value) {
+                                provider.toggleItemSelection(provider.titles[i]);
                               },
-                            ) 
-                            : Container(),
-                          Checkbox(
-                            value: provider.titlesIsSelected.contains(provider.titles[i]),
-                            onChanged: (value) {
-                              provider.toggleItemSelection(provider.titles[i]);
-                            },
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
+                      onTap: () => provider.toggleItemSelection(provider.titles[i]),
                     ),
                 ],
               )
@@ -147,39 +150,42 @@ class Selecionados extends StatelessWidget {
               child: ListView.builder(
                 itemCount: provider.titlesIsSelected.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      provider.titlesIsSelected[index],
-                      style: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) 
-                        ? const TextStyle(fontSize: 18,decoration: TextDecoration.lineThrough) 
-                        : const TextStyle(fontSize: 18)
+                  return InkWell(
+                    child: ListTile(
+                      title: Text(
+                        provider.titlesIsSelected[index],
+                        style: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) 
+                          ? const TextStyle(fontSize: 18,decoration: TextDecoration.lineThrough) 
+                          : const TextStyle(fontSize: 18)
+                      ),
+                      leading: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index])  
+                        ? const Icon(Icons.check) 
+                        : const Icon(Icons.watch_later_outlined),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) ,
+                            onChanged: (value) {
+                              provider.toggleItemCompletion(provider.titlesIsSelected[index]);
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.more_vert),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => ChangeNotifierProvider.value(
+                                  value: provider,
+                                  child: InfoAlertDialog(title: provider.titlesIsSelected[index]),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      )
                     ),
-                    leading: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index])  
-                      ? const Icon(Icons.check) 
-                      : const Icon(Icons.watch_later_outlined),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Checkbox(
-                          value: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) ,
-                          onChanged: (value) {
-                            provider.toggleItemCompletion(provider.titlesIsSelected[index]);
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => ChangeNotifierProvider.value(
-                                value: provider,
-                                child: InfoAlertDialog(title: provider.titlesIsSelected[index]),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )
+                    onTap: () => provider.toggleItemCompletion(provider.titlesIsSelected[index]),
                   );
                 }
               )

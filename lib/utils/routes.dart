@@ -1,5 +1,8 @@
 import 'package:coramdeo/pages/oracoes/credo_page.dart';
 import 'package:coramdeo/pages/oracoes/lembrai_vos_page.dart';
+import 'package:coramdeo/pages/oracoes/oferecimento_de_obras_page.dart';
+import 'package:coramdeo/pages/oracoes/preces_page.dart';
+import 'package:coramdeo/pages/oracoes/santo_rosario_page.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/pages/bible/bible_page.dart';
 import 'package:coramdeo/pages/bible/reading_page.dart';
@@ -34,9 +37,9 @@ class Routes {
     '/comentario-do-evangelho-do-dia': (context) => const ComentarioDoEvangelhoPage(),
     '/credo': (context) => const CredoPage(),
     '/lembrai-vos': (context) => const LembraiVosPage(),
-    // '/oferecimento-de-obras': (context) => const OferecimentoDeObrasPage(),
-    // 'preces': (context) => const PrecesPage(),
-    // 'terco': (context) => const TercoPage(),
+    '/oferecimento-de-obras': (context) => const OferecimentoDeObrasPage(),
+    '/preces': (context) => const PrecesPage(),
+    '/santo-rosario': (context) => const SantoRosarioPage(),
     // 'te-deum': (context) => const TeDeumPage(),
     // 'via-sacra': (context) => const ViaSacraPage(),
     // 'visita-ao-santissimo': (context) => const VisitaAoSantissimoPage(),
