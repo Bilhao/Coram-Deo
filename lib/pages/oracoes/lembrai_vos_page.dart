@@ -33,9 +33,13 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Lembrai-Vos"),
+        title: Text(language == "pt" ? "Lembrai-Vos" : "Memoráre"),
         actions: [
-          IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: const Icon(Icons.language), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
+          IconButton(
+            onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
+            icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()),
+            tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"
+          ),
           IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
         ],
@@ -46,7 +50,6 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ListView(
               children: [
-                Text(language == "pt" ? "Lembrai-Vos" : "Memoráre", textAlign: TextAlign.center, style: TextStyle(fontSize: fontSize + 6, fontWeight: FontWeight.bold)),
                 const Divider(height: 15, color: Colors.transparent),
                 Text(
                   language == "pt"
@@ -64,7 +67,8 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
                   language == "pt"
                     ? "\nAmém." 
                     : "\nAmen.",
-                  style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)
+                  style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center
                 ),
               ]
             ),

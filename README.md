@@ -4,8 +4,6 @@ Aplicativo com diversas orações católicas, com o objetivo de facilitar e moti
 
 ## TODO:
 
-- [ ] Atualizar página de orações para buscar a oração em um arquivo .md
-
 - [ ] Implementar orações
   - [ ] Oferecimento de Obras
   - [ ] Preces
@@ -15,8 +13,6 @@ Aplicativo com diversas orações católicas, com o objetivo de facilitar e moti
   - [ ] Visita ao Santíssimo
   - [ ] ...
 
-- [ ] Atualizar BiblePage, para pegar dados dos XML em https://beblia.com/BibleXML?Language=Portuguese&Book=1&Chapter=1
-
 - [ ] Implementar Livros
   - [ ] Caminho
   - [ ] Sulco
@@ -25,5 +21,7 @@ Aplicativo com diversas orações católicas, com o objetivo de facilitar e moti
   - [ ] Amigos de Deus
   - [ ] Via Sacra (Livro)
   - [ ] ...
+
+- [ ] Encontrar solução para adicionar mais traduções e idiomas para a biblia
 
 - [ ] Missal Romano
