@@ -12,7 +12,7 @@ class ComentarioDoEvangelhoProvider extends ChangeNotifier {
   String _comentario = "";
   List<String> _evangelhoText = [];
   List<String> _comentarioText = []; 
-  double _fontSize = 16.0;
+  double _fontSize = 17.0;
   bool _error = false;
   bool _isLoading = false;
 
@@ -36,7 +36,7 @@ class ComentarioDoEvangelhoProvider extends ChangeNotifier {
       _comentario = data.getComentario();
       _evangelhoText = data.getEvangelhoText();
       _comentarioText = data.getCommentsText();
-      _fontSize = 16.0;
+      _fontSize = 17.0;
       _error = false;
       _isLoading = false;
       notifyListeners();
