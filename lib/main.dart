@@ -73,6 +73,7 @@ class OracaoApp extends StatelessWidget {
                   colorScheme: provider.dynamicColor 
                     ? darkDynamic
                     : ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.tonalSpot,
                       seedColor: Color(provider.colorSeed),
                       brightness: Brightness.dark,
                     ),

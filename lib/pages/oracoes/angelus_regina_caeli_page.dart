@@ -42,7 +42,11 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
       appBar: AppBar(
         title: selected == "angelus" ? const Text('Ângelus') : const Text('Regina Cæli'),
         actions: [
-          IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: const Icon(Icons.language), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
+          IconButton(
+            onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
+            icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()),
+            tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"
+          ),
           IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
         ],
@@ -57,7 +61,6 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                   child: ListView(
                     children: selected == "angelus"
                       ? [
-                        Text(language == "pt" ? "Ângelus" : "Angelus", textAlign: TextAlign.center, style: TextStyle(fontSize: fontSize + 6, fontWeight: FontWeight.bold)),
                         const Divider(height: 15, color: Colors.transparent),
                         Text.rich(
                           TextSpan(
@@ -103,12 +106,11 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                   : "\nGrátiam tuam, quæsumus, Dómine, méntibus nostris infúnde: ut qui, Angelo nuntiánte, Christi Filii tui incarnatió- nem cognóvimus, per passiónem eius et crucem ad resurrec- tiónis glóriam perducámur. Per eumdem Christum Dóminum nostrum.",
                                 style: TextStyle(fontSize: fontSize)
                               ),
-                              TextSpan(text: language == "pt" ? "\n\nAmém." : "\n\nAmen.", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
                             ]
                           )
-                        )
+                        ),
+                        Text(language == "pt" ? "\nAmém." : "\nAmen.", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                       ] : [
-                        Text("Regina Cæli", textAlign: TextAlign.center, style: TextStyle(fontSize: fontSize + 6, fontWeight: FontWeight.bold)),
                         const Divider(height: 15, color: Colors.transparent),
                         Text.rich(
                           TextSpan(
@@ -131,10 +133,10 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                   ? "\nÓ Deus, que Vos dignastes alegrar o mundo com a Ressurreição do Vosso Filho Jesus Cristo, Senhor Nosso, concedei-nos, Vos suplicamos, que por sua Mãe, a Virgem Maria, alcancemos as alegrias da vida eterna. Por Cristo Senhor nosso."
                                   : "\nDeus, qui per resurrectiónem Filii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es: præsta, quæsumus; ut, per eius Genitrícem Vírginem Mariam, perpétuæ capiámus gáudia vitæ. Per eumdem Christum, Dóminum nostrum.",
                                 style: TextStyle(fontSize: fontSize)),
-                              TextSpan(text: language == "pt" ? "\n\nAmém." : "\n\nAmen.", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
                             ]
                           )
-                        )
+                        ),
+                        Text(language == "pt" ? "\nAmém." : "\nAmen.", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                       ],
                   ),
                 ),
