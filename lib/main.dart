@@ -30,6 +30,8 @@ void main() async {
   );
 }
 
+// TESTE
+
 class OracaoApp extends StatelessWidget {
   const OracaoApp({super.key});
 
