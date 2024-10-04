@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/models/falar_com_deus.dart';
 
 class FalarComDeusProvider extends ChangeNotifier {
-  
   FalarComDeusProvider() {
     init();
   }
@@ -52,7 +51,7 @@ class FalarComDeusProvider extends ChangeNotifier {
     _fontsize++;
     notifyListeners();
   }
-  
+
   decreaseFontSize() {
     _fontsize--;
     notifyListeners();

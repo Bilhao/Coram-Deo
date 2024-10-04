@@ -24,7 +24,9 @@ class _SettingsPageState extends State<SettingsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 15.0),
-              child: Text("Aparência", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              child: Text("Aparência",
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary)),
             ),
             ListTile(
               title: const Text('Tema'),
@@ -37,7 +39,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 segments: [
                   ButtonSegment(
                     value: "light",
-                    icon: Icon(provider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined),
+                    icon: Icon(provider.currentTheme == "light"
+                        ? Icons.light_mode
+                        : Icons.light_mode_outlined),
                   ),
                   const ButtonSegment(
                     value: "system",
@@ -45,10 +49,13 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   ButtonSegment(
                     value: "dark",
-                    icon: Icon(provider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined),
+                    icon: Icon(provider.currentTheme == "dark"
+                        ? Icons.dark_mode
+                        : Icons.dark_mode_outlined),
                   ),
                 ],
-                onSelectionChanged: (segment) => provider.changeTheme(segment.first.toString()),
+                onSelectionChanged: (segment) =>
+                    provider.changeTheme(segment.first.toString()),
               ),
             ),
             SwitchListTile(
@@ -79,7 +86,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         content: SingleChildScrollView(
                           child: ColorPicker(
                             color: Color(provider.colorSeed),
-                            // enableShadesSelection: false,
                             subheading: const Text("Tonalidade"),
                             wheelSubheading: const Text("Tonalidade"),
                             wheelSquarePadding: 10,
@@ -109,7 +115,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     );
                   },
                 ),
-                
               ),
           ],
         ),

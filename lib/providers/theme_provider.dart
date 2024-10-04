@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  String _currentTheme;
-  bool _dynamicColor;
-  int _colorSeed;
 
-  ThemeProvider({
-    required String initialTheme,
-    required bool initialDynamicColor,
-    required int initialColorSeed,
-  }) : _currentTheme = initialTheme,
-       _dynamicColor = initialDynamicColor,
-       _colorSeed = initialColorSeed;
+  ThemeProvider() {
+    init();
+  }
 
+  String _currentTheme = "system";
+  bool _dynamicColor = false;
+  int _colorSeed = 0xFF004B8D;
 
   String get currentTheme => _currentTheme;
   bool get dynamicColor => _dynamicColor;
@@ -27,6 +23,14 @@ class ThemeProvider extends ChangeNotifier {
     } else {
       return ThemeMode.dark;
     }
+  }
+
+  init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _currentTheme = prefs.getString('theme.theme') ?? "system";
+    _dynamicColor = prefs.getBool('theme.dynamiccolor') ?? false;
+    _colorSeed = prefs.getInt('theme.colorseed') ?? 0xFF004B8D;
+    notifyListeners();
   }
 
   Future<void> changeTheme(String theme) async {

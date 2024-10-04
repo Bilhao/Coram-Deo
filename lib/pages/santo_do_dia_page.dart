@@ -14,30 +14,30 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => SantoDoDiaProvider(),
-      child: Consumer<SantoDoDiaProvider>(
-        builder: (context, provider, child) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (provider.error) {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Conection Error"),
-                  content: const Text("There was an error connecting to the server. Please try again later."),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            }
-          });
-          return Scaffold(
-            appBar: AppBar(
+      child: Consumer<SantoDoDiaProvider>(builder: (context, provider, child) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (provider.error) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Conection Error"),
+                content: const Text(
+                    "There was an error connecting to the server. Please try again later."),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        });
+        return Scaffold(
+          appBar: AppBar(
               title: const Text("Santo do Dia"),
               actions: [
                 IconButton(
@@ -49,74 +49,96 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                   onPressed: () => provider.increaseFontSize(),
                 )
               ],
-              bottom: provider.isLoading ? const PreferredSize(
-                preferredSize: Size.fromHeight(2.0),
-                child: LinearProgressIndicator(),
-              ) : null
-            ),
-            body: provider.isLoading ? Container() : SafeArea(
-              child: SelectionArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: ListView(
-                    children: [
-                      const Divider(height: 15, color: Colors.transparent),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              alignment: WrapAlignment.center,
+              bottom: provider.isLoading
+                  ? const PreferredSize(
+                      preferredSize: Size.fromHeight(2.0),
+                      child: LinearProgressIndicator(),
+                    )
+                  : null),
+          body: provider.isLoading
+              ? Container()
+              : SafeArea(
+                  child: SelectionArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(
+                                height: 15, color: Colors.transparent),
+                            Row(
                               children: [
-                                Text(
-                                  provider.name,
-                                  style: TextStyle(fontSize: provider.fontsize + 5),
-                                  textAlign: TextAlign.center
+                                Expanded(
+                                  child: Text(
+                                    provider.name,
+                                    style: TextStyle(
+                                        fontSize: provider.fontsize + 5),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
+                                const VerticalDivider(
+                                    width: 10, color: Colors.transparent),
+                                Row(
+                                  children: [
+                                    Text("${provider.day}/${provider.month}"),
+                                    IconButton(
+                                      onPressed: () async {
+                                        DateTime? pickedDate =
+                                            await showDatePicker(
+                                          context: context,
+                                          firstDate: DateTime(2020),
+                                          lastDate: DateTime(2030),
+                                          initialDate: DateTime(
+                                              DateTime.now().year,
+                                              provider.month,
+                                              provider.day),
+                                        );
+                                        if (pickedDate != null) {
+                                          provider.changeDate(
+                                              pickedDate.day, pickedDate.month);
+                                        }
+                                      },
+                                      icon: const Icon(Icons.calendar_month),
+                                    )
+                                  ],
+                                )
                               ],
                             ),
-                          ),
-                          const VerticalDivider(width: 10, color: Colors.transparent),
-                          Row(
-                            children: [
-                              Text("${provider.day}/${provider.month}"),
-                              IconButton(
-                                onPressed: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    firstDate: DateTime(2020),
-                                    lastDate: DateTime(2030),
-                                    initialDate: DateTime(DateTime.now().year, provider.month, provider.day),
-                                  );
-                                  if (pickedDate != null) {
-                                    provider.changeDate(pickedDate.day, pickedDate.month);
-                                  }
-                                }, 
-                                icon: const Icon(Icons.calendar_month),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                      const Divider(height: 15, color: Colors.transparent),
-                      for (String text in provider.text)
-                        Text(
-                          provider.boldText.contains(text) ? "$text\n" : text,
-                          textAlign: provider.boldText.contains(text) ? TextAlign.center : TextAlign.left,
-                          style: TextStyle(
-                            fontSize: provider.boldText.contains(text) ? provider.fontsize + 5 : provider.fontsize + 2,
-                            fontWeight: provider.boldText.contains(text) ? FontWeight.bold : FontWeight.normal,
-                          ),
-                              
+                            const Divider(
+                                height: 30, color: Colors.transparent),
+                            for (String text in provider.text)
+                              Align(
+                                alignment: provider.boldText.contains(text)
+                                    ? Alignment.center
+                                    : Alignment.centerLeft,
+                                child: Text(
+                                  provider.boldText.contains(text)
+                                      ? "$text\n"
+                                      : "${text.trim()}\n",
+                                  style: TextStyle(
+                                    fontSize: provider.boldText.contains(text)
+                                        ? provider.fontsize + 5
+                                        : provider.fontsize + 2,
+                                    fontWeight: provider.boldText.contains(text)
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            Text(
+                                "Fonte: https://www.a12.com/reze-no-santuario/santo-do-dia",
+                                style: TextStyle(
+                                    fontSize: provider.fontsize - 2,
+                                    fontWeight: FontWeight.w300)),
+                          ],
                         ),
-                      Text("Fonte: https://www.a12.com/reze-no-santuario/santo-do-dia", style: TextStyle(fontSize: provider.fontsize - 2, fontWeight: FontWeight.w300)),
-                    ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }
-      ),
+        );
+      }),
     );
   }
 }

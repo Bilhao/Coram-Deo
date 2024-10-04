@@ -1,7 +1,8 @@
+import 'package:coramdeo/providers/bible_provider.dart';
+import 'package:coramdeo/providers/santo_do_dia_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'providers/theme_provider.dart';
 import 'utils/notification.dart';
 import 'utils/routes.dart';
@@ -10,49 +11,36 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+
+  // Carrega o splashscreen
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
+  // Carrega as notificações
   Notifier.init();
+
+  // Ajuste das configurações de tela
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     systemNavigationBarColor: Colors.transparent,
   ));
 
-  // Carregar preferências de tema antes de iniciar o aplicativo
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String currentTheme = prefs.getString('theme.theme') ?? "system";
-  bool dynamicColor = prefs.getBool('theme.dynamiccolor') ?? false;
-  int colorSeed = prefs.getInt('theme.colorseed') ?? 0xFF004B8D;
-
   runApp(
-    OracaoApp(
-      initialTheme: currentTheme,
-      initialDynamicColor: dynamicColor,
-      initialColorSeed: colorSeed,
-    ),
+    const OracaoApp(),
   );
 }
 
 class OracaoApp extends StatelessWidget {
-  final String initialTheme;
-  final bool initialDynamicColor;
-  final int initialColorSeed;
-
-  const OracaoApp({
-    super.key,
-    required this.initialTheme,
-    required this.initialDynamicColor,
-    required this.initialColorSeed,
-  });
+  const OracaoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ThemeProvider(
-        initialTheme: initialTheme,
-        initialDynamicColor: initialDynamicColor,
-        initialColorSeed: initialColorSeed,
-      ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => SantoDoDiaProvider()),
+        ChangeNotifierProvider(create: (context) => BibleProvider()),
+      ],
       child: Consumer<ThemeProvider>(
         builder: (context, provider, _) {
           return DynamicColorBuilder(
@@ -61,29 +49,36 @@ class OracaoApp extends StatelessWidget {
                 debugShowCheckedModeBanner: false,
                 themeMode: provider.themeMode,
                 theme: ThemeData(
-                  colorScheme: provider.dynamicColor 
-                    ? lightDynamic
-                    : ColorScheme.fromSeed(
-                      seedColor: Color(provider.colorSeed),
-                      brightness: Brightness.light,
-                    ),
+                  colorScheme: provider.dynamicColor && lightDynamic != null
+                      ? ColorScheme.fromSeed(
+                          seedColor: lightDynamic.harmonized().primary,
+                          brightness: Brightness.light,
+                        )
+                      : ColorScheme.fromSeed(
+                          seedColor: Color(provider.colorSeed),
+                          brightness: Brightness.light,
+                        ),
                   useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
-                  colorScheme: provider.dynamicColor 
-                    ? darkDynamic
-                    : ColorScheme.fromSeed(
-                      dynamicSchemeVariant: DynamicSchemeVariant.tonalSpot,
-                      seedColor: Color(provider.colorSeed),
-                      brightness: Brightness.dark,
-                    ),
+                  colorScheme: provider.dynamicColor && darkDynamic != null
+                      ? ColorScheme.fromSeed(
+                          seedColor: darkDynamic.harmonized().primary,
+                          brightness: Brightness.dark,
+                      )
+                      : ColorScheme.fromSeed(
+                          seedColor: Color(provider.colorSeed),
+                          brightness: Brightness.dark,
+                        ),
                   useMaterial3: true,
                 ),
                 initialRoute: Routes.initial,
-                routes: Routes.routes,
+                onGenerateRoute: Routes.onGenerateRoute,
                 navigatorKey: Routes.navigatorKey,
               );
-              lightDynamic == null || darkDynamic == null ? () : FlutterNativeSplash.remove();
+              lightDynamic == null || darkDynamic == null
+                  ? ()
+                  : FlutterNativeSplash.remove();
               return app;
             },
           );

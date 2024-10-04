@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/models/plano_de_vida.dart';
 
 class PlanoDeVidaProvider with ChangeNotifier {
-
   PlanoDeVida pdvDb = PlanoDeVida();
 
   List<String> _titles = [];
@@ -17,7 +16,8 @@ class PlanoDeVidaProvider with ChangeNotifier {
   int _year = DateTime.now().year;
   int _month = DateTime.now().month;
   int _day = DateTime.now().day;
-  String _date = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+  String _date =
+      "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
 
   List<String> get titles => _titles;
   List<String> get titlesIsCustom => _titlesIsCustom;
@@ -27,7 +27,7 @@ class PlanoDeVidaProvider with ChangeNotifier {
   List<String> get titlesIsNotification => _titlesIsNotification;
   Map<String, dynamic> get notificationTimes => _notificationTimes;
   Map<String, dynamic> get completedDates => _completedDates;
-  Map<String, int> get notificationId => _notificationId; 
+  Map<String, int> get notificationId => _notificationId;
   int get year => _year;
   int get month => _month;
   int get day => _day;
@@ -41,7 +41,8 @@ class PlanoDeVidaProvider with ChangeNotifier {
     _titles = await pdvDb.getAllTitles();
     _titlesIsCustom = await pdvDb.getTitleisCustom();
     _titlesIsSelected = await pdvDb.getTitleisSelected();
-    _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
+    _titlesIsCompleted =
+        await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
     _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
     _titlesIsNotification = await pdvDb.getTitleisNotification();
     _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
@@ -50,7 +51,8 @@ class PlanoDeVidaProvider with ChangeNotifier {
     _year = DateTime.now().year;
     _month = DateTime.now().month;
     _day = DateTime.now().day;
-    _date = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+    _date =
+        "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     notifyListeners();
   }
 
@@ -58,7 +60,8 @@ class PlanoDeVidaProvider with ChangeNotifier {
     _titles = await pdvDb.getAllTitles();
     _titlesIsCustom = await pdvDb.getTitleisCustom();
     _titlesIsSelected = await pdvDb.getTitleisSelected();
-    _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
+    _titlesIsCompleted =
+        await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
     _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
     _titlesIsNotification = await pdvDb.getTitleisNotification();
     _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
@@ -67,7 +70,7 @@ class PlanoDeVidaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  changeDate (int year, int month, int day) {
+  changeDate(int year, int month, int day) {
     _year = year;
     _month = month;
     _day = day;
@@ -75,8 +78,10 @@ class PlanoDeVidaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  addItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
-    await pdvDb.insertNewItem(title, isCustom, isSelected, isCompleted, isNotification);
+  addItem(String title, int isCustom, int isSelected, int isCompleted,
+      int isNotification) async {
+    await pdvDb.insertNewItem(
+        title, isCustom, isSelected, isCompleted, isNotification);
     update();
   }
 
@@ -112,10 +117,12 @@ class PlanoDeVidaProvider with ChangeNotifier {
   }
 
   insertNotificationTime(String title, String notificationTime) async {
-    if (!(_notificationTimes[title] ?? "").split(",").contains(notificationTime)) {
+    if (!(_notificationTimes[title] ?? "")
+        .split(",")
+        .contains(notificationTime)) {
       await pdvDb.insertNotificationTime(title, notificationTime);
       update();
-    }  
+    }
   }
 
   deleteNoticationTime(String title, String notificationTime) async {
@@ -134,4 +141,4 @@ class PlanoDeVidaProvider with ChangeNotifier {
     await pdvDb.deleteCompletedDate(title, completedDate);
     update();
   }
-} 
+}
