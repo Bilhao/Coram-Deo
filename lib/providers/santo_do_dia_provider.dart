@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/models/santo_do_dia.dart';
 
 class SantoDoDiaProvider extends ChangeNotifier {
-
   SantoDoDiaProvider() {
     init();
   }

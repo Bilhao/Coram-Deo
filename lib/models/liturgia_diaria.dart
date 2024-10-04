@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-
 class LiturgiaDiaria {
   dynamic data;
   RegExp regExp = RegExp(r'\d+');
@@ -10,7 +9,8 @@ class LiturgiaDiaria {
     String formatedDay = day.toString().padLeft(2, "0");
     String formatedMonth = month.toString().padLeft(2, "0");
     try {
-      var response = await http.get(Uri.parse('https://liturgiadiaria.site/$formatedDay-$formatedMonth'));
+      var response = await http.get(
+          Uri.parse('https://liturgiadiaria.site/$formatedDay-$formatedMonth'));
       if (response.statusCode == 200) {
         data = jsonDecode(response.body);
         if (data.containsKey('error')) {
@@ -31,7 +31,7 @@ class LiturgiaDiaria {
   String getLiturgia() {
     return data['liturgia'];
   }
-  
+
   String getPrimeiraLeituraTitulo() {
     return data['primeiraLeitura']['titulo'];
   }
@@ -66,7 +66,7 @@ class LiturgiaDiaria {
   String getSegundaLeituraReferencia() {
     if (data['segundaLeitura'] == "Não há segunda leitura hoje!") {
       return '';
-    } 
+    }
     return data['segundaLeitura']['referencia'];
   }
 

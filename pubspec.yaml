@@ -50,6 +50,7 @@ dependencies:
   html: ^0.15.4
   path: ^1.9.0
 
+  timezone: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,7 +60,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,6 +77,13 @@ flutter:
   assets:
     - assets/biblia_nvi.db
     - assets/plano_de_vida.db
+    - assets/books/amigos_de_deus.db
+    - assets/books/caminho.db
+    - assets/books/e_cristo_que_passa.db
+    - assets/books/forja.db
+    - assets/books/santo_rosario.db
+    - assets/books/sulco.db
+    - assets/books/via_sacra.db
     - assets/images/logo.png
     - assets/images/logo_dark.png
     - assets/images/bible.jpeg
