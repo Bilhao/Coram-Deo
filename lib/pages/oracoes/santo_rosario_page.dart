@@ -13,13 +13,13 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
 
   void decreaseFontSize() {
     setState(() {
-      fontSize --;
+      fontSize--;
     });
   }
 
   void increaseFontSize() {
     setState(() {
-      fontSize ++;
+      fontSize++;
     });
   }
 
@@ -36,22 +36,23 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
         title: const Text("Santo Rosário"),
         actions: [
           IconButton(
-            onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
-            icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()),
-            tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"
-          ),
-          IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
+              onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
+              icon: Text(
+                  language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()),
+              tooltip: language == "pt"
+                  ? "Mudar para Latim"
+                  : "Mudar para Português"),
+          IconButton(
+              onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
         ],
       ),
-      body: SafeArea(
+      body: const SafeArea(
         child: SelectionArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: ListView(
-              children: [
-                
-              ]
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: SingleChildScrollView(
+              child: Column(children: []),
             ),
           ),
         ),
