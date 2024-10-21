@@ -233,7 +233,7 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                       : "Resurréxit, sicut dixit, alleluia.",
                                   style: TextStyle(fontSize: fontSize)),
                               TextSpan(
-                                  text: "\nR℟.  ",
+                                  text: "\n℟.  ",
                                   style: TextStyle(
                                       fontSize: fontSize,
                                       fontWeight: FontWeight.bold,
@@ -278,11 +278,14 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                       : "\nDeus, qui per resurrectiónem Filii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es: præsta, quæsumus; ut, per eius Genitrícem Vírginem Mariam, perpétuæ capiámus gáudia vitæ. Per eumdem Christum, Dóminum nostrum.",
                                   style: TextStyle(fontSize: fontSize)),
                             ])),
-                            Text(language == "pt" ? "\nAmém." : "\nAmen.",
-                                style: TextStyle(
-                                    fontSize: fontSize,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center),
+                            Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                    language == "pt" ? "\nAmém." : "\nAmen.",
+                                    style: TextStyle(
+                                        fontSize: fontSize,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center)),
                           ],
                   ),
                 ),
