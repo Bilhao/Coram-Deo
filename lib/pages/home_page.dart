@@ -217,7 +217,7 @@ class HomePageCardCarusel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterCarousel(
-      options: CarouselOptions(
+      options: FlutterCarouselOptions(
         height: 250,
         enableInfiniteScroll: true,
         autoPlay: true,
