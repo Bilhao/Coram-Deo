@@ -51,24 +51,20 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const SantoDoDiaPage());
 
       case "/liturgia":
-        return MaterialPageRoute(
-            builder: (context) => const LiturgiaDiariaPage());
+        return MaterialPageRoute(builder: (context) => const LiturgiaDiariaPage());
 
       case "/plano-de-vida":
         return MaterialPageRoute(builder: (context) => const PlanoDeVidaPage());
 
       // oracoes
       case "/falar-com-deus":
-        return MaterialPageRoute(
-            builder: (context) => const FalarComDeusPage());
+        return MaterialPageRoute(builder: (context) => const FalarComDeusPage());
 
       case "/angelus-regina-caeli":
-        return MaterialPageRoute(
-            builder: (context) => const AngelusReginaCaeliPage());
+        return MaterialPageRoute(builder: (context) => const AngelusReginaCaeliPage());
 
       case "/comentario-do-evangelho-do-dia":
-        return MaterialPageRoute(
-            builder: (context) => const ComentarioDoEvangelhoPage());
+        return MaterialPageRoute(builder: (context) => const ComentarioDoEvangelhoPage());
 
       case "/credo":
         return MaterialPageRoute(builder: (context) => const CredoPage());
@@ -77,15 +73,13 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const LembraiVosPage());
 
       case "/oferecimento-de-obras":
-        return MaterialPageRoute(
-            builder: (context) => const OferecimentoDeObrasPage());
+        return MaterialPageRoute(builder: (context) => const OferecimentoDeObrasPage());
 
       case "/preces":
         return MaterialPageRoute(builder: (context) => const PrecesPage());
 
       case "/santo-rosario":
-        return MaterialPageRoute(
-            builder: (context) => const SantoRosarioPage());
+        return MaterialPageRoute(builder: (context) => const SantoRosarioPage());
 
       case "/te-deum":
         return MaterialPageRoute(builder: (context) => const TeDeumPage());
@@ -95,8 +89,7 @@ class Routes {
       // livros
       case "/book-reading":
         final args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(
-            builder: (context) => BookReadingPage(bookName: args['bookName']));
+        return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
 
       case "/caminho":
         return MaterialPageRoute(builder: (context) => const CaminhoPage());
@@ -108,20 +101,16 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const ForjaPage());
 
       case "/amigos-de-deus":
-        return MaterialPageRoute(
-            builder: (context) => const AmigosDeDeusPage());
+        return MaterialPageRoute(builder: (context) => const AmigosDeDeusPage());
 
       case "/e-cristo-que-passa":
-        return MaterialPageRoute(
-            builder: (context) => const ECristoQuePassaPage());
+        return MaterialPageRoute(builder: (context) => const ECristoQuePassaPage());
 
       case "/santo-rosario-livro":
-        return MaterialPageRoute(
-            builder: (context) => const SantoRosarioLivroPage());
+        return MaterialPageRoute(builder: (context) => const SantoRosarioLivroPage());
 
       case "/via-sacra-livro":
-        return MaterialPageRoute(
-            builder: (context) => const ViaSacraLivroPage());
+        return MaterialPageRoute(builder: (context) => const ViaSacraLivroPage());
 
       default:
         return MaterialPageRoute(builder: (_) => const HomePage());

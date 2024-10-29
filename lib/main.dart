@@ -65,7 +65,7 @@ class OracaoApp extends StatelessWidget {
                       ? ColorScheme.fromSeed(
                           seedColor: darkDynamic.harmonized().primary,
                           brightness: Brightness.dark,
-                      )
+                        )
                       : ColorScheme.fromSeed(
                           seedColor: Color(provider.colorSeed),
                           brightness: Brightness.dark,
@@ -76,9 +76,7 @@ class OracaoApp extends StatelessWidget {
                 onGenerateRoute: Routes.onGenerateRoute,
                 navigatorKey: Routes.navigatorKey,
               );
-              lightDynamic == null || darkDynamic == null
-                  ? ()
-                  : FlutterNativeSplash.remove();
+              lightDynamic == null || darkDynamic == null ? () : FlutterNativeSplash.remove();
               return app;
             },
           );
