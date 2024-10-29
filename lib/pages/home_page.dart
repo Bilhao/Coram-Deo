@@ -11,9 +11,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Theme.of(context).brightness == Brightness.dark
-            ? Image.asset('assets/images/logo_dark.png', fit: BoxFit.cover)
-            : Image.asset('assets/images/logo.png', fit: BoxFit.cover),
+        leading: Theme.of(context).brightness == Brightness.dark ? Image.asset('assets/images/logo_dark.png', fit: BoxFit.cover) : Image.asset('assets/images/logo.png', fit: BoxFit.cover),
         leadingWidth: 70,
         title: const Text("Coram Deo"),
         actions: [
@@ -30,13 +28,11 @@ class HomePage extends StatelessWidget {
           flex: 2,
           child: ListView(children: const [
             Divider(height: 15, color: Colors.transparent),
-            Text("Destaques",
-                style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             Divider(height: 15, color: Colors.transparent),
             HomePageCardCarusel(),
             Divider(height: 15, color: Colors.transparent),
-            Text("Menu",
-                style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
             Divider(height: 10, color: Colors.transparent),
             HomePageButtons(text: "Bíblia", route: '/bible'),
             HomePageButtons(text: "Livros", route: '/livros'),
@@ -103,35 +99,25 @@ class SantoDoDiaCard extends StatelessWidget {
             : Row(children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, top: 10.0, bottom: 25.0),
+                    padding: const EdgeInsets.only(left: 10.0, top: 10.0, bottom: 25.0),
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Text(provider.name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center),
+                        child: Text(provider.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                       ),
                       const Align(
                         alignment: Alignment.bottomLeft,
-                        child: Text("Clique para ver mais",
-                            style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.left),
+                        child: Text("Clique para ver mais", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500), textAlign: TextAlign.left),
                       )
                     ]),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image(
-                          image: NetworkImage(provider.portrait),
-                          fit: BoxFit.cover),
+                      child: Image(image: NetworkImage(provider.portrait), fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -158,33 +144,19 @@ class BibliaReadingCard extends StatelessWidget {
               : Row(children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image.asset("assets/images/bible.jpeg",
-                            fit: BoxFit.cover),
+                        child: Image.asset("assets/images/bible.jpeg", fit: BoxFit.cover),
                       ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                          right: 10.0, top: 20.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(right: 10.0, top: 20.0, bottom: 25.0),
                       child: Column(children: [
-                        Text("${provider.book} - ${provider.chapter}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center),
-                        Divider(
-                            height: 20,
-                            thickness: 1,
-                            indent: 10,
-                            endIndent: 10,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                    ? const Color(0xFFFFFFFF)
-                                    : const Color(0xFF000000)),
+                        Text("${provider.book} - ${provider.chapter}", style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                        Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFFFFFF) : const Color(0xFF000000)),
                         Text(
                           provider.verses.join(" "),
                           maxLines: 5,
@@ -195,10 +167,7 @@ class BibliaReadingCard extends StatelessWidget {
                         const Spacer(),
                         const Align(
                           alignment: Alignment.bottomRight,
-                          child: Text("Clique para continuar leitura",
-                              style: TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.left),
+                          child: Text("Clique para continuar leitura", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500), textAlign: TextAlign.left),
                         )
                       ]),
                     ),

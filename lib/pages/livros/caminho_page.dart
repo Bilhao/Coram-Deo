@@ -50,11 +50,7 @@ class _CaminhoPageState extends State<CaminhoPage> {
               const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.watch_later_outlined, size: 80),
-                    Divider(height: 15, color: Colors.transparent),
-                    Text("Em desenvimento", style: TextStyle(fontSize: 18))
-                  ],
+                  children: [Icon(Icons.watch_later_outlined, size: 80), Divider(height: 15, color: Colors.transparent), Text("Em desenvimento", style: TextStyle(fontSize: 18))],
                 ),
               ),
               Container(),
@@ -63,8 +59,7 @@ class _CaminhoPageState extends State<CaminhoPage> {
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading',
-                        arguments: {"bookName": "caminho"});
+                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -91,15 +86,12 @@ class _IndiceState extends State<Indice> {
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(provider.chapterNames[index],
-                  style: const TextStyle(fontSize: 18)),
-              leading: Text("${provider.chapterIds[index]}",
-                  style: const TextStyle(fontSize: 18)),
+              title: Text(provider.chapterNames[index], style: const TextStyle(fontSize: 18)),
+              leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading',
-                    arguments: {"bookName": "caminho"});
+                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
               },
             );
           },
@@ -114,28 +106,7 @@ class IndiceTematico extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> letters = [
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-      "G",
-      "H",
-      "I",
-      "J",
-      "L",
-      "M",
-      "N",
-      "O",
-      "P",
-      "R",
-      "S",
-      "T",
-      "U",
-      "V"
-    ];
+    List<String> letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V"];
 
     return SingleChildScrollView(
       child: Column(children: [
@@ -155,9 +126,7 @@ class IndiceTematico extends StatelessWidget {
                     IconButton(
                         icon: Text(letter),
                         onPressed: () {
-                          Scrollable.ensureVisible(
-                              GlobalObjectKey(letter).currentContext!,
-                              duration: const Duration(milliseconds: 500));
+                          Scrollable.ensureVisible(GlobalObjectKey(letter).currentContext!, duration: const Duration(milliseconds: 500));
                         })
                   }
                 ],
@@ -167,33 +136,10 @@ class IndiceTematico extends StatelessWidget {
         ),
         const Divider(height: 15, color: Colors.transparent),
         const LetterTile(letter: "A"),
-        const ClickableText(isTitle: true, text: "Abandono em Deus", points: [
-          113,
-          389,
-          472,
-          498,
-          659,
-          691,
-          731,
-          732,
-          760,
-          766,
-          767,
-          768,
-          853,
-          864,
-          912
-        ]),
-        const ClickableText(
-            isTitle: false,
-            text: "nas dificuldade econômicas",
-            points: [363, 481, 487]),
-        const ClickableText(
-            isTitle: false,
-            text: "por meio da luta confiada",
-            points: [95, 314, 719, 721, 722, 729, 733]),
-        const ClickableText(
-            isTitle: false, text: "através de Nossa Senhora", points: [498]),
+        const ClickableText(isTitle: true, text: "Abandono em Deus", points: [113, 389, 472, 498, 659, 691, 731, 732, 760, 766, 767, 768, 853, 864, 912]),
+        const ClickableText(isTitle: false, text: "nas dificuldade econômicas", points: [363, 481, 487]),
+        const ClickableText(isTitle: false, text: "por meio da luta confiada", points: [95, 314, 719, 721, 722, 729, 733]),
+        const ClickableText(isTitle: false, text: "através de Nossa Senhora", points: [498]),
         const ClickableText(isTitle: true, text: "Abnegação", points: [498]),
       ]),
     );
@@ -201,11 +147,7 @@ class IndiceTematico extends StatelessWidget {
 }
 
 class ClickableText extends StatelessWidget {
-  const ClickableText(
-      {super.key,
-      required this.isTitle,
-      required this.text,
-      required this.points});
+  const ClickableText({super.key, required this.isTitle, required this.text, required this.points});
 
   final bool isTitle;
   final String text;
@@ -219,15 +161,9 @@ class ClickableText extends StatelessWidget {
         builder: (context, provider, child) => InkWell(
           onTap: () {
             provider.changeContentForThemeIndex(points, text);
-            Navigator.pushNamed(context, '/book-reading',
-                arguments: {"bookName": "caminho"});
+            Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
           },
-          child: Text(text,
-              style: TextStyle(
-                  fontSize: isTitle ? 22 : 18,
-                  decoration: points.isNotEmpty
-                      ? TextDecoration.underline
-                      : TextDecoration.none)),
+          child: Text(text, style: TextStyle(fontSize: isTitle ? 22 : 18, decoration: points.isNotEmpty ? TextDecoration.underline : TextDecoration.none)),
         ),
       ),
     );
@@ -244,9 +180,7 @@ class LetterTile extends StatelessWidget {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
       const Text("A"),
       IconButton(
-        onPressed: () => Scrollable.ensureVisible(
-            const GlobalObjectKey("menu").currentContext!,
-            duration: const Duration(milliseconds: 500)),
+        onPressed: () => Scrollable.ensureVisible(const GlobalObjectKey("menu").currentContext!, duration: const Duration(milliseconds: 500)),
         icon: const Icon(Icons.move_up),
       )
     ]);

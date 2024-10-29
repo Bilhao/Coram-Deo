@@ -50,11 +50,7 @@ class _ECristoQuePassaPageState extends State<ECristoQuePassaPage> {
               const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.watch_later_outlined, size: 80),
-                    Divider(height: 15, color: Colors.transparent),
-                    Text("Em desenvimento", style: TextStyle(fontSize: 18))
-                  ],
+                  children: [Icon(Icons.watch_later_outlined, size: 80), Divider(height: 15, color: Colors.transparent), Text("Em desenvimento", style: TextStyle(fontSize: 18))],
                 ),
               ),
               Container(),
@@ -63,8 +59,7 @@ class _ECristoQuePassaPageState extends State<ECristoQuePassaPage> {
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading',
-                        arguments: {"bookName": "e_cristo_que_passa"});
+                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "e_cristo_que_passa"});
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -91,15 +86,12 @@ class _IndiceState extends State<Indice> {
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(provider.chapterNames[index],
-                  style: const TextStyle(fontSize: 18)),
-              leading: Text("${provider.chapterIds[index]}",
-                  style: const TextStyle(fontSize: 18)),
+              title: Text(provider.chapterNames[index], style: const TextStyle(fontSize: 18)),
+              leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading',
-                    arguments: {"bookName": "e_cristo_que_passa"});
+                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "e_cristo_que_passa"});
               },
             );
           },

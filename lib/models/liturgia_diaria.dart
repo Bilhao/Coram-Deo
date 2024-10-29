@@ -9,8 +9,7 @@ class LiturgiaDiaria {
     String formatedDay = day.toString().padLeft(2, "0");
     String formatedMonth = month.toString().padLeft(2, "0");
     try {
-      var response = await http.get(
-          Uri.parse('https://liturgiadiaria.site/$formatedDay-$formatedMonth'));
+      var response = await http.get(Uri.parse('https://liturgiadiaria.site/$formatedDay-$formatedMonth'));
       if (response.statusCode == 200) {
         data = jsonDecode(response.body);
         if (data.containsKey('error')) {

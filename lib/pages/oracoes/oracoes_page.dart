@@ -19,35 +19,27 @@ class _OracoesPageState extends State<OracoesPage> {
           Expanded(
             child: ListView(children: [
               ListTile(
-                title: const Text("Oferecimento de Obras",
-                    style: TextStyle(fontSize: 18)),
-                onTap: () =>
-                    Navigator.pushNamed(context, '/oferecimento-de-obras'),
+                title: const Text("Oferecimento de Obras", style: TextStyle(fontSize: 18)),
+                onTap: () => Navigator.pushNamed(context, '/oferecimento-de-obras'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Comentário do Evangelho do dia",
-                    style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(
-                    context, '/comentario-do-evangelho-do-dia'),
+                title: const Text("Comentário do Evangelho do dia", style: TextStyle(fontSize: 18)),
+                onTap: () => Navigator.pushNamed(context, '/comentario-do-evangelho-do-dia'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Meditação Diária do Falar com Deus",
-                    style: TextStyle(fontSize: 18)),
+                title: const Text("Meditação Diária do Falar com Deus", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/falar-com-deus'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Ângelus/Regina Cæli",
-                    style: TextStyle(fontSize: 18)),
-                onTap: () =>
-                    Navigator.pushNamed(context, '/angelus-regina-caeli'),
+                title: const Text("Ângelus/Regina Cæli", style: TextStyle(fontSize: 18)),
+                onTap: () => Navigator.pushNamed(context, '/angelus-regina-caeli'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title:
-                    const Text("Lembrai-vos", style: TextStyle(fontSize: 18)),
+                title: const Text("Lembrai-vos", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/lembrai-vos'),
                 trailing: const Icon(Icons.chevron_right),
               ),
@@ -57,14 +49,12 @@ class _OracoesPageState extends State<OracoesPage> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Credo Niceno-Constantinopolitano",
-                    style: TextStyle(fontSize: 18)),
+                title: const Text("Credo Niceno-Constantinopolitano", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/credo'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title:
-                    const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
+                title: const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/santo-rosario'),
                 trailing: const Icon(Icons.chevron_right),
               ),
@@ -79,10 +69,8 @@ class _OracoesPageState extends State<OracoesPage> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Visita ao Santíssimo",
-                    style: TextStyle(fontSize: 18)),
-                onTap: () =>
-                    Navigator.pushNamed(context, '/visita-ao-santissimo'),
+                title: const Text("Visita ao Santíssimo", style: TextStyle(fontSize: 18)),
+                onTap: () => Navigator.pushNamed(context, '/visita-ao-santissimo'),
                 trailing: const Icon(Icons.chevron_right),
               ),
             ]),
