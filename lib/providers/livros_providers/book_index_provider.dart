@@ -37,10 +37,8 @@ class BookIndexProvider extends ChangeNotifier {
     _chapterIds = await book.getChapterIds();
     _chapterNames = await book.getChapterNames();
     _fistChapterId = await book.getFirstChapter();
-    _currentChapterId = prefs.getInt('livros.$bookName.currentChapterId') ??
-        await book.getFirstChapter();
-    _currentChapterName =
-        prefs.getString('livros.$bookName.currentChapterName') ?? "";
+    _currentChapterId = prefs.getInt('livros.$bookName.currentChapterId') ?? await book.getFirstChapter();
+    _currentChapterName = prefs.getString('livros.$bookName.currentChapterName') ?? "";
     _contentIds = await book.getContentIds(chapterId: _currentChapterId);
     _content = await book.getContentByIds(contentIds: _contentIds);
     _isLoading = false;
@@ -52,10 +50,8 @@ class BookIndexProvider extends ChangeNotifier {
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Livros book = Livros(bookName: bookName);
-    prefs.setInt(
-        'livros.$bookName.currentChapterId', chapterId + _fistChapterId);
-    prefs.setString(
-        'livros.$bookName.currentChapterName', _chapterNames[chapterId]);
+    prefs.setInt('livros.$bookName.currentChapterId', chapterId + _fistChapterId);
+    prefs.setString('livros.$bookName.currentChapterName', _chapterNames[chapterId]);
     _currentChapterId = chapterId + _fistChapterId;
     _currentChapterName = _chapterNames[chapterId];
     _contentIds = await book.getContentIds(chapterId: _currentChapterId);

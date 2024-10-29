@@ -35,15 +35,8 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
       appBar: AppBar(
         title: const Text("Santo Rosário"),
         actions: [
-          IconButton(
-              onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
-              icon: Text(
-                  language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()),
-              tooltip: language == "pt"
-                  ? "Mudar para Latim"
-                  : "Mudar para Português"),
-          IconButton(
-              onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
+          IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
         ],
       ),

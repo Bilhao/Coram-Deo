@@ -63,8 +63,7 @@ class _ReadingPageState extends State<ReadingPage> {
                                 style: TextStyle(fontSize: fontSize + 4),
                               ),
                             ),
-                            const Divider(
-                                height: 15, color: Colors.transparent),
+                            const Divider(height: 15, color: Colors.transparent),
                             for (int i = 0; i < provider.versesId.length; i++)
                               Container(
                                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -73,9 +72,7 @@ class _ReadingPageState extends State<ReadingPage> {
                                     children: [
                                       TextSpan(
                                         text: "${provider.versesId[i]}.  ",
-                                        style: TextStyle(
-                                            fontSize: fontSize - 4,
-                                            fontWeight: FontWeight.w200),
+                                        style: TextStyle(fontSize: fontSize - 4, fontWeight: FontWeight.w200),
                                       ),
                                       TextSpan(
                                         text: provider.verses[i],
@@ -98,17 +95,12 @@ class _ReadingPageState extends State<ReadingPage> {
                             ? null
                             : () {
                                 provider.goToPreviousChapter();
-                                Scrollable.ensureVisible(
-                                    const GlobalObjectKey('chapter')
-                                        .currentContext!,
-                                    duration:
-                                        const Duration(milliseconds: 500));
+                                Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
                               },
                         icon: const Icon(Icons.arrow_back),
                         color: Theme.of(context).colorScheme.primary,
                         style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                         ),
                       ),
                       Text(
@@ -117,22 +109,16 @@ class _ReadingPageState extends State<ReadingPage> {
                         textAlign: TextAlign.center,
                       ),
                       IconButton(
-                        onPressed:
-                            provider.bookId == 66 && provider.chapter == 22
-                                ? null
-                                : () {
-                                    provider.goToNextChapter();
-                                    Scrollable.ensureVisible(
-                                        const GlobalObjectKey('chapter')
-                                            .currentContext!,
-                                        duration:
-                                            const Duration(milliseconds: 500));
-                                  },
+                        onPressed: provider.bookId == 66 && provider.chapter == 22
+                            ? null
+                            : () {
+                                provider.goToNextChapter();
+                                Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
+                              },
                         icon: const Icon(Icons.arrow_forward),
                         color: Theme.of(context).colorScheme.primary,
                         style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                         ),
                       ),
                     ],

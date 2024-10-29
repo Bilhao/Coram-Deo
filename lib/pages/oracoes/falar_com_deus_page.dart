@@ -14,16 +14,14 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => FalarComDeusProvider(),
-        child:
-            Consumer<FalarComDeusProvider>(builder: (context, provider, child) {
+        child: Consumer<FalarComDeusProvider>(builder: (context, provider, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (provider.error) {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
                   title: const Text("Conection Error"),
-                  content: const Text(
-                      "There was an error connecting to the server. Please try again later."),
+                  content: const Text("There was an error connecting to the server. Please try again later."),
                   actions: <Widget>[
                     TextButton(
                       child: const Text('OK'),
@@ -41,12 +39,8 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
               appBar: AppBar(
                   title: const Text("Falar com Deus"),
                   actions: [
-                    IconButton(
-                        onPressed: provider.decreaseFontSize,
-                        icon: const Icon(Icons.remove)),
-                    IconButton(
-                        onPressed: provider.increaseFontSize,
-                        icon: const Icon(Icons.add)),
+                    IconButton(onPressed: provider.decreaseFontSize, icon: const Icon(Icons.remove)),
+                    IconButton(onPressed: provider.increaseFontSize, icon: const Icon(Icons.add)),
                   ],
                   bottom: provider.isLoading
                       ? const PreferredSize(
@@ -64,53 +58,19 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                for (String day in provider.day)
-                                  Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(day,
-                                          style: TextStyle(
-                                              fontSize:
-                                                  provider.fontsize - 2))),
-                                const Divider(
-                                    height: 15, color: Colors.transparent),
-                                for (String title in provider.title)
-                                  Align(
-                                      alignment: Alignment.center,
-                                      child: Text(title,
-                                          style: TextStyle(
-                                              fontSize: provider.fontsize + 4,
-                                              fontWeight: FontWeight.bold))),
-                                const Divider(
-                                    height: 15, color: Colors.transparent),
-                                for (String subtitle in provider.subtitle)
-                                  Text(subtitle,
-                                      style: TextStyle(
-                                          fontSize: provider.fontsize,
-                                          fontWeight: FontWeight.w300)),
-                                const Divider(
-                                    height: 10, color: Colors.transparent),
-                                for (String note in provider.note)
-                                  Text(note,
-                                      style: TextStyle(
-                                          fontSize: provider.fontsize,
-                                          fontStyle: FontStyle.italic)),
-                                const Divider(
-                                    height: 15, color: Colors.transparent),
-                                for (String content in provider.content)
-                                  Text("$content\n",
-                                      style: TextStyle(
-                                          fontSize: provider.fontsize)),
-                                const Divider(
-                                    height: 15, color: Colors.transparent),
-                                for (String reference in provider.reference)
-                                  Text(reference),
-                                const Divider(
-                                    height: 15, color: Colors.transparent),
-                                Text(
-                                    "Fonte: https://www.hablarcondios.org/pt/meditacaodiaria.aspx",
-                                    style: TextStyle(
-                                        fontSize: provider.fontsize - 2,
-                                        fontWeight: FontWeight.w300)),
+                                for (String day in provider.day) Align(alignment: Alignment.centerRight, child: Text(day, style: TextStyle(fontSize: provider.fontsize - 2))),
+                                const Divider(height: 15, color: Colors.transparent),
+                                for (String title in provider.title) Align(alignment: Alignment.center, child: Text(title, style: TextStyle(fontSize: provider.fontsize + 4, fontWeight: FontWeight.bold))),
+                                const Divider(height: 15, color: Colors.transparent),
+                                for (String subtitle in provider.subtitle) Text(subtitle, style: TextStyle(fontSize: provider.fontsize, fontWeight: FontWeight.w300)),
+                                const Divider(height: 10, color: Colors.transparent),
+                                for (String note in provider.note) Text(note, style: TextStyle(fontSize: provider.fontsize, fontStyle: FontStyle.italic)),
+                                const Divider(height: 15, color: Colors.transparent),
+                                for (String content in provider.content) Text("$content\n", style: TextStyle(fontSize: provider.fontsize)),
+                                const Divider(height: 15, color: Colors.transparent),
+                                for (String reference in provider.reference) Text(reference),
+                                const Divider(height: 15, color: Colors.transparent),
+                                Text("Fonte: https://www.hablarcondios.org/pt/meditacaodiaria.aspx", style: TextStyle(fontSize: provider.fontsize - 2, fontWeight: FontWeight.w300)),
                               ],
                             ),
                           ),

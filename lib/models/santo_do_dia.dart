@@ -7,8 +7,7 @@ class SantoDoDia {
 
   Future<void> initSDD({required int day, required int month}) async {
     try {
-      var response = await http.get(Uri.parse(
-          'https://www.a12.com/reze-no-santuario/santo-do-dia?day=$day&month=$month'));
+      var response = await http.get(Uri.parse('https://www.a12.com/reze-no-santuario/santo-do-dia?day=$day&month=$month'));
       if (response.statusCode == 200) {
         data = parse(response.body);
       } else {
@@ -35,18 +34,10 @@ class SantoDoDia {
   }
 
   List<String> getBoldText() {
-    return data
-            ?.querySelectorAll('.wg-text b')
-            .map((element) => element.text)
-            .toList() ??
-        [];
+    return data?.querySelectorAll('.wg-text b').map((element) => element.text).toList() ?? [];
   }
 
   List<String> getItalicText() {
-    return data
-            ?.querySelectorAll('.wg-text i')
-            .map((element) => element.text)
-            .toList() ??
-        [];
+    return data?.querySelectorAll('.wg-text i').map((element) => element.text).toList() ?? [];
   }
 }

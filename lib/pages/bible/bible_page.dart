@@ -21,8 +21,7 @@ class BiblePage extends StatelessWidget {
               child: ListView(
                 children: [
                   ExpansionTile(
-                    title: const Text("Antigo Testamento",
-                        style: TextStyle(fontSize: 18)),
+                    title: const Text("Antigo Testamento", style: TextStyle(fontSize: 18)),
                     children: [
                       for (String book in provider.oldBooks) ...{
                         ExpansionTile(
@@ -34,28 +33,19 @@ class BiblePage extends StatelessWidget {
                           },
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: 10.0, left: 10.0, right: 10.0),
+                              padding: const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                               child: Wrap(
                                 spacing: 5,
                                 children: [
-                                  for (int chapter
-                                      in provider.bookChapters[book] ?? [])
+                                  for (int chapter in provider.bookChapters[book] ?? [])
                                     FilledButton.tonal(
                                       onPressed: () {
-                                        provider.updateValues(
-                                            testament: "Old",
-                                            book: book,
-                                            chapter: chapter);
-                                        Navigator.pushNamed(
-                                            context, "/reading");
+                                        provider.updateValues(testament: "Old", book: book, chapter: chapter);
+                                        Navigator.pushNamed(context, "/reading");
                                       },
                                       style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0)),
+                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                         ),
                                       ),
                                       child: Text("$chapter"),
@@ -69,8 +59,7 @@ class BiblePage extends StatelessWidget {
                     ],
                   ),
                   ExpansionTile(
-                    title: const Text("Novo Testamento",
-                        style: TextStyle(fontSize: 18)),
+                    title: const Text("Novo Testamento", style: TextStyle(fontSize: 18)),
                     children: [
                       for (String book in provider.newBooks)
                         ExpansionTile(
@@ -82,28 +71,20 @@ class BiblePage extends StatelessWidget {
                           },
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                  bottom: 10.0, left: 10.0, right: 10.0),
+                              padding: const EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
                               child: Wrap(
                                 spacing: 5,
                                 children: [
-                                  for (int chapter
-                                      in provider.bookChapters[book] ?? [])
+                                  for (int chapter in provider.bookChapters[book] ?? [])
                                     FilledButton.tonal(
                                       onPressed: () {
-                                        provider.updateValues(
-                                            testament: "New",
-                                            book: book,
-                                            chapter: chapter);
-                                        Navigator.pushNamed(
-                                            context, "/reading");
+                                        provider.updateValues(testament: "New", book: book, chapter: chapter);
+                                        Navigator.pushNamed(context, "/reading");
                                       },
                                       style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<
-                                            RoundedRectangleBorder>(
+                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10.0),
+                                            borderRadius: BorderRadius.circular(10.0),
                                           ),
                                         ),
                                       ),
@@ -133,8 +114,7 @@ class BiblePage extends StatelessWidget {
                     ),
                   ),
                 ),
-                child: const Text("Continuar última leitura",
-                    style: TextStyle(fontSize: 16)),
+                child: const Text("Continuar última leitura", style: TextStyle(fontSize: 16)),
               ),
             ),
           ],

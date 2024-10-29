@@ -2,9 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorage {
   SecureStorage({required this.name}) {
-    storage = FlutterSecureStorage(
-        aOptions: AndroidOptions(
-            encryptedSharedPreferences: false, sharedPreferencesName: name));
+    storage = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: false, sharedPreferencesName: name));
   }
 
   final String name;
