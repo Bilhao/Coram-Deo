@@ -15,8 +15,7 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => PlanoDeVidaProvider(),
-        child:
-            Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
+        child: Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
           return DefaultTabController(
             length: 3,
             initialIndex: 1,
@@ -26,9 +25,7 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
                 bottom: const TabBar(
                   tabs: [
                     Tab(text: "Todos os itens", icon: Icon(Icons.list)),
-                    Tab(
-                        text: "Itens do dia",
-                        icon: Icon(Icons.watch_later_outlined)),
+                    Tab(text: "Itens do dia", icon: Icon(Icons.watch_later_outlined)),
                     Tab(text: "Completos", icon: Icon(Icons.check_box)),
                   ],
                 ),
@@ -89,9 +86,7 @@ class _TodosOsItensState extends State<TodosOsItens> {
                 const VerticalDivider(width: 10, color: Colors.transparent),
                 IconButton.filledTonal(
                     icon: const Icon(Icons.add),
-                    style: ButtonStyle(
-                        shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0)))),
+                    style: ButtonStyle(shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
                     onPressed: titleController.text.isEmpty
                         ? null
                         : () {
@@ -103,8 +98,7 @@ class _TodosOsItensState extends State<TodosOsItens> {
             const Divider(height: 15, color: Colors.transparent),
             for (int i = 0; i < provider.titles.length; i++)
               ListTile(
-                title: Text(provider.titles[i],
-                    style: const TextStyle(fontSize: 18)),
+                title: Text(provider.titles[i], style: const TextStyle(fontSize: 18)),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -117,8 +111,7 @@ class _TodosOsItensState extends State<TodosOsItens> {
                           )
                         : Container(),
                     Checkbox(
-                      value: provider.titlesIsSelected
-                          .contains(provider.titles[i]),
+                      value: provider.titlesIsSelected.contains(provider.titles[i]),
                       onChanged: (value) {
                         provider.toggleItemSelection(provider.titles[i]);
                       },
@@ -146,26 +139,16 @@ class Selecionados extends StatelessWidget {
                 itemCount: provider.titlesIsSelected.length,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(provider.titlesIsSelected[index],
-                        style: provider.titlesIsCompletedToday
-                                .contains(provider.titlesIsSelected[index])
-                            ? const TextStyle(
-                                fontSize: 18,
-                                decoration: TextDecoration.lineThrough)
-                            : const TextStyle(fontSize: 18)),
-                    leading: provider.titlesIsCompletedToday
-                            .contains(provider.titlesIsSelected[index])
-                        ? const Icon(Icons.check)
-                        : const Icon(Icons.watch_later_outlined),
+                    title:
+                        Text(provider.titlesIsSelected[index], style: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) ? const TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough) : const TextStyle(fontSize: 18)),
+                    leading: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) ? const Icon(Icons.check) : const Icon(Icons.watch_later_outlined),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Checkbox(
-                          value: provider.titlesIsCompletedToday
-                              .contains(provider.titlesIsSelected[index]),
+                          value: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]),
                           onChanged: (value) {
-                            provider.toggleItemCompletion(
-                                provider.titlesIsSelected[index]);
+                            provider.toggleItemCompletion(provider.titlesIsSelected[index]);
                           },
                         ),
                         IconButton(
@@ -173,19 +156,16 @@ class Selecionados extends StatelessWidget {
                           onPressed: () {
                             showDialog(
                               context: context,
-                              builder: (context) =>
-                                  ChangeNotifierProvider.value(
+                              builder: (context) => ChangeNotifierProvider.value(
                                 value: provider,
-                                child: InfoAlertDialog(
-                                    title: provider.titlesIsSelected[index]),
+                                child: InfoAlertDialog(title: provider.titlesIsSelected[index]),
                               ),
                             );
                           },
                         ),
                       ],
                     ),
-                    onTap: () => provider
-                        .toggleItemCompletion(provider.titlesIsSelected[index]),
+                    onTap: () => provider.toggleItemCompletion(provider.titlesIsSelected[index]),
                   );
                 })),
       ]);
@@ -212,12 +192,8 @@ class InfoAlertDialog extends StatelessWidget {
                 width: double.maxFinite,
               ),
               ListTile(
-                title: provider.titlesIsCompletedToday.contains(title)
-                    ? const Text("Marcar como pendente")
-                    : const Text("Marcar como concluído"),
-                leading: provider.titlesIsCompletedToday.contains(title)
-                    ? const Icon(Icons.watch_later_outlined)
-                    : const Icon(Icons.check),
+                title: provider.titlesIsCompletedToday.contains(title) ? const Text("Marcar como pendente") : const Text("Marcar como concluído"),
+                leading: provider.titlesIsCompletedToday.contains(title) ? const Icon(Icons.watch_later_outlined) : const Icon(Icons.check),
                 onTap: () {
                   provider.toggleItemCompletion(title);
                 },
@@ -233,39 +209,26 @@ class InfoAlertDialog extends StatelessWidget {
                       initialTime: const TimeOfDay(hour: 7, minute: 0),
                     );
                     if (pickedTime != null) {
-                      if (await Notifier.verifyNotificationPermission() !=
-                              null &&
-                          await Notifier.verifyNotificationPermission() !=
-                              false) {
+                      if (await Notifier.verifyNotificationPermission() != null && await Notifier.verifyNotificationPermission() != false) {
                         await provider.activateItemNotification(title);
-                        await provider.insertNotificationTime(
-                            title, pickedTime.format(context));
-                        await Notifier.scheduledNotification(
-                            CustomNotification(
-                                id: provider.notificationId[title]!,
-                                title: title,
-                                body: "Lembrete para: $title",
-                                payload: "/oracoes"),
-                            pickedTime);
+                        await provider.insertNotificationTime(title, pickedTime.format(context));
+                        await Notifier.scheduledNotification(CustomNotification(id: provider.notificationId[title]!, title: title, body: "Lembrete para: $title", payload: "/oracoes"), pickedTime);
                         controller.expand();
                       }
                     }
                   },
                 ),
-                initiallyExpanded:
-                    (provider.notificationTimes[title] == null) ? false : true,
+                initiallyExpanded: (provider.notificationTimes[title] == null) ? false : true,
                 controller: controller,
                 children: [
                   if (provider.notificationTimes[title] != null)
-                    for (String time
-                        in (provider.notificationTimes[title] ?? "").split(","))
+                    for (String time in (provider.notificationTimes[title] ?? "").split(","))
                       ListTile(
                         title: Text("Lembrete para: $time"),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () async {
-                            Notifier.stopNotification(
-                                provider.notificationId[title]!);
+                            Notifier.stopNotification(provider.notificationId[title]!);
                             await provider.deactivateItemNotification(title);
                             await provider.deleteNoticationTime(title, time);
                           },
@@ -273,8 +236,7 @@ class InfoAlertDialog extends StatelessWidget {
                       ),
                   if (provider.notificationTimes[title] == null)
                     const ListTile(
-                      title: Text("Nenhum lembrete configurado",
-                          textAlign: TextAlign.center),
+                      title: Text("Nenhum lembrete configurado", textAlign: TextAlign.center),
                     ),
                 ],
               ),
@@ -302,21 +264,17 @@ class Concluidos extends StatelessWidget {
     return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
       return Column(children: [
         ListTile(
-            title: Text(
-                "Concluídos do dia ${provider.day}/${provider.month}/${provider.year}",
-                style: const TextStyle(fontSize: 19)),
+            title: Text("Concluídos do dia ${provider.day}/${provider.month}/${provider.year}", style: const TextStyle(fontSize: 19)),
             trailing: IconButton(
               onPressed: () async {
                 DateTime? pickedDate = await showDatePicker(
                   context: context,
                   firstDate: DateTime(2020),
                   lastDate: DateTime(2030),
-                  initialDate:
-                      DateTime(provider.year, provider.month, provider.day),
+                  initialDate: DateTime(provider.year, provider.month, provider.day),
                 );
                 if (pickedDate != null) {
-                  provider.changeDate(
-                      pickedDate.year, pickedDate.month, pickedDate.day);
+                  provider.changeDate(pickedDate.year, pickedDate.month, pickedDate.day);
                 }
               },
               icon: const Icon(Icons.calendar_month),
@@ -325,15 +283,9 @@ class Concluidos extends StatelessWidget {
             child: ListView.builder(
                 itemCount: provider.titlesIsCompleted.length,
                 itemBuilder: (context, index) {
-                  return (provider.completedDates[
-                                  provider.titlesIsCompleted[index]] ??
-                              "")
-                          .split(",")
-                          .contains(
-                              "${provider.day}/${provider.month}/${provider.year}")
+                  return (provider.completedDates[provider.titlesIsCompleted[index]] ?? "").split(",").contains("${provider.day}/${provider.month}/${provider.year}")
                       ? ListTile(
-                          title: Text(provider.titlesIsCompleted[index],
-                              style: const TextStyle(fontSize: 18)),
+                          title: Text(provider.titlesIsCompleted[index], style: const TextStyle(fontSize: 18)),
                           leading: const Icon(Icons.check),
                         )
                       : Container();

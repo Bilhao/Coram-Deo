@@ -41,10 +41,8 @@ class BibleProvider extends ChangeNotifier {
     _oldBooks = await dbHelper.getBooks("Old");
     _newBooks = await dbHelper.getBooks("New");
     _chapter = pref.getInt("biblie.chapter") ?? 1;
-    _versesId = pref.getStringList("biblie.verses_id") ??
-        await dbHelper.getVersesId(_book, _chapter);
-    _verses = pref.getStringList("biblie.verses") ??
-        await dbHelper.getVerses(_book, _chapter);
+    _versesId = pref.getStringList("biblie.verses_id") ?? await dbHelper.getVersesId(_book, _chapter);
+    _verses = pref.getStringList("biblie.verses") ?? await dbHelper.getVerses(_book, _chapter);
     _isLoading = false;
     notifyListeners();
   }
@@ -79,35 +77,24 @@ class BibleProvider extends ChangeNotifier {
     int lastChapter = await dbHelper.getLastChapterOfBook(_book);
 
     if (_chapter < lastChapter) {
-      await updateValues(
-          testament: _testament, book: book, chapter: chapter + 1);
+      await updateValues(testament: _testament, book: book, chapter: chapter + 1);
     } else {
       String newBook = await dbHelper.getBookById(_bookId + 1);
-      await updateValues(
-          testament: _bookId + 1 > 39 ? "New" : "Old",
-          book: newBook,
-          chapter: 1);
+      await updateValues(testament: _bookId + 1 > 39 ? "New" : "Old", book: newBook, chapter: 1);
     }
   }
 
   goToPreviousChapter() async {
     if (_chapter > 1) {
-      await updateValues(
-          testament: _testament, book: book, chapter: chapter - 1);
+      await updateValues(testament: _testament, book: book, chapter: chapter - 1);
     } else {
       String newBook = await dbHelper.getBookById(_bookId - 1);
       int lastChapter = await dbHelper.getLastChapterOfBook(newBook);
-      await updateValues(
-          testament: _bookId - 1 > 39 ? "New" : "Old",
-          book: newBook,
-          chapter: lastChapter);
+      await updateValues(testament: _bookId - 1 > 39 ? "New" : "Old", book: newBook, chapter: lastChapter);
     }
   }
 
-  updateValues(
-      {required String testament,
-      required String book,
-      required int chapter}) async {
+  updateValues({required String testament, required String book, required int chapter}) async {
     _testament = testament;
     _book = book;
     _bookId = await dbHelper.getBookId(book);

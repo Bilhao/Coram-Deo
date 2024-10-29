@@ -49,8 +49,7 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading',
-                        arguments: {"bookName": "santo_rosario_livro"});
+                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "santo_rosario_livro"});
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -77,15 +76,12 @@ class _IndiceState extends State<Indice> {
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(provider.chapterNames[index],
-                  style: const TextStyle(fontSize: 18)),
-              leading: Text("${provider.chapterIds[index]}",
-                  style: const TextStyle(fontSize: 18)),
+              title: Text(provider.chapterNames[index], style: const TextStyle(fontSize: 18)),
+              leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading',
-                    arguments: {"bookName": "santo_rosario_livro"});
+                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "santo_rosario_livro"});
               },
             );
           },

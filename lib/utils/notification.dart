@@ -6,8 +6,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 
 void _onSelectNotification(NotificationResponse? response) {
   if (response != null && response.payload != null) {
-    Navigator.of(Routes.navigatorKey.currentContext!)
-        .pushNamed(response.payload!);
+    Navigator.of(Routes.navigatorKey.currentContext!).pushNamed(response.payload!);
   }
 }
 
@@ -17,11 +16,7 @@ class CustomNotification {
   final String? body;
   final String? payload;
 
-  CustomNotification(
-      {required this.id,
-      required this.title,
-      required this.body,
-      required this.payload});
+  CustomNotification({required this.id, required this.title, required this.body, required this.payload});
 }
 
 class Notifier {
@@ -39,10 +34,8 @@ class Notifier {
     tz.initializeTimeZones();
   }
 
-  static scheduledNotification(
-      CustomNotification notification, TimeOfDay time) async {
-    final date = DateTime(DateTime.now().year, DateTime.now().month,
-        DateTime.now().day, time.hour, time.minute);
+  static scheduledNotification(CustomNotification notification, TimeOfDay time) async {
+    final date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, time.hour, time.minute);
 
     var androidDetails = const AndroidNotificationDetails(
       'lembretes',
@@ -54,20 +47,10 @@ class Notifier {
     );
     var iosDetails = const DarwinNotificationDetails();
 
-    var notificationDetails =
-        NotificationDetails(android: androidDetails, iOS: iosDetails);
+    var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
-    await _notification.zonedSchedule(
-        notification.id,
-        notification.title,
-        notification.body,
-        tz.TZDateTime.from(date, tz.local),
-        notificationDetails,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        payload: notification.payload,
-        matchDateTimeComponents: DateTimeComponents.time);
+    await _notification.zonedSchedule(notification.id, notification.title, notification.body, tz.TZDateTime.from(date, tz.local), notificationDetails,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, payload: notification.payload, matchDateTimeComponents: DateTimeComponents.time);
   }
 
   static stopNotification(int id) async {
@@ -75,14 +58,8 @@ class Notifier {
   }
 
   static Future<bool?> verifyNotificationPermission() async {
-    bool? permission = await _notification
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestNotificationsPermission();
-    bool? permission2 = await _notification
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestExactAlarmsPermission();
+    bool? permission = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
+    bool? permission2 = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()!.requestExactAlarmsPermission();
 
     if (permission == true && permission2 == true) {
       return true;
