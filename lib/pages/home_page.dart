@@ -161,7 +161,7 @@ class BibliaReadingCard extends StatelessWidget {
                           provider.verses.join(" "),
                           maxLines: 5,
                           overflow: TextOverflow.fade,
-                          style: const TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 15),
                           textAlign: TextAlign.left,
                         ),
                         const Spacer(),
@@ -194,13 +194,17 @@ class HomePageCardCarusel extends StatelessWidget {
         autoPlayAnimationDuration: const Duration(milliseconds: 500),
         autoPlayCurve: Curves.easeInOut,
         showIndicator: true,
+        viewportFraction: 0.9,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.18,
         indicatorMargin: 10.0,
         slideIndicator: CircularSlideIndicator(
-            slideIndicatorOptions: SlideIndicatorOptions(
-          currentIndicatorColor: Theme.of(context).colorScheme.primary,
-          indicatorRadius: 3.0,
-          itemSpacing: 12.0,
-        )),
+          slideIndicatorOptions: SlideIndicatorOptions(
+            currentIndicatorColor: Theme.of(context).colorScheme.primary,
+            indicatorRadius: 3.0,
+            itemSpacing: 12.0,
+          )
+        ),
       ),
       items: const [
         SantoDoDiaCard(),
