@@ -27,7 +27,6 @@ class _BookReadingPageState extends State<BookReadingPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => BookIndexProvider(bookName: widget.bookName),
@@ -49,51 +48,51 @@ class _BookReadingPageState extends State<BookReadingPage> {
                         Expanded(
                           child: SingleChildScrollView(
                               child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              provider.contentIds.length != 1
-                                  ? ExpansionTile(
-                                      title: const Text("Pontos do capítulo", style: TextStyle(fontSize: 18)),
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Wrap(
-                                            spacing: 5,
-                                            children: [
-                                              for (int id in provider.contentIds) ...[
-                                                FilledButton.tonal(
-                                                  onPressed: () => Scrollable.ensureVisible(GlobalObjectKey(id).currentContext!, duration: const Duration(milliseconds: 700), curve: Curves.decelerate),
-                                                  style: ButtonStyle(
-                                                    shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                                      RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.circular(10.0),
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  provider.contentIds.length != 1
+                                      ? ExpansionTile(
+                                          title: const Text("Pontos do capítulo", style: TextStyle(fontSize: 18)),
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Wrap(
+                                                spacing: 5,
+                                                children: [
+                                                  for (int id in provider.contentIds) ...[
+                                                    FilledButton.tonal(
+                                                      onPressed: () => Scrollable.ensureVisible(GlobalObjectKey(id).currentContext!, duration: const Duration(milliseconds: 700), curve: Curves.decelerate),
+                                                      style: ButtonStyle(
+                                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(10.0),
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  child: Text("$id"),
-                                                )
-                                              ]
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    )
-                                  : Container(),
-                              for (int i = 0; i < provider.contentIds.length; i++) ...[
-                                const Divider(height: 15, color: Colors.transparent),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                                  child: Text.rich(
-                                      key: GlobalObjectKey(provider.contentIds[i]),
-                                      TextSpan(children: [
-                                        TextSpan(text: provider.contentIds[i] == 0 ? "" : "${provider.contentIds[i]}\n", style: TextStyle(fontSize: _fontSize + 3, fontWeight: FontWeight.bold)),
-                                        TextSpan(text: provider.content[i], style: TextStyle(fontSize: _fontSize)),
-                                      ])),
-                                ),
-                              ],
-                              const Divider(height: 15, color: Colors.transparent),
-                            ],
-                          )),
+                                                      child: Text("$id"),
+                                                    )
+                                                  ]
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Container(),
+                                  for (int i = 0; i < provider.contentIds.length; i++) ...[
+                                    const Divider(height: 15, color: Colors.transparent),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                                      child: Text.rich(
+                                          key: GlobalObjectKey(provider.contentIds[i]),
+                                          TextSpan(children: [
+                                            TextSpan(text: provider.contentIds[i] == 0 ? "" : "${provider.contentIds[i]}\n", style: TextStyle(fontSize: _fontSize + 3, fontWeight: FontWeight.bold)),
+                                            TextSpan(text: provider.content[i], style: TextStyle(fontSize: _fontSize)),
+                                          ])),
+                                    ),
+                                  ],
+                                  const Divider(height: 15, color: Colors.transparent),
+                                ],
+                              )),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

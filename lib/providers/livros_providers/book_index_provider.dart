@@ -38,7 +38,7 @@ class BookIndexProvider extends ChangeNotifier {
     _chapterNames = await book.getChapterNames();
     _fistChapterId = await book.getFirstChapter();
     _currentChapterId = prefs.getInt('livros.$bookName.currentChapterId') ?? await book.getFirstChapter();
-    _currentChapterName = prefs.getString('livros.$bookName.currentChapterName') ?? "";
+    _currentChapterName = prefs.getString('livros.$bookName.currentChapterName') ?? await book.getFirstChapterName();
     _contentIds = await book.getContentIds(chapterId: _currentChapterId);
     _content = await book.getContentByIds(contentIds: _contentIds);
     _isLoading = false;
