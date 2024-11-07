@@ -46,6 +46,12 @@ class Livros {
     });
   }
 
+  Future<String> getFirstChapterName() async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT chapter FROM book');
+    return maps[0]['chapter'];
+  }
+
   Future<List<String>> getChapterNames() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT chapter FROM book');
