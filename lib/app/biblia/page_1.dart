@@ -41,7 +41,7 @@ class BibliaPage1 extends StatelessWidget {
                                     FilledButton.tonal(
                                       onPressed: () {
                                         provider.updateValues(testament: "Old", book: book, chapter: chapter);
-                                        Navigator.pushNamed(context, "/reading");
+                                        Navigator.pushNamed(context, "/biblia-page-2");
                                       },
                                       style: ButtonStyle(
                                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
@@ -79,7 +79,7 @@ class BibliaPage1 extends StatelessWidget {
                                     FilledButton.tonal(
                                       onPressed: () {
                                         provider.updateValues(testament: "New", book: book, chapter: chapter);
-                                        Navigator.pushNamed(context, "/reading");
+                                        Navigator.pushNamed(context, "/biblia-page-2");
                                       },
                                       style: ButtonStyle(
                                         shape: WidgetStateProperty.all<RoundedRectangleBorder>(
@@ -105,7 +105,7 @@ class BibliaPage1 extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0),
               child: FilledButton.tonal(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/reading');
+                  Navigator.pushNamed(context, '/biblia-page-2');
                 },
                 style: ButtonStyle(
                   shape: WidgetStateProperty.all<RoundedRectangleBorder>(
