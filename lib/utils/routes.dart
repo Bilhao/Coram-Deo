@@ -1,30 +1,31 @@
-import 'package:coramdeo/pages/livros/amigos_de_deus_page.dart';
-import 'package:coramdeo/pages/livros/point_book_reading_page.dart';
-import 'package:coramdeo/pages/livros/caminho_page.dart';
-import 'package:coramdeo/pages/livros/e_cristo_que_passa_page.dart';
-import 'package:coramdeo/pages/livros/forja_page.dart';
-import 'package:coramdeo/pages/livros/santo_rosario_livro_page.dart';
-import 'package:coramdeo/pages/livros/sulco_page.dart';
-import 'package:coramdeo/pages/livros/via_sacra_page.dart';
-import 'package:coramdeo/pages/oracoes/credo_page.dart';
-import 'package:coramdeo/pages/oracoes/lembrai_vos_page.dart';
-import 'package:coramdeo/pages/oracoes/oferecimento_de_obras_page.dart';
-import 'package:coramdeo/pages/oracoes/preces_page.dart';
-import 'package:coramdeo/pages/oracoes/santo_rosario_page.dart';
 import 'package:flutter/material.dart';
-import 'package:coramdeo/pages/bible/bible_page.dart';
-import 'package:coramdeo/pages/bible/reading_page.dart';
-import 'package:coramdeo/pages/home_page.dart';
-import 'package:coramdeo/pages/liturgia_diaria_page.dart';
-import 'package:coramdeo/pages/livros/livros_page.dart';
-import 'package:coramdeo/pages/oracoes/angelus_regina_caeli_page.dart';
-import 'package:coramdeo/pages/oracoes/comentario_do_evangelho_page.dart';
-import 'package:coramdeo/pages/oracoes/falar_com_deus_page.dart';
-import 'package:coramdeo/pages/oracoes/oracoes_page.dart';
-import 'package:coramdeo/pages/plano_de_vida_page.dart';
-import 'package:coramdeo/pages/santo_do_dia_page.dart';
-import 'package:coramdeo/pages/settings_page.dart';
-import 'package:coramdeo/pages/oracoes/te_deum_page.dart';
+import 'package:coramdeo/app/livros/amigos_de_deus_page.dart';
+import 'package:coramdeo/app/livros/point_book_reading_page.dart';
+import 'package:coramdeo/app/livros/caminho_page.dart';
+import 'package:coramdeo/app/livros/e_cristo_que_passa_page.dart';
+import 'package:coramdeo/app/livros/forja_page.dart';
+import 'package:coramdeo/app/livros/santo_rosario_livro_page.dart';
+import 'package:coramdeo/app/livros/sulco_page.dart';
+import 'package:coramdeo/app/livros/via_sacra_page.dart';
+import 'package:coramdeo/app/oracoes/credo/page.dart';
+import 'package:coramdeo/app/oracoes/lembrai_vos/page.dart';
+import 'package:coramdeo/app/oracoes/oferecimento_de_obras/page.dart';
+import 'package:coramdeo/app/oracoes/preces/page.dart';
+import 'package:coramdeo/app/oracoes/santo_rosario/page.dart';
+import 'package:coramdeo/app/biblia/page_1.dart';
+import 'package:coramdeo/app/biblia/page_2.dart';
+import 'package:coramdeo/app/home_page.dart';
+import 'package:coramdeo/app/liturgia_diaria/page.dart';
+import 'package:coramdeo/app/livros/livros_page.dart';
+import 'package:coramdeo/app/oracoes/angelus_regina_caeli/page.dart';
+import 'package:coramdeo/app/oracoes/comentario_evangelho/page.dart';
+import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
+import 'package:coramdeo/app/oracoes/page.dart';
+import 'package:coramdeo/app/oracoes/te_deum/page.dart';
+import 'package:coramdeo/app/oracoes/visita_ao_santissimo/page.dart';
+import 'package:coramdeo/app/plano_de_vida/page.dart';
+import 'package:coramdeo/app/santo_do_dia/page.dart';
+import 'package:coramdeo/app/settings_page.dart';
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -35,11 +36,11 @@ class Routes {
       case "/settings":
         return MaterialPageRoute(builder: (context) => const SettingsPage());
 
-      case "/bible":
-        return MaterialPageRoute(builder: (context) => const BiblePage());
+      case "/biblia-page-1":
+        return MaterialPageRoute(builder: (context) => const BibliaPage1());
 
-      case "/reading":
-        return MaterialPageRoute(builder: (context) => const ReadingPage());
+      case "/biblia-page-2":
+        return MaterialPageRoute(builder: (context) => const BibliaPage2());
 
       case "/livros":
         return MaterialPageRoute(builder: (context) => const LivrosPage());
@@ -83,8 +84,9 @@ class Routes {
 
       case "/te-deum":
         return MaterialPageRoute(builder: (context) => const TeDeumPage());
-      // 'via-sacra':
-      // 'visita-ao-santissimo':
+
+      case '/visita-ao-santissimo':
+        return MaterialPageRoute(builder: (context) => const VisitaAoSantissimoPage());
 
       // livros
       case "/book-reading":
