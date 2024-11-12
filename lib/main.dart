@@ -1,9 +1,9 @@
-import 'package:coramdeo/providers/bible_provider.dart';
-import 'package:coramdeo/providers/santo_do_dia_provider.dart';
+import 'package:coramdeo/app/biblia/provider.dart';
+import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'providers/theme_provider.dart';
+import 'app/theme_provider.dart';
 import 'utils/notification.dart';
 import 'utils/routes.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -52,6 +52,7 @@ class OracaoApp extends StatelessWidget {
                   colorScheme: provider.dynamicColor && lightDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: lightDynamic.harmonized().primary,
+                          primary: lightDynamic.harmonized().primary,
                           brightness: Brightness.light,
                         )
                       : ColorScheme.fromSeed(
@@ -64,6 +65,7 @@ class OracaoApp extends StatelessWidget {
                   colorScheme: provider.dynamicColor && darkDynamic != null
                       ? ColorScheme.fromSeed(
                           seedColor: darkDynamic.harmonized().primary,
+                          primary: darkDynamic.harmonized().primary,
                           brightness: Brightness.dark,
                         )
                       : ColorScheme.fromSeed(
