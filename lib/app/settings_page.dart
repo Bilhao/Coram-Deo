@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:coramdeo/app/theme_provider.dart';
+import 'package:coramdeo/app/fontsize_provider.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -14,7 +15,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     int newcolorSeed = 0;
-    return Consumer<ThemeProvider>(builder: (context, provider, child) {
+    return Consumer2<ThemeProvider, FontSizeProvider>(builder: (context, themeprovider, fontsizeprovider, child) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Configurações'),
@@ -24,20 +25,20 @@ class _SettingsPageState extends State<SettingsPage> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.only(left: 15.0, top: 15.0),
-              child: Text("Aparência", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              child: Text("Aparência", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
             ),
             ListTile(
-              title: const Text('Tema'),
-              subtitle: const Text('Alternar entre temas'),
+              title: Text('Tema', style: TextStyle(fontSize: 16.0)),
+              subtitle: Text('Alternar entre temas', style: TextStyle(fontSize: 14.0)),
               trailing: SegmentedButton(
-                selected: {provider.currentTheme},
+                selected: {themeprovider.currentTheme},
                 showSelectedIcon: false,
                 emptySelectionAllowed: false,
                 multiSelectionEnabled: false,
                 segments: [
                   ButtonSegment(
                     value: "light",
-                    icon: Icon(provider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined),
+                    icon: Icon(themeprovider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined),
                   ),
                   const ButtonSegment(
                     value: "system",
@@ -45,31 +46,31 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   ButtonSegment(
                     value: "dark",
-                    icon: Icon(provider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined),
+                    icon: Icon(themeprovider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined),
                   ),
                 ],
-                onSelectionChanged: (segment) => provider.changeTheme(segment.first.toString()),
+                onSelectionChanged: (segment) => themeprovider.changeTheme(segment.first.toString()),
               ),
             ),
             SwitchListTile(
-              title: const Text('Cores dinâmicas'),
-              subtitle: const Text('Utilizar cores baseadas no sistema'),
-              value: provider.dynamicColor,
+              title: Text('Cores dinâmicas', style: TextStyle(fontSize: 16.0)),
+              subtitle: Text('Utilizar cores baseadas no sistema', style: TextStyle(fontSize: 14)),
+              value: themeprovider.dynamicColor,
               secondary: const Icon(Icons.color_lens),
               onChanged: (value) {
                 setState(() {
-                  provider.toggleDynamicColor();
+                  themeprovider.toggleDynamicColor();
                 });
               },
             ),
-            if (!provider.dynamicColor)
+            if (!themeprovider.dynamicColor)
               ListTile(
-                title: const Text('Cor principal'),
+                title: Text('Cor principal', style: TextStyle(fontSize: 16.0)),
                 trailing: ColorIndicator(
                   width: 35,
                   height: 35,
                   borderRadius: 8,
-                  color: Color(provider.colorSeed),
+                  color: Color(themeprovider.colorSeed),
                   onSelectFocus: false,
                   onSelect: () {
                     showDialog(
@@ -78,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         title: const Text('Selecione uma cor'),
                         content: SingleChildScrollView(
                           child: ColorPicker(
-                            color: Color(provider.colorSeed),
+                            color: Color(themeprovider.colorSeed),
                             subheading: const Text("Tonalidade"),
                             wheelSubheading: const Text("Tonalidade"),
                             wheelSquarePadding: 10,
@@ -89,7 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               ColorPickerType.wheel: true,
                             },
                             onColorChanged: (Color value) {
-                              newcolorSeed = value.value;
+                              newcolorSeed = value.value32bit;
                             },
                           ),
                         ),
@@ -98,7 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             child: const Text('Confirmar'),
                             onPressed: () {
                               setState(() {
-                                provider.changeColorSeed(newcolorSeed);
+                                themeprovider.changeColorSeed(newcolorSeed);
                               });
                               Navigator.pop(context);
                             },
@@ -109,6 +110,31 @@ class _SettingsPageState extends State<SettingsPage> {
                   },
                 ),
               ),
+            ListTile(
+              title: Text('Tamanho da fonte', style: TextStyle(fontSize: 16.0)),
+              subtitle: Text("Padrão 16", style: TextStyle(fontSize: 14.0)),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      setState(() {
+                        fontsizeprovider.saveFontSize(fontsizeprovider.fontSize - 1);
+                      });
+                    },
+                  ),
+                  Text(fontsizeprovider.fontSize.toString(), style: TextStyle(fontSize: 16)),
+                  IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        setState(() {
+                          fontsizeprovider.saveFontSize(fontsizeprovider.fontSize + 1);
+                        });
+                      })
+                ],
+              ),
+            ),
           ],
         ),
       );

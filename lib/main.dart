@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/biblia/provider.dart';
+import 'package:coramdeo/app/fontsize_provider.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,7 @@ class OracaoApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => FontSizeProvider()),
         ChangeNotifierProvider(create: (context) => SantoDoDiaProvider()),
         ChangeNotifierProvider(create: (context) => BibleProvider()),
       ],
@@ -51,27 +53,27 @@ class OracaoApp extends StatelessWidget {
                 theme: ThemeData(
                   colorScheme: provider.dynamicColor && lightDynamic != null
                       ? ColorScheme.fromSeed(
-                          seedColor: lightDynamic.harmonized().primary,
-                          primary: lightDynamic.harmonized().primary,
-                          brightness: Brightness.light,
-                        )
+                    seedColor: lightDynamic.primary,
+                    primary: lightDynamic.primary,
+                    brightness: Brightness.light,
+                  )
                       : ColorScheme.fromSeed(
-                          seedColor: Color(provider.colorSeed),
-                          brightness: Brightness.light,
-                        ),
+                    seedColor: Color(provider.colorSeed),
+                    brightness: Brightness.light,
+                  ),
                   useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
                   colorScheme: provider.dynamicColor && darkDynamic != null
                       ? ColorScheme.fromSeed(
-                          seedColor: darkDynamic.harmonized().primary,
-                          primary: darkDynamic.harmonized().primary,
-                          brightness: Brightness.dark,
-                        )
+                    seedColor: darkDynamic.primary,
+                    primary: darkDynamic.primary,
+                    brightness: Brightness.dark,
+                  )
                       : ColorScheme.fromSeed(
-                          seedColor: Color(provider.colorSeed),
-                          brightness: Brightness.dark,
-                        ),
+                    seedColor: Color(provider.colorSeed),
+                    brightness: Brightness.dark,
+                  ),
                   useMaterial3: true,
                 ),
                 initialRoute: Routes.initial,

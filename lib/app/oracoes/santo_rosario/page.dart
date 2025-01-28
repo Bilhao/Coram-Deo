@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:coramdeo/app/fontsize_provider.dart';
 
 class SantoRosarioPage extends StatefulWidget {
   const SantoRosarioPage({super.key});
@@ -8,7 +10,6 @@ class SantoRosarioPage extends StatefulWidget {
 }
 
 class _SantoRosarioPageState extends State<SantoRosarioPage> {
-  double fontSize = 16.0;
   int weekday = DateTime.now().weekday;
   String? selectedMisterio;
   ExpansionTileController expansionTileController = ExpansionTileController();
@@ -17,18 +18,6 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
   void initState() {
     super.initState();
     selectedMisterio = getMisterio(weekday);
-  }
-
-  void decreaseFontSize() {
-    setState(() {
-      fontSize--;
-    });
-  }
-
-  void increaseFontSize() {
-    setState(() {
-      fontSize++;
-    });
   }
 
   String? getMisterio(int weekday) {
@@ -45,17 +34,12 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
   }
 
   Widget _prayline(String prefix, String text) {
+    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
     return Text.rich(
       TextSpan(
         children: [
-          TextSpan(
-            text: "$prefix  ",
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red),
-          ),
-          TextSpan(
-            text: text,
-            style: TextStyle(fontSize: fontSize),
-          ),
+          TextSpan(text: "$prefix  ", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+          TextSpan(text: text, style: TextStyle(fontSize: fs.fontSize)),
         ],
       ),
     );
@@ -63,18 +47,13 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
 
   @override
   Widget build(BuildContext context) {
+    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Santo Rosário"),
         actions: [
-          IconButton(
-            onPressed: decreaseFontSize,
-            icon: const Icon(Icons.remove),
-          ),
-          IconButton(
-            onPressed: increaseFontSize,
-            icon: const Icon(Icons.add),
-          ),
+          IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],
       ),
       body: SafeArea(
@@ -98,14 +77,14 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                       for (int i = 0; i < 3; i++) ...[
                         _prayline("℣.", "Graças e louvores sejam dadas a todo o momento,"),
                         _prayline("℟.", "ao Santíssimo e diviníssimo Sacramento."),
-                        Text("\nPai nosso, Ave Maria e Glória\n", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic)),
+                        Text("\nPai nosso, Ave Maria e Glória\n", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic)),
                       ],
                       _prayline("℣.", "Graças e louvores sejam dadas a todo o momento,"),
                       _prayline("℟.", "ao Santíssimo e diviníssimo Sacramento."),
-                      Text("\nComunhão espiritual", style: TextStyle(fontSize: fontSize + 1, fontWeight: FontWeight.bold)),
+                      Text("\nComunhão espiritual", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),
                       Text(
                         "\nEu quisera, Senhor, receber-Vos com aquela pureza, humildade e devoção com que Vos recebeu a Vossa Santíssima Mãe, com o espírito e o fervor dos Santos.",
-                        style: TextStyle(fontSize: fontSize),
+                        style: TextStyle(fontSize: fs.fontSize),
                       )
                     ],
                   ),
@@ -113,104 +92,104 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                   _prayline("℣.", "Pelo Sinal da Santa Cruz, livre-nos Deus Nosso Senhor, dos nossos inimigos. Em nome do Pai e do Filho e do Espírito Santo. Ámen."),
                   const Divider(height: 15, color: Colors.transparent),
                   ExpansionTile(
-                    title: Text(selectedMisterio!),
-                    controller: expansionTileController,
-                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                    childrenPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    collapsedBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                    collapsedShape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    children: [
-                      ListTile(
-                        title: Text("Mistérios Gozosos"),
-                        subtitle: Text("Segunda-feira e Sábado"),
-                        selected: selectedMisterio == "Mistérios Gozosos",
-                        onLongPress: () {},
-                        onTap: () {
-                          setState(() {
-                            selectedMisterio = "Mistérios Gozosos";
-                          });
-                        },
-                      ),
-                      ListTile(
-                        title: Text("Mistérios Dolorosos"),
-                        subtitle: Text("Terça-feira e Sexta-feira"),
-                        selected: selectedMisterio == "Mistérios Dolorosos",
-                        onLongPress: () {},
-                        onTap: () {
-                          setState(() {
-                            selectedMisterio = "Mistérios Dolorosos";
-                          });
-                        },
-                      ),
-                      ListTile(
-                        title: Text("Mistérios Gloriosos"),
-                        subtitle: Text("Quarta-feira e Domingo"),
-                        selected: selectedMisterio == "Mistérios Gloriosos",
-                        onLongPress: () {},
-                        onTap: () {
-                          setState(() {
-                            selectedMisterio = "Mistérios Gloriosos";
-                          });
-                        },
-                      ),
-                      ListTile(
-                        title: Text("Mistérios Luminosos"),
-                        subtitle: Text("Quinta-feira"),
-                        selected: selectedMisterio == "Mistérios Luminosos",
-                        onLongPress: () {},
-                        onTap: () {
-                          setState(() {
-                            selectedMisterio = "Mistérios Luminosos";
-                          });
-                        },
-                      ),
-                    ]
+                      title: Text(selectedMisterio!),
+                      controller: expansionTileController,
+                      expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                      childrenPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      collapsedBackgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                      collapsedShape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      children: [
+                        ListTile(
+                          title: Text("Mistérios Gozosos"),
+                          subtitle: Text("Segunda-feira e Sábado"),
+                          selected: selectedMisterio == "Mistérios Gozosos",
+                          onLongPress: () {},
+                          onTap: () {
+                            setState(() {
+                              selectedMisterio = "Mistérios Gozosos";
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Mistérios Dolorosos"),
+                          subtitle: Text("Terça-feira e Sexta-feira"),
+                          selected: selectedMisterio == "Mistérios Dolorosos",
+                          onLongPress: () {},
+                          onTap: () {
+                            setState(() {
+                              selectedMisterio = "Mistérios Dolorosos";
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Mistérios Gloriosos"),
+                          subtitle: Text("Quarta-feira e Domingo"),
+                          selected: selectedMisterio == "Mistérios Gloriosos",
+                          onLongPress: () {},
+                          onTap: () {
+                            setState(() {
+                              selectedMisterio = "Mistérios Gloriosos";
+                            });
+                          },
+                        ),
+                        ListTile(
+                          title: Text("Mistérios Luminosos"),
+                          subtitle: Text("Quinta-feira"),
+                          selected: selectedMisterio == "Mistérios Luminosos",
+                          onLongPress: () {},
+                          onTap: () {
+                            setState(() {
+                              selectedMisterio = "Mistérios Luminosos";
+                            });
+                          },
+                        ),
+                      ]
                   ),
                   const Divider(height: 15, color: Colors.transparent),
                   ...() {
                     switch (selectedMisterio) {
                       case "Mistérios Gozosos":
                         return [
-                          Text("1°. A Anunciação do Anjo à Virgem Nossa Senhora.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("2°. A Visita de Nossa Senhora à Sua prima Santa Isabel.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("3°. O Nascimento do Filho de Deus em Belém.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("4°. A Apresentação de Jesus no Templo.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("5°. O Menino Deus perdido e achado no Templo.", style: TextStyle(fontSize: fontSize - 2)),
+                          Text("1°. A Anunciação do Anjo à Virgem Nossa Senhora.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("2°. A Visita de Nossa Senhora à Sua prima Santa Isabel.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("3°. O Nascimento do Filho de Deus em Belém.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("4°. A Apresentação de Jesus no Templo.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("5°. O Menino Deus perdido e achado no Templo.", style: TextStyle(fontSize: fs.fontSize - 2)),
                         ];
                       case "Mistérios Dolorosos":
                         return [
-                          Text("1°. A Oração de Jesus no Horto.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("2°. A Flagelação.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("3°. A Coroação de Espinhos.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("4°. Jesus com a Cruz às costas.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("5°. Jesus morre na Cruz.", style: TextStyle(fontSize: fontSize - 2)),
+                          Text("1°. A Oração de Jesus no Horto.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("2°. A Flagelação.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("3°. A Coroação de Espinhos.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("4°. Jesus com a Cruz às costas.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("5°. Jesus morre na Cruz.", style: TextStyle(fontSize: fs.fontSize - 2)),
                         ];
                       case "Mistérios Gloriosos":
                         return [
-                          Text("1°. A Ressurreição do Senhor.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("2°. A Ascensão de Jesus ao Céu.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("3°. A Vinda do Espírito Santo.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("4°. A Assunção de Nossa Senhora.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("5°. A Coroação de Maria Santíssima.", style: TextStyle(fontSize: fontSize - 2)),
+                          Text("1°. A Ressurreição do Senhor.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("2°. A Ascensão de Jesus ao Céu.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("3°. A Vinda do Espírito Santo.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("4°. A Assunção de Nossa Senhora.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("5°. A Coroação de Maria Santíssima.", style: TextStyle(fontSize: fs.fontSize - 2)),
                         ];
                       case "Mistérios Luminosos":
                         return [
-                          Text("1º. O Batismo de Jesus no Jordão.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("2º. A Auto-revelação do Senhor nas bodas de Caná.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("3º. O Anúncio do Reino de Deus, convidando à conversão.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("4º. A Transfiguração do Senhor.", style: TextStyle(fontSize: fontSize - 2)),
-                          Text("5º. A Instituição da Eucaristia.", style: TextStyle(fontSize: fontSize - 2)),
+                          Text("1º. O Batismo de Jesus no Jordão.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("2º. A Auto-revelação do Senhor nas bodas de Caná.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("3º. O Anúncio do Reino de Deus, convidando à conversão.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("4º. A Transfiguração do Senhor.", style: TextStyle(fontSize: fs.fontSize - 2)),
+                          Text("5º. A Instituição da Eucaristia.", style: TextStyle(fontSize: fs.fontSize - 2)),
                         ];
                       default:
                         return [];
                     }
                   }(),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Depois de cada mistério:", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic, color: Colors.red)),
+                  Text("Depois de cada mistério:", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic, color: Colors.red)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Glória...", style: TextStyle(fontSize: fontSize)),
+                  Text("Glória...", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℣.", "Ó Maria concebida sem pecado,"),
                   _prayline("℟.", "Rogai por nós, que recorremos a vós."),
@@ -218,17 +197,17 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                   _prayline("℣.", "Ó meu Jesus, perdoai-nos e livrai-nos do fogo do inferno,"),
                   _prayline("℟.", "Levai as almas todas para o céu e socorrei principalmente as que mais precisarem."),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Ao terminar os cinco mistérios:", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic, color: Colors.red)),
+                  Text("Ao terminar os cinco mistérios:", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic, color: Colors.red)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Ave Maria, Filha de Deus Pai, cheia de graça, ...", style: TextStyle(fontSize: fontSize - 1)),
-                  Text("Ave Maria, Mãe de Deus Filho, cheia de graça, ...", style: TextStyle(fontSize: fontSize - 1)),
-                  Text("Ave Maria, Esposa de Deus Espírito Santo, cheia de graça, ...", style: TextStyle(fontSize: fontSize - 1)),
+                  Text("Ave Maria, Filha de Deus Pai, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
+                  Text("Ave Maria, Mãe de Deus Filho, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
+                  Text("Ave Maria, Esposa de Deus Espírito Santo, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Salve Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A Vós bradamos os degredados filhos de Eva; a Vós suspiramos gemendo e chorando neste vale de lágrimas. Eia, pois, Advogada nossa, esses Vossos olhos misericordiosos a nós volvei. E depois deste desterro mostrai nos Jesus, bendito fruto do Vosso ventre. Ó clemente, ó piedosa, ó doce Virgem Maria. Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo.", style: TextStyle(fontSize: fontSize)),
+                  Text("Salve Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A Vós bradamos os degredados filhos de Eva; a Vós suspiramos gemendo e chorando neste vale de lágrimas. Eia, pois, Advogada nossa, esses Vossos olhos misericordiosos a nós volvei. E depois deste desterro mostrai nos Jesus, bendito fruto do Vosso ventre. Ó clemente, ó piedosa, ó doce Virgem Maria. Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo.", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),
                   Align(
-                    alignment: Alignment.center,
-                    child: Text("Ladaínha de Nossa Senhora", style: TextStyle(fontSize: fontSize + 2, fontWeight: FontWeight.bold))
+                      alignment: Alignment.center,
+                      child: Text("Ladaínha de Nossa Senhora", style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold))
                   ),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℣.", "Senhor, tende piedade de nós"),
@@ -324,25 +303,25 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                   _prayline("℣.", "Cordeiro de Deus, que tirais o pecado do mundo."),
                   _prayline("℟.", "Tende piedade de nós"),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("À vossa proteção nos acolhemos, Santa Mãe de Deus, não desprezeis as nossas súplicas nas necessidades: mas livrai-nos sempre de todos os perigos, ó Virgem gloriosa e bendita.", style: TextStyle(fontSize: fontSize)),
+                  Text("À vossa proteção nos acolhemos, Santa Mãe de Deus, não desprezeis as nossas súplicas nas necessidades: mas livrai-nos sempre de todos os perigos, ó Virgem gloriosa e bendita.", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℣.", "Rogai por nós, Santa Mãe de Deus,"),
                   _prayline("℟.", "Para que sejamos dignos das promessas de Cristo."),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Oremos", style: TextStyle(fontSize: fontSize + 2, fontWeight: FontWeight.bold)),
+                  Text("Oremos", style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Concedei, Senhor, aos vossos servos a perfeita saúde da alma e do corpo e, por intercessão da Virgem Santa Maria, livrai-nos das tristezas do tempo presente e dai-nos as alegrias eternas. Por Nosso Senhor Jesus Cristo, Vosso Filho, que é Deus convosco na unidade do Espírito Santo", style: TextStyle(fontSize: fontSize)),
+                  Text("Concedei, Senhor, aos vossos servos a perfeita saúde da alma e do corpo e, por intercessão da Virgem Santa Maria, livrai-nos das tristezas do tempo presente e dai-nos as alegrias eternas. Por Nosso Senhor Jesus Cristo, Vosso Filho, que é Deus convosco na unidade do Espírito Santo", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℟.", "Amen."),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("— Pelas necessidades da Igreja e do Estado: ", style: TextStyle(fontSize: fontSize)),
-                  Text("Pai Nosso, Avé Maria, Glória.", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic)),
+                  Text("— Pelas necessidades da Igreja e do Estado: ", style: TextStyle(fontSize: fs.fontSize)),
+                  Text("Pai Nosso, Avé Maria, Glória.", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("— Pela pessoa e intenções do Sr. Bispo desta diocese: ", style: TextStyle(fontSize: fontSize)),
-                  Text("Pai Nosso, Avé Maria, Glória.", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic)),
+                  Text("— Pela pessoa e intenções do Sr. Bispo desta diocese: ", style: TextStyle(fontSize: fs.fontSize)),
+                  Text("Pai Nosso, Avé Maria, Glória.", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("— Pelas benditas almas do Purgatório: ", style: TextStyle(fontSize: fontSize)),
-                  Text("Pai Nosso, Avé Maria", style: TextStyle(fontSize: fontSize, fontStyle: FontStyle.italic)),
+                  Text("— Pelas benditas almas do Purgatório: ", style: TextStyle(fontSize: fs.fontSize)),
+                  Text("Pai Nosso, Avé Maria", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic)),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℣.", "Descansem em paz."),
                   _prayline("℟.", "Amen.")

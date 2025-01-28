@@ -103,11 +103,11 @@ class SantoDoDiaCard extends StatelessWidget {
                     child: Stack(children: [
                       Align(
                         alignment: Alignment.center,
-                        child: Text(provider.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                        child: Text(provider.name, style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
                       ),
                       const Align(
                         alignment: Alignment.bottomLeft,
-                        child: Text("Clique para ver mais", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500), textAlign: TextAlign.left),
+                        child: Text("Clique para ver mais", style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w500), textAlign: TextAlign.left),
                       )
                     ]),
                   ),

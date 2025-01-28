@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:coramdeo/app/fontsize_provider.dart';
 
 class PrecesPage extends StatefulWidget {
   const PrecesPage({super.key});
@@ -8,20 +10,7 @@ class PrecesPage extends StatefulWidget {
 }
 
 class _PrecesPageState extends State<PrecesPage> {
-  double fontSize = 17.0;
   String language = "pt";
-
-  void decreaseFontSize() {
-    setState(() {
-      fontSize--;
-    });
-  }
-
-  void increaseFontSize() {
-    setState(() {
-      fontSize++;
-    });
-  }
 
   void toggleLanguage(String value) {
     setState(() {
@@ -30,22 +19,27 @@ class _PrecesPageState extends State<PrecesPage> {
   }
 
   Widget _prayline(String prefix, String text) {
+    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
     return Text.rich(
       TextSpan(
-        children: [TextSpan(text: "$prefix  ", style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red)), TextSpan(text: text, style: TextStyle(fontSize: fontSize))],
+        children: [
+          TextSpan(text: "$prefix  ", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
+          TextSpan(text: text, style: TextStyle(fontSize: fs.fontSize))
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Preces"),
         actions: [
           IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
-          IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
-          IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
+          IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],
       ),
       body: SafeArea(
@@ -55,7 +49,7 @@ class _PrecesPageState extends State<PrecesPage> {
             child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Divider(height: 15, color: Colors.transparent),
-                Text(language == "pt" ? "Servirei!" : "Sérviam!", style: TextStyle(fontSize: fontSize + 1, fontWeight: FontWeight.bold)),
+                Text(language == "pt" ? "Servirei!" : "Sérviam!", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),
                 _prayline("\n℣.", language == "pt" ? "À Santíssima Trindade." : "Ad Trinitátem Beatíssimam."),
                 _prayline("℟.", language == "pt"
                     ? "Graças a vós, Senhor Deus, graças a vós. Verdadeira e única Trindade, divindade suprema e única, indivisa e Santa Trindade."
@@ -109,39 +103,39 @@ class _PrecesPageState extends State<PrecesPage> {
                 Text.rich(TextSpan(children: [
                   TextSpan(
                     text: language == "pt" ? "\nSe é um sacerdote quem dirige as Preces, levanta-se e acrescenta:" : "\nSacerdos, si Preces moderatur, exsurgit et addit",
-                    style: TextStyle(fontSize: fontSize, color: Colors.red, fontStyle: FontStyle.italic),
+                    style: TextStyle(fontSize: fs.fontSize, color: Colors.red, fontStyle: FontStyle.italic),
                   ),
                   TextSpan(
                     text: language == "pt" ? " O Senhor esteja convosco, " : " Dóminus vobiscum, ",
-                    style: TextStyle(fontSize: fontSize),
+                    style: TextStyle(fontSize: fs.fontSize),
                   ),
                   TextSpan(
                     text: language == "pt" ? "permanecendo de pé enquanto reza a oração." : "stans etiam dum recitat orationem.",
-                    style: TextStyle(fontSize: fontSize, color: Colors.red, fontStyle: FontStyle.italic),
+                    style: TextStyle(fontSize: fs.fontSize, color: Colors.red, fontStyle: FontStyle.italic),
                   ),
                 ])),
                 _prayline("\n℣.", language == "pt" ? "O Senhor esteja convosco." : "Dóminus vobíscum."),
                 _prayline("℟.", language == "pt" ? "Ele está no meio de nós." : "Et cum spíritu tuo."),
-                Text(language == "pt" ? "\nOremos" : "\nOrémus", style: TextStyle(fontSize: fontSize + 1, fontWeight: FontWeight.bold)),
+                Text(language == "pt" ? "\nOremos" : "\nOrémus", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),
                 Text(
                   language == "pt"
                       ? "\nÓ Deus, de quem é próprio ter misericórdia sempre e perdoar: recebei as nossas humildes súplicas. Inflamai, Senhor, as nossas entranhas e o nosso coração com o fogo do Espirito Santo: para que vos sirvamos com um corpo casto, e vos agrademos com o coração limpo."
                       : "\nDeus, cui próprium est miseréri semper et párcere: súscipe deprecatiónem nostram. Ure igne Sancti Spíritus renes nostros et cor nostrum, Dómine: ut tibi casto córpore serviámus, et mundo corde placeámus.",
-                  style: TextStyle(fontSize: fontSize),
+                  style: TextStyle(fontSize: fs.fontSize),
                 ),
                 Text(
                   language == "pt"
                       ? "\nNós Vos pedimos, Senhor, que prepareis as nossas ações com a vossa inspiração, e as acompanheis com a vossa ajuda, a fim de que todos os nossos trabalhos e orações em vós comecem sempre e por vós acabem. Por Cristo, Senhor Nosso."
                       : "\nActiónes nostras, quǽsumus Dómine, aspirándo prǽveni et adiuvándo proséquere: ut cuncta nostra orátio et operátio a te semper incípiat, et per te cœpta finiátur. Per Christum Dóminum nostrum.",
-                  style: TextStyle(fontSize: fontSize),
+                  style: TextStyle(fontSize: fs.fontSize),
                 ),
                 _prayline("\n℟.", language == "pt" ? "Amém." : "Amen."),
-                Text(language == "pt" ? "\nTodos dizem:" : "\nOmnes dicunt:", style: TextStyle(fontSize: fontSize, color: Colors.red, fontStyle: FontStyle.italic)),
+                Text(language == "pt" ? "\nTodos dizem:" : "\nOmnes dicunt:", style: TextStyle(fontSize: fs.fontSize, color: Colors.red, fontStyle: FontStyle.italic)),
                 Text(
                     language == "pt"
                         ? "\nQue o Senhor onipotente e misericordioso nos conceda a alegria e a paz, a conversão da nossa vida, um tempo de verdadeira penitência, a graça e o consolo do Espírito Santo e a perseverança no Opus Dei."
                         : "\nGáudium cum pace, emendatiónem vitæ, spátium veræ pœniténtiæ, grátiam et consolatiónem Sancti Spíritus atque in Ópere Dei perseverántiam, tríbuat nobis Omnípotens et Miséricors Dóminus.",
-                    style: TextStyle(fontSize: fontSize)),
+                    style: TextStyle(fontSize: fs.fontSize)),
                 _prayline("\n℣.", language == "pt" ? "São Miguel." : "Sancte Míchaël."),
                 _prayline("℟.", language == "pt" ? "Rogai por nós" : "Ora pro nobis."),
                 _prayline("\n℣.", language == "pt" ? "São Gabriel." : "Sancte Gábriel."),
@@ -156,21 +150,21 @@ class _PrecesPageState extends State<PrecesPage> {
                 _prayline("℟.", language == "pt" ? "Rogai por nós." : "Ora pro nobis."),
                 Text(
                   language == "pt" ? "\nQuando estiver presente um sacerdote, o diretor ou quem o substitua diz:" : "\nCum adsit aliquis Sacerdos, dignior ait:",
-                  style: TextStyle(fontSize: fontSize, color: Colors.red, fontStyle: FontStyle.italic),
+                  style: TextStyle(fontSize: fs.fontSize, color: Colors.red, fontStyle: FontStyle.italic),
                 ),
                 Text(
                   language == "pt" ? "\nDignai-vos, padre, abençoar-nos." : "\nIube, Domne, benedícere.",
-                  style: TextStyle(fontSize: fontSize),
+                  style: TextStyle(fontSize: fs.fontSize),
                 ),
                 Text(
                   language == "pt" ? "\nO sacerdote abençoa:" : "\nSacerdos benedicit:",
-                  style: TextStyle(fontSize: fontSize, color: Colors.red, fontStyle: FontStyle.italic),
+                  style: TextStyle(fontSize: fs.fontSize, color: Colors.red, fontStyle: FontStyle.italic),
                 ),
                 Text(
                   language == "pt"
                       ? "\nQue o Senhor esteja em vossos corações e em vossos lábios, em nome do Pai † e do Filho e do Espírito Santo."
                       : "\nDóminus sit in córdibus vestris, et in lábiis vestris, in nómine Patris † et Fílii et Spíritus Sancti.",
-                  style: TextStyle(fontSize: fontSize),
+                  style: TextStyle(fontSize: fs.fontSize),
                 ),
                 _prayline("\n℟.", language == "pt" ? "Amén." : "Amen."),
                 _prayline("\n℣.", language == "pt" ? "Paz." : "Pax."),

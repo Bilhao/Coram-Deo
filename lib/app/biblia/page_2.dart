@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/fontsize_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
@@ -12,34 +13,21 @@ class BibliaPage2 extends StatefulWidget {
 
 class _BibliaPage2State extends State<BibliaPage2> {
   final Biblia dbHelper = Biblia();
-  double fontSize = 18.0;
-
-  void decreaseFontSize() {
-    setState(() {
-      fontSize--;
-    });
-  }
-
-  void increaseFontSize() {
-    setState(() {
-      fontSize++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BibleProvider>(
-      builder: (context, provider, child) {
+    return Consumer2<BibleProvider, FontSizeProvider>(
+      builder: (context, provider, fs, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text(provider.book),
             actions: [
               IconButton(
-                onPressed: decreaseFontSize,
+                onPressed: fs.decreaseFontSize,
                 icon: const Icon(Icons.remove),
               ),
               IconButton(
-                onPressed: increaseFontSize,
+                onPressed: fs.increaseFontSize,
                 icon: const Icon(Icons.add),
               ),
             ],
@@ -60,7 +48,7 @@ class _BibliaPage2State extends State<BibliaPage2> {
                               child: Text(
                                 key: const GlobalObjectKey('chapter'),
                                 "Capítulo ${provider.chapter}",
-                                style: TextStyle(fontSize: fontSize + 4),
+                                style: TextStyle(fontSize: fs.fontSize + 4),
                               ),
                             ),
                             const Divider(height: 15, color: Colors.transparent),
@@ -72,11 +60,11 @@ class _BibliaPage2State extends State<BibliaPage2> {
                                     children: [
                                       TextSpan(
                                         text: "${provider.versesId[i]}.  ",
-                                        style: TextStyle(fontSize: fontSize - 4, fontWeight: FontWeight.w200),
+                                        style: TextStyle(fontSize: fs.fontSize - 4, fontWeight: FontWeight.w200),
                                       ),
                                       TextSpan(
                                         text: provider.verses[i],
-                                        style: TextStyle(fontSize: fontSize),
+                                        style: TextStyle(fontSize: fs.fontSize),
                                       ),
                                     ],
                                   ),
