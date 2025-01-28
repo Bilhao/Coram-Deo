@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:coramdeo/app/fontsize_provider.dart';
 
 class LembraiVosPage extends StatefulWidget {
   const LembraiVosPage({super.key});
@@ -8,20 +10,7 @@ class LembraiVosPage extends StatefulWidget {
 }
 
 class _LembraiVosPageState extends State<LembraiVosPage> {
-  double fontSize = 18.0;
   String language = "pt";
-
-  void decreaseFontSize() {
-    setState(() {
-      fontSize--;
-    });
-  }
-
-  void increaseFontSize() {
-    setState(() {
-      fontSize++;
-    });
-  }
 
   void toggleLanguage(String value) {
     setState(() {
@@ -31,13 +20,14 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
 
   @override
   Widget build(BuildContext context) {
+    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(language == "pt" ? "Lembrai-Vos" : "Memoráre"),
         actions: [
           IconButton(onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"), icon: Text(language == "pt" ? "lt".toUpperCase() : "pt".toUpperCase()), tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português"),
-          IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
-          IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
+          IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+          IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],
       ),
       body: SafeArea(
@@ -51,17 +41,17 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
                     language == "pt"
                         ? "Lembrai-vos, ó piíssima Virgem Maria, de que nunca se ouviu dizer que algum daqueles que têm recorrido à Vossa protecção, implorado a Vossa assistência e reclamado o Vosso socorro, fosse por Vós desamparado."
                         : "Memoráre, o piíssima Virgo Maria, non esse audítum a sǽculo, quemquam ad tua curréntem præsídia, tua implorántem auxilia, tua peténtem suffrágia, esse derelíctum.",
-                    style: TextStyle(fontSize: fontSize)),
+                    style: TextStyle(fontSize: fs.fontSize)),
                 Text(
                     language == "pt"
                         ? "\nAnimado eu, pois, de igual confiança, a Vós, Virgem entre todas singular, como a Mãe recorro, de Vós me valho, e, gemendo sob o peso dos meus pecados, me prostro a Vossos pés. Não desprezeis as minhas súplicas, ó Mãe do Filho de Deus humanado, mas dignai-Vos de as ouvir propícia e de me alcançar o que Vos rogo."
                         : "\nEgo tali animátus confidéntia, ad te, Virgo Vírginum, Mater, curro, ad te vénio, coram te gemens peccátor assísto. Noli, Mater Verbi, verba mea despícere; sed áudi propítia et exáudi.",
-                    style: TextStyle(fontSize: fontSize)),
+                    style: TextStyle(fontSize: fs.fontSize)),
                 Align(
                   alignment: Alignment.center,
                   child: Text(
                     language == "pt" ? "\nAmém." : "\nAmen.",
-                    style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold),
                   ),
                 ),
               ]),

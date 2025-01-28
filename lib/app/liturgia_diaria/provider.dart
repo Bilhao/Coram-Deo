@@ -8,7 +8,6 @@ class LiturgiaDiariaProvider extends ChangeNotifier {
 
   LiturgiaDiaria data = LiturgiaDiaria();
 
-  double _fontsize = 16.0;
   int _month = DateTime.now().month;
   int _day = DateTime.now().day;
   String _date = "";
@@ -28,7 +27,6 @@ class LiturgiaDiariaProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _error = false;
 
-  double get fontsize => _fontsize;
   int get month => _month;
   int get day => _day;
   String get date => _date;
@@ -79,16 +77,6 @@ class LiturgiaDiariaProvider extends ChangeNotifier {
     _day = day;
     _month = month;
     init();
-    notifyListeners();
-  }
-
-  increaseFontSize() {
-    _fontsize++;
-    notifyListeners();
-  }
-
-  decreaseFontSize() {
-    _fontsize--;
     notifyListeners();
   }
 }
