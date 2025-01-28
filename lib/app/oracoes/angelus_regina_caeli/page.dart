@@ -88,7 +88,7 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                 : "\nGrátiam tuam, quæsumus, Dómine, méntibus nostris infúnde: ut qui, Angelo nuntiánte, Christi Filii tui incarnatió- nem cognóvimus, per passiónem eius et crucem ad resurrec- tiónis glóriam perducámur. Per eumdem Christum Dóminum nostrum.",
                             style: TextStyle(fontSize: fs.fontSize)),
                       ])),
-                      Align(alignment: Alignment.center, child: Text(language == "pt" ? "\nAmém." : "\nAmen.", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
+                      Align(alignment: Alignment.center, child: Text(language == "pt" ? "\nAmém" : "\nAmen", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
                     ]
                         : [
                       const Divider(height: 15, color: Colors.transparent),
@@ -112,7 +112,7 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
                                 : "\nDeus, qui per resurrectiónem Filii tui Dómini nostri Jesu Christi mundum lætificáre dignátus es: præsta, quæsumus; ut, per eius Genitrícem Vírginem Mariam, perpétuæ capiámus gáudia vitæ. Per eumdem Christum, Dóminum nostrum.",
                             style: TextStyle(fontSize: fs.fontSize)),
                       ])),
-                      Align(alignment: Alignment.center, child: Text(language == "pt" ? "\nAmém." : "\nAmen.", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
+                      Align(alignment: Alignment.center, child: Text(language == "pt" ? "\nAmém" : "\nAmen", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
                     ],
                   ),
                 ),

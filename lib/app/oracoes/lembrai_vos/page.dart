@@ -50,7 +50,7 @@ class _LembraiVosPageState extends State<LembraiVosPage> {
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    language == "pt" ? "\nAmém." : "\nAmen.",
+                    language == "pt" ? "\nAmém" : "\nAmen",
                     style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold),
                   ),
                 ),

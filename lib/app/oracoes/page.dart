@@ -68,6 +68,16 @@ class _OracoesPageState extends State<OracoesPage> {
                 onTap: () => Navigator.pushNamed(context, '/visita-ao-santissimo'),
                 trailing: const Icon(Icons.chevron_right),
               ),
+              ListTile(
+                title: Text("Adoro Te Devote", style: TextStyle(fontSize: 18.0)),
+                onTap: () => Navigator.pushNamed(context, '/adoro-te-devote'),
+                trailing: const Icon(Icons.chevron_right),
+              ),
+              ListTile(
+                title: Text("Salmo 2", style: TextStyle(fontSize: 18.0)),
+                onTap: () => Navigator.pushNamed(context, '/salmo-2'),
+                trailing: const Icon(Icons.chevron_right),
+              ),
             ]),
           ),
         ],

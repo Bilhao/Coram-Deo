@@ -1,3 +1,5 @@
+import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
+import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
 import 'package:coramdeo/app/livros/point_book_reading_page.dart';
@@ -87,6 +89,12 @@ class Routes {
 
       case '/visita-ao-santissimo':
         return MaterialPageRoute(builder: (context) => const VisitaAoSantissimoPage());
+
+      case '/adoro-te-devote':
+        return MaterialPageRoute(builder: (context) => const AdoroTeDevotePage());
+
+      case '/salmo-2':
+        return MaterialPageRoute(builder: (context) => const Salmo2Page());
 
       // livros
       case "/book-reading":
