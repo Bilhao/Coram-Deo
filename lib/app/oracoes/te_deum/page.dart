@@ -125,13 +125,13 @@ In te, Dómine, sperávi: non confúndar in ætérnum.""",
                 language == "pt"
                     ? Text.rich(TextSpan(children: [
                   TextSpan(text: "\n℣.  ", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
-                  TextSpan(text: "Senhor, ouvi a minha oração.", style: TextStyle(fontSize: fs.fontSize)),
+                  TextSpan(text: "Ouvi, Senhor, a minha oração.", style: TextStyle(fontSize: fs.fontSize)),
                 ]))
                     : Container(),
                 language == "pt"
                     ? Text.rich(TextSpan(children: [
                   TextSpan(text: "℟.  ", style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red)),
-                  TextSpan(text: "E chegue até Vós o meu clamor.", style: TextStyle(fontSize: fs.fontSize)),
+                  TextSpan(text: "E o meu clamor chegue até Vós.", style: TextStyle(fontSize: fs.fontSize)),
                 ]))
                     : Container(),
                 Text(language == "pt" ? "\nOremos" : "\nOrémus", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),

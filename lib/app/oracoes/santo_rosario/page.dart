@@ -324,7 +324,7 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                   Text("Pai Nosso, Avé Maria", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic)),
                   const Divider(height: 15, color: Colors.transparent),
                   _prayline("℣.", "Descansem em paz."),
-                  _prayline("℟.", "Amen.")
+                  _prayline("℟.", "Amém.")
                 ],
               ),
             ),

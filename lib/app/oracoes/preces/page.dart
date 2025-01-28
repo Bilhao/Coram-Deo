@@ -166,7 +166,7 @@ class _PrecesPageState extends State<PrecesPage> {
                       : "\nDóminus sit in córdibus vestris, et in lábiis vestris, in nómine Patris † et Fílii et Spíritus Sancti.",
                   style: TextStyle(fontSize: fs.fontSize),
                 ),
-                _prayline("\n℟.", language == "pt" ? "Amén." : "Amen."),
+                _prayline("\n℟.", language == "pt" ? "Amém." : "Amen."),
                 _prayline("\n℣.", language == "pt" ? "Paz." : "Pax."),
                 _prayline("℟.", language == "pt" ? "Para sempre." : "In ætérnum."),
                 const Divider(height: 25, color: Colors.transparent),
