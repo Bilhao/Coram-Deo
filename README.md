@@ -1,27 +1,16 @@
-# Coram Deo
+# coramdeo
 
-Aplicativo com diversas orações católicas, com o objetivo de facilitar e motivar os usuários a cumprirem as práticas de piedade e seus planos de vida espiritual
+A new Flutter project.
 
-## TODO:
+## Getting Started
 
-- [ ] Implementar orações
-  - [ ] Oferecimento de Obras
-  - [ ] Preces
-  - [ ] Terço
-  - [ ] Te Deum
-  - [ ] Via Sacra
-  - [ ] Visita ao Santíssimo
-  - [ ] ...
+This project is a starting point for a Flutter application.
 
-- [ ] Implementar Livros
-  - [ ] Caminho
-  - [ ] Sulco
-  - [ ] Forja
-  - [ ] Cristo que Passa
-  - [ ] Amigos de Deus
-  - [ ] Via Sacra (Livro)
-  - [ ] ...
+A few resources to get you started if this is your first Flutter project:
 
-- [ ] Encontrar solução para adicionar mais traduções e idiomas para a biblia
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-- [ ] Missal Romano
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

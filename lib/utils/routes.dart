@@ -1,12 +1,15 @@
+import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
+import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
+import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:flutter/material.dart';
-import 'package:coramdeo/app/livros/amigos_de_deus_page.dart';
+import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
 import 'package:coramdeo/app/livros/point_book_reading_page.dart';
-import 'package:coramdeo/app/livros/caminho_page.dart';
-import 'package:coramdeo/app/livros/e_cristo_que_passa_page.dart';
-import 'package:coramdeo/app/livros/forja_page.dart';
-import 'package:coramdeo/app/livros/santo_rosario_livro_page.dart';
-import 'package:coramdeo/app/livros/sulco_page.dart';
-import 'package:coramdeo/app/livros/via_sacra_page.dart';
+import 'package:coramdeo/app/livros/1_caminho/page.dart';
+import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page.dart';
+import 'package:coramdeo/app/livros/3_forja/page.dart';
+import 'package:coramdeo/app/livros/6_santo_rosario/page.dart';
+import 'package:coramdeo/app/livros/2_sulco/page.dart';
+import 'package:coramdeo/app/livros/7_via_sacra/page.dart';
 import 'package:coramdeo/app/oracoes/credo/page.dart';
 import 'package:coramdeo/app/oracoes/lembrai_vos/page.dart';
 import 'package:coramdeo/app/oracoes/oferecimento_de_obras/page.dart';
@@ -23,9 +26,12 @@ import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
 import 'package:coramdeo/app/oracoes/page.dart';
 import 'package:coramdeo/app/oracoes/te_deum/page.dart';
 import 'package:coramdeo/app/oracoes/visita_ao_santissimo/page.dart';
+import 'package:coramdeo/app/oracoes/estampa_josemaria/page.dart';
 import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
+import 'package:coramdeo/app/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/settings_page.dart';
+
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -57,6 +63,9 @@ class Routes {
       case "/plano-de-vida":
         return MaterialPageRoute(builder: (context) => const PlanoDeVidaPage());
 
+      case "/exame-de-consciencia":
+        return MaterialPageRoute(builder: (context) => const ExameDeConscienciaPage());
+
       // oracoes
       case "/falar-com-deus":
         return MaterialPageRoute(builder: (context) => const FalarComDeusPage());
@@ -87,6 +96,18 @@ class Routes {
 
       case '/visita-ao-santissimo':
         return MaterialPageRoute(builder: (context) => const VisitaAoSantissimoPage());
+
+      case '/adoro-te-devote':
+        return MaterialPageRoute(builder: (context) => const AdoroTeDevotePage());
+
+      case '/salmo-2':
+        return MaterialPageRoute(builder: (context) => const Salmo2Page());
+
+      case '/exame-de-consciencia-oracao':
+        return MaterialPageRoute(builder: (context) => const ExameDeConscienciaOracaoPage());
+
+      case '/estampa-josemaria':
+        return MaterialPageRoute(builder: (context) => const EstampaJosemariaPage());
 
       // livros
       case "/book-reading":

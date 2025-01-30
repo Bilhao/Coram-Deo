@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/livros/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,31 +13,18 @@ class BookReadingPage extends StatefulWidget {
 }
 
 class _BookReadingPageState extends State<BookReadingPage> {
-  double _fontSize = 17.0;
-
-  void decreaseFontSize() {
-    setState(() {
-      _fontSize--;
-    });
-  }
-
-  void increaseFontSize() {
-    setState(() {
-      _fontSize++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => BookIndexProvider(bookName: widget.bookName),
-      child: Consumer<BookIndexProvider>(
-        builder: (context, provider, child) => Scaffold(
+      child: Consumer2<BookIndexProvider, AppProvider>(
+        builder: (context, provider, fs, child) => Scaffold(
           appBar: AppBar(
             title: Text(provider.currentChapterName),
             actions: [
-              IconButton(onPressed: decreaseFontSize, icon: const Icon(Icons.remove)),
-              IconButton(onPressed: increaseFontSize, icon: const Icon(Icons.add)),
+              IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+              IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
             ],
           ),
           body: SafeArea(
@@ -85,8 +73,8 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                       child: Text.rich(
                                           key: GlobalObjectKey(provider.contentIds[i]),
                                           TextSpan(children: [
-                                            TextSpan(text: provider.contentIds[i] == 0 ? "" : "${provider.contentIds[i]}\n", style: TextStyle(fontSize: _fontSize + 3, fontWeight: FontWeight.bold)),
-                                            TextSpan(text: provider.content[i], style: TextStyle(fontSize: _fontSize)),
+                                            TextSpan(text: provider.contentIds[i] == 0 ? "" : "${provider.contentIds[i]}\n", style: TextStyle(fontSize: fs.fontSize + 3, fontWeight: FontWeight.bold)),
+                                            TextSpan(text: provider.content[i], style: TextStyle(fontSize: fs.fontSize)),
                                           ])),
                                     ),
                                   ],

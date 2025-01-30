@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:coramdeo/app/oracoes/provider.dart';
 
 class OracoesPage extends StatefulWidget {
   const OracoesPage({super.key});
@@ -8,70 +10,82 @@ class OracoesPage extends StatefulWidget {
 }
 
 class _OracoesPageState extends State<OracoesPage> {
+
+  Map<String, String> routeToName = {
+    "oferecimento-de-obras": "Oferecimento de Obras",
+    "comentario-do-evangelho-do-dia": "Comentário do Evangelho do dia",
+    "falar-com-deus": "Meditação Diária do Falar com Deus",
+    "angelus-regina-caeli": "Angelus/Regina Cæli",
+    "lembrai-vos": "Lembrai-Vos",
+    "preces": "Preces",
+    "credo": "Credo Niceno-Constantinopolitano",
+    "santo-rosario": "Santo Rosário",
+    "te-deum": "Te Deum",
+    "visita-ao-santissimo": "Visita ao Santíssimo",
+    "adoro-te-devote": "Adoro Te Devote",
+    "salmo-2": "Salmo 2",
+    "exame-de-consciencia-oracao": "Exame de Consciência",
+    "estampa-josemaria": "Estampa de São Josemaría",
+  };
+
+  Widget itembuild(String title, String route) {
+    return Consumer<OracoesProvider>(
+      builder: (context, provider, child) => ListTile(
+        title: Text(title, style: TextStyle(fontSize: 17.0)),
+        onTap: () => Navigator.pushNamed(context, '/$route'),
+        leading: const Icon(Icons.chevron_right),
+        trailing: IconButton(
+          onPressed: () {
+            provider.toggleFavorita(route);
+          },
+          icon: provider.favoritas.contains(route)
+              ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary)
+              : Icon(Icons.star_border),
+        )
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Orações'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(children: [
-              ListTile(
-                title: const Text("Oferecimento de Obras", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/oferecimento-de-obras'),
-                trailing: const Icon(Icons.chevron_right),
+    return ChangeNotifierProvider<OracoesProvider>(
+      create: (context) => OracoesProvider(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Orações'),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Consumer<OracoesProvider>(
+                builder: (context, provider, child) {
+                  return ExpansionTile(
+                    title: Text("Favoritas", style: TextStyle(fontSize: 18.0)),
+                    initiallyExpanded: true,
+                    shape: const Border(),
+                    children: [
+                      for (String route in provider.favoritas)
+                        itembuild(routeToName[route]!, route),
+                    ],
+                  );
+                }
               ),
-              ListTile(
-                title: const Text("Comentário do Evangelho do dia", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/comentario-do-evangelho-do-dia'),
-                trailing: const Icon(Icons.chevron_right),
+              // TODO: implementar pesquisa em oracoes usando o SearchableListView.expansion
+
+              ExpansionTile(
+                title: Text("Todas", style: TextStyle(fontSize: 18.0)),
+                initiallyExpanded: false,
+                shape: const Border(),
+                children: [
+                  for (String route in routeToName.keys)
+                    itembuild(routeToName[route]!, route),
+                ],
               ),
-              ListTile(
-                title: const Text("Meditação Diária do Falar com Deus", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/falar-com-deus'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Ângelus/Regina Cæli", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/angelus-regina-caeli'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Lembrai-vos", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/lembrai-vos'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Preces", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/preces'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Credo Niceno-Constantinopolitano", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/credo'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/santo-rosario'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Te Deum", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/te-deum'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Visita ao Santíssimo", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/visita-ao-santissimo'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-            ]),
+              const Divider(height: 40, color: Colors.transparent),
+            ],
           ),
-        ],
-      ),
+        ),
+      )
     );
   }
 }

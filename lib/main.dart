@@ -1,9 +1,9 @@
 import 'package:coramdeo/app/biblia/provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'app/theme_provider.dart';
 import 'utils/notification.dart';
 import 'utils/routes.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -26,22 +26,22 @@ void main() async {
   ));
 
   runApp(
-    const OracaoApp(),
+    const CoramDeoApp(),
   );
 }
 
-class OracaoApp extends StatelessWidget {
-  const OracaoApp({super.key});
+class CoramDeoApp extends StatelessWidget {
+  const CoramDeoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (context) => AppProvider()),
         ChangeNotifierProvider(create: (context) => SantoDoDiaProvider()),
         ChangeNotifierProvider(create: (context) => BibleProvider()),
       ],
-      child: Consumer<ThemeProvider>(
+      child: Consumer<AppProvider>(
         builder: (context, provider, _) {
           return DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
@@ -50,28 +50,28 @@ class OracaoApp extends StatelessWidget {
                 themeMode: provider.themeMode,
                 theme: ThemeData(
                   colorScheme: provider.dynamicColor && lightDynamic != null
-                      ? ColorScheme.fromSeed(
-                          seedColor: lightDynamic.harmonized().primary,
-                          primary: lightDynamic.harmonized().primary,
-                          brightness: Brightness.light,
-                        )
-                      : ColorScheme.fromSeed(
-                          seedColor: Color(provider.colorSeed),
-                          brightness: Brightness.light,
-                        ),
+                    ? ColorScheme.fromSeed(
+                      seedColor: lightDynamic.primary,
+                      primary: lightDynamic.primary,
+                      brightness: Brightness.light,
+                    )
+                    : ColorScheme.fromSeed(
+                      seedColor: Color(provider.colorSeed),
+                      brightness: Brightness.light,
+                    ),
                   useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
                   colorScheme: provider.dynamicColor && darkDynamic != null
-                      ? ColorScheme.fromSeed(
-                          seedColor: darkDynamic.harmonized().primary,
-                          primary: darkDynamic.harmonized().primary,
-                          brightness: Brightness.dark,
-                        )
-                      : ColorScheme.fromSeed(
-                          seedColor: Color(provider.colorSeed),
-                          brightness: Brightness.dark,
-                        ),
+                    ? ColorScheme.fromSeed(
+                      seedColor: darkDynamic.primary,
+                      primary: darkDynamic.primary,
+                      brightness: Brightness.dark,
+                    )
+                    : ColorScheme.fromSeed(
+                      seedColor: Color(provider.colorSeed),
+                      brightness: Brightness.dark,
+                    ),
                   useMaterial3: true,
                 ),
                 initialRoute: Routes.initial,

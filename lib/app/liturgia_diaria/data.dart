@@ -8,8 +8,9 @@ class LiturgiaDiaria {
   Future<void> initLD({required int day, required int month}) async {
     String formatedDay = day.toString().padLeft(2, "0");
     String formatedMonth = month.toString().padLeft(2, "0");
+    String formatedYear = DateTime.now().year.toString();
     try {
-      var response = await http.get(Uri.parse('https://liturgia.up.railway.app/$formatedDay-$formatedMonth'));
+      var response = await http.get(Uri.parse('https://liturgia.up.railway.app/$formatedDay-$formatedMonth-$formatedYear'));
       if (response.statusCode == 200) {
         data = jsonDecode(response.body);
         if (data.containsKey('error')) {
