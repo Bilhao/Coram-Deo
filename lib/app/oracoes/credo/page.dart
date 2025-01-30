@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 
 
 class CredoPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _CredoPageState extends State<CredoPage> {
 
   @override
   Widget build(BuildContext context) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Credo Niceno-Constantinopolitano"),

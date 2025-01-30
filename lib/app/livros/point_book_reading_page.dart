@@ -1,4 +1,4 @@
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/livros/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +18,7 @@ class _BookReadingPageState extends State<BookReadingPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => BookIndexProvider(bookName: widget.bookName),
-      child: Consumer2<BookIndexProvider, FontSizeProvider>(
+      child: Consumer2<BookIndexProvider, AppProvider>(
         builder: (context, provider, fs, child) => Scaffold(
           appBar: AppBar(
             title: Text(provider.currentChapterName),

@@ -1,4 +1,4 @@
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
@@ -16,7 +16,7 @@ class _BibliaPage2State extends State<BibliaPage2> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<BibleProvider, FontSizeProvider>(
+    return Consumer2<BibleProvider, AppProvider>(
       builder: (context, provider, fs, child) {
         return Scaffold(
           appBar: AppBar(

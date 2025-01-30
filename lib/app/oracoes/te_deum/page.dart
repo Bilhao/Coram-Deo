@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 
 class TeDeumPage extends StatefulWidget {
   const TeDeumPage({super.key});
@@ -20,7 +20,7 @@ class _TeDeumPageState extends State<TeDeumPage> {
 
   @override
   Widget build(BuildContext context) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Te Deum"),

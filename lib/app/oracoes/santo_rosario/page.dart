@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 
 class SantoRosarioPage extends StatefulWidget {
   const SantoRosarioPage({super.key});
@@ -34,7 +34,7 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
   }
 
   Widget _prayline(String prefix, String text) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Text.rich(
       TextSpan(
         children: [
@@ -47,7 +47,7 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
 
   @override
   Widget build(BuildContext context) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Santo Rosário"),
@@ -199,9 +199,9 @@ class _SantoRosarioPageState extends State<SantoRosarioPage> {
                   const Divider(height: 15, color: Colors.transparent),
                   Text("Ao terminar os cinco mistérios:", style: TextStyle(fontSize: fs.fontSize, fontStyle: FontStyle.italic, color: Colors.red)),
                   const Divider(height: 15, color: Colors.transparent),
-                  Text("Ave Maria, Filha de Deus Pai, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
-                  Text("Ave Maria, Mãe de Deus Filho, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
-                  Text("Ave Maria, Esposa de Deus Espírito Santo, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize - 1)),
+                  Text("Ave Maria, Filha de Deus Pai, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize)),
+                  Text("Ave Maria, Mãe de Deus Filho, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize)),
+                  Text("Ave Maria, Esposa de Deus Espírito Santo, cheia de graça, ...", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),
                   Text("Salve Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A Vós bradamos os degredados filhos de Eva; a Vós suspiramos gemendo e chorando neste vale de lágrimas. Eia, pois, Advogada nossa, esses Vossos olhos misericordiosos a nós volvei. E depois deste desterro mostrai nos Jesus, bendito fruto do Vosso ventre. Ó clemente, ó piedosa, ó doce Virgem Maria. Rogai por nós, Santa Mãe de Deus, para que sejamos dignos das promessas de Cristo.", style: TextStyle(fontSize: fs.fontSize)),
                   const Divider(height: 15, color: Colors.transparent),

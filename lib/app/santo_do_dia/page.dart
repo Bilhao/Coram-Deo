@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 
 class SantoDoDiaPage extends StatefulWidget {
   const SantoDoDiaPage({super.key});
@@ -15,7 +15,7 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => SantoDoDiaProvider(),
-      child: Consumer2<SantoDoDiaProvider, FontSizeProvider>(builder: (context, provider, fs, child) {
+      child: Consumer2<SantoDoDiaProvider, AppProvider>(builder: (context, provider, fs, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (provider.error) {
             showDialog(
