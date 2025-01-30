@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
+import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
@@ -25,9 +26,12 @@ import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
 import 'package:coramdeo/app/oracoes/page.dart';
 import 'package:coramdeo/app/oracoes/te_deum/page.dart';
 import 'package:coramdeo/app/oracoes/visita_ao_santissimo/page.dart';
+import 'package:coramdeo/app/oracoes/estampa_josemaria/page.dart';
 import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
+import 'package:coramdeo/app/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/settings_page.dart';
+
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -58,6 +62,9 @@ class Routes {
 
       case "/plano-de-vida":
         return MaterialPageRoute(builder: (context) => const PlanoDeVidaPage());
+
+      case "/exame-de-consciencia":
+        return MaterialPageRoute(builder: (context) => const ExameDeConscienciaPage());
 
       // oracoes
       case "/falar-com-deus":
@@ -95,6 +102,12 @@ class Routes {
 
       case '/salmo-2':
         return MaterialPageRoute(builder: (context) => const Salmo2Page());
+
+      case '/exame-de-consciencia-oracao':
+        return MaterialPageRoute(builder: (context) => const ExameDeConscienciaOracaoPage());
+
+      case '/estampa-josemaria':
+        return MaterialPageRoute(builder: (context) => const EstampaJosemariaPage());
 
       // livros
       case "/book-reading":

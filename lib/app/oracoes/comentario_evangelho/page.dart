@@ -1,4 +1,4 @@
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/comentario_evangelho/provider.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ class _ComentarioDoEvangelhoPageState extends State<ComentarioDoEvangelhoPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => ComentarioDoEvangelhoProvider(),
-      child: Consumer2<ComentarioDoEvangelhoProvider, FontSizeProvider>(builder: (context, provider, fs, child) {
+      child: Consumer2<ComentarioDoEvangelhoProvider, AppProvider>(builder: (context, provider, fs, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (provider.error) {
             showDialog(

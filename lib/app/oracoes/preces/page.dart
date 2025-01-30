@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 
 class PrecesPage extends StatefulWidget {
   const PrecesPage({super.key});
@@ -19,7 +19,7 @@ class _PrecesPageState extends State<PrecesPage> {
   }
 
   Widget _prayline(String prefix, String text) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Text.rich(
       TextSpan(
         children: [
@@ -32,7 +32,7 @@ class _PrecesPageState extends State<PrecesPage> {
 
   @override
   Widget build(BuildContext context) {
-    FontSizeProvider fs = Provider.of<FontSizeProvider>(context);
+    AppProvider fs = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Preces"),

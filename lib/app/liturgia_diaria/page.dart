@@ -1,4 +1,4 @@
-import 'package:coramdeo/app/fontsize_provider.dart';
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +15,7 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => LiturgiaDiariaProvider(),
-      child: Consumer2<LiturgiaDiariaProvider, FontSizeProvider>(
+      child: Consumer2<LiturgiaDiariaProvider, AppProvider>(
         builder: (context, provider, fs, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (provider.error) {

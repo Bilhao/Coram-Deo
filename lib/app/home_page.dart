@@ -1,7 +1,11 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +13,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppProvider appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: Theme.of(context).brightness == Brightness.dark ? Image.asset('assets/images/logo_dark.png', fit: BoxFit.cover) : Image.asset('assets/images/logo.png', fit: BoxFit.cover),
@@ -25,21 +30,21 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         Expanded(
-          flex: 2,
-          child: ListView(children: const [
-            Divider(height: 15, color: Colors.transparent),
-            Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
-            Divider(height: 15, color: Colors.transparent),
-            HomePageCardCarusel(),
-            Divider(height: 15, color: Colors.transparent),
-            Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
-            Divider(height: 10, color: Colors.transparent),
-            HomePageButtons(text: "Bíblia", route: '/biblia-page-1'),
-            HomePageButtons(text: "Livros", route: '/livros'),
-            HomePageButtons(text: "Orações", route: '/oracoes'),
-            HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
-            HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
-            HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
+          child: ListView(children: [
+            const Divider(height: 15, color: Colors.transparent),
+            const Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            const Divider(height: 15, color: Colors.transparent),
+            const HomePageCardCarusel(),
+            const Divider(height: 15, color: Colors.transparent),
+            const Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+            const Divider(height: 10, color: Colors.transparent),
+            const HomePageButtons(text: "Bíblia", route: '/biblia-page-1'),
+            const HomePageButtons(text: "Livros", route: '/livros'),
+            const HomePageButtons(text: "Orações", route: '/oracoes'),
+            const HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
+            const HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
+            const HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
+            HomePageButtons(text: "Exame de consciência", route: '/exame-de-consciencia', requireAuth: appProvider.blockExame),
             // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
           ]),
         ),
@@ -49,23 +54,46 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageButtons extends StatelessWidget {
-  const HomePageButtons({super.key, required this.text, required this.route});
+  const HomePageButtons({super.key, required this.text, required this.route, this.requireAuth = false});
 
   final String text;
   final String route;
+  final bool requireAuth;
 
   @override
   Widget build(BuildContext context) {
+    AppProvider appProvider = Provider.of<AppProvider>(context);
     return Container(
       width: double.maxFinite,
       height: 65.0,
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
       child: FilledButton.tonal(
-          onPressed: () {
-            Navigator.pushNamed(context, route);
+          onPressed: () async {
+            if (requireAuth) {
+              final LocalAuthentication auth = LocalAuthentication();
+              try {
+                final bool didAuthenticate = await auth.authenticate(
+                  localizedReason: ' ',
+                  authMessages: [const AndroidAuthMessages(
+                    signInTitle: 'Verifique sua identidade',
+                    cancelButton: 'Cancelar',
+                    biometricHint: 'Use sua digital para acessar o Exame de Consciência',
+                  )],
+                  options: AuthenticationOptions(biometricOnly: appProvider.useBiometric),
+                );
+                if (didAuthenticate) {
+                  Navigator.pushNamed(context, route);
+                }
+              } on PlatformException{
+                return;
+              }
+            }
+            else {
+              Navigator.pushNamed(context, route);
+            }
           },
           style: ButtonStyle(
-            shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+            shape: WidgetStateProperty.all(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),

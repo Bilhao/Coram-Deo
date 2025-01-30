@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/falar_com_deus/provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../fontsize_provider.dart';
+import '../../app_provider.dart';
 
 class FalarComDeusPage extends StatefulWidget {
   const FalarComDeusPage({super.key});
@@ -16,7 +16,7 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => FalarComDeusProvider(),
-        child: Consumer2<FalarComDeusProvider, FontSizeProvider>(builder: (context, provider, fs, child) {
+        child: Consumer2<FalarComDeusProvider, AppProvider>(builder: (context, provider, fs, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (provider.error) {
               showDialog(
