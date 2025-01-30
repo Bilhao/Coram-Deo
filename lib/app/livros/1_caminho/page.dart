@@ -57,14 +57,14 @@ class _CaminhoPageState extends State<CaminhoPage> {
             ],
           ),
           floatingActionButton: _selectedIndex == 0
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
-                  },
-                  label: const Text("Continuar leitura"),
-                  icon: const Icon(Icons.chevron_right),
-                )
-              : null),
+            ? FloatingActionButton.extended(
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
+                },
+                label: const Text("Continuar leitura"),
+                icon: const Icon(Icons.chevron_right),
+              )
+            : null),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +15,8 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => LiturgiaDiariaProvider(),
-      child: Consumer<LiturgiaDiariaProvider>(
-        builder: (context, provider, child) {
+      child: Consumer2<LiturgiaDiariaProvider, AppProvider>(
+        builder: (context, provider, fs, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (provider.error) {
               showDialog(
@@ -42,11 +43,11 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.remove),
-                    onPressed: () => provider.decreaseFontSize(),
+                    onPressed: () => fs.decreaseFontSize()
                   ),
                   IconButton(
                     icon: const Icon(Icons.add),
-                    onPressed: () => provider.increaseFontSize(),
+                    onPressed: () => fs.increaseFontSize(),
                   )
                 ],
                 bottom: provider.isLoading
@@ -68,11 +69,7 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(
-                                      child: Text(
-                                    "Liturgia do dia: ${provider.date}",
-                                    style: TextStyle(fontSize: provider.fontsize + 2),
-                                  )),
+                                  Expanded(child: Text("Liturgia do dia: ${provider.date}", style: TextStyle(fontSize: fs.fontSize + 2),)),
                                   IconButton(
                                     onPressed: () async {
                                       DateTime? pickedDate = await showDatePicker(
@@ -90,55 +87,55 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                                 ],
                               ),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.liturgia, style: TextStyle(fontSize: provider.fontsize + 2)),
+                              Text(provider.liturgia, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 15, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Primeira Leitura (${provider.primeiraLeituraReferencia})", style: TextStyle(fontSize: provider.fontsize + 6, fontWeight: FontWeight.bold)),
+                                child: Text("Primeira Leitura (${provider.primeiraLeituraReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
                               ),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.primeiraLeituraTitulo, style: TextStyle(fontSize: provider.fontsize + 3), textAlign: TextAlign.left),
+                              Text(provider.primeiraLeituraTitulo, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.primeiraLeituraText, style: TextStyle(fontSize: provider.fontsize + 2)),
+                              Text(provider.primeiraLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 25, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Salmo (${provider.salmoReferencia})", style: TextStyle(fontSize: provider.fontsize + 6, fontWeight: FontWeight.bold)),
+                                child: Text("Salmo (${provider.salmoReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
                               ),
                               const Divider(height: 10, color: Colors.transparent),
                               Text.rich(TextSpan(children: [
                                 TextSpan(
                                   text: "℟. ",
-                                  style: TextStyle(fontSize: provider.fontsize + 1, fontWeight: FontWeight.bold, color: Colors.red),
+                                  style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold, color: Colors.red),
                                 ),
                                 TextSpan(
                                   text: provider.salmoRefrao,
-                                  style: TextStyle(fontSize: provider.fontsize + 2, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold),
                                 ),
                               ])),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.salmoText, style: TextStyle(fontSize: provider.fontsize + 2)),
+                              Text(provider.salmoText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 25, color: Colors.transparent),
                               if (provider.segundaLeituraTitulo != "")
                                 Align(
                                   alignment: Alignment.center,
-                                  child: Text("Segunda Leitura (${provider.segundaLeituraReferencia})", style: TextStyle(fontSize: provider.fontsize + 6, fontWeight: FontWeight.bold)),
+                                  child: Text("Segunda Leitura (${provider.segundaLeituraReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
                                 ),
                               if (provider.segundaLeituraReferencia != "") const Divider(height: 15, color: Colors.transparent),
-                              if (provider.segundaLeituraTitulo != "") Text(provider.segundaLeituraTitulo, style: TextStyle(fontSize: provider.fontsize + 3), textAlign: TextAlign.left),
+                              if (provider.segundaLeituraTitulo != "") Text(provider.segundaLeituraTitulo, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
                               if (provider.segundaLeituraText != "") const Divider(height: 15, color: Colors.transparent),
-                              if (provider.segundaLeituraText != "") Text(provider.segundaLeituraText, style: TextStyle(fontSize: provider.fontsize + 2)),
+                              if (provider.segundaLeituraText != "") Text(provider.segundaLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               if (provider.segundaLeituraText != "") const Divider(height: 25, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Evangelho (${provider.evangelhoReferencia})", style: TextStyle(fontSize: provider.fontsize + 6, fontWeight: FontWeight.bold)),
+                                child: Text("Evangelho (${provider.evangelhoReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
                               ),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.evangelhoTitle, style: TextStyle(fontSize: provider.fontsize + 3), textAlign: TextAlign.left),
+                              Text(provider.evangelhoTitle, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.evangelhoText, style: TextStyle(fontSize: provider.fontsize + 2)),
+                              Text(provider.evangelhoText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text("Fonte: https://liturgiadiaria.site/", style: TextStyle(fontSize: provider.fontsize - 2, fontWeight: FontWeight.w300))
+                              Text("Fonte: https://liturgia.up.railway.app", style: TextStyle(fontSize: fs.fontSize - 2, fontWeight: FontWeight.w300))
                             ],
                           ),
                         ),

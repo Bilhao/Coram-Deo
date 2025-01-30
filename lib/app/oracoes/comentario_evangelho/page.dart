@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/comentario_evangelho/provider.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,7 @@ class _ComentarioDoEvangelhoPageState extends State<ComentarioDoEvangelhoPage> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => ComentarioDoEvangelhoProvider(),
-      child: Consumer<ComentarioDoEvangelhoProvider>(builder: (context, provider, child) {
+      child: Consumer2<ComentarioDoEvangelhoProvider, AppProvider>(builder: (context, provider, fs, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (provider.error) {
             showDialog(
@@ -39,41 +40,41 @@ class _ComentarioDoEvangelhoPageState extends State<ComentarioDoEvangelhoPage> {
             appBar: AppBar(
                 title: const Text('Comentários do Evangelho do dia'),
                 actions: [
-                  IconButton(onPressed: provider.decreaseFontSize, icon: const Icon(Icons.remove)),
-                  IconButton(onPressed: provider.increaseFontSize, icon: const Icon(Icons.add)),
+                  IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+                  IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
                 ],
                 bottom: provider.isLoading
                     ? const PreferredSize(
-                        preferredSize: Size.fromHeight(2.0),
-                        child: LinearProgressIndicator(),
-                      )
+                  preferredSize: Size.fromHeight(2.0),
+                  child: LinearProgressIndicator(),
+                )
                     : null),
             body: provider.isLoading
                 ? Container()
                 : SafeArea(
-                    child: SelectionArea(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 5.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Divider(height: 15, color: Colors.transparent),
-                              Align(alignment: Alignment.center, child: Text(provider.evangelho, style: TextStyle(fontSize: provider.fontSize + 4, fontWeight: FontWeight.bold))),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text.rich(TextSpan(children: [for (String text in provider.evangelhoText) TextSpan(text: "$text ".replaceFirst(provider.evangelho, ""), style: TextStyle(fontSize: provider.fontSize))])),
-                              const Divider(height: 25, color: Colors.transparent),
-                              Align(alignment: Alignment.center, child: Text(provider.comentarios, textAlign: TextAlign.center, style: TextStyle(fontSize: provider.fontSize + 4, fontWeight: FontWeight.bold))),
-                              const Divider(height: 15, color: Colors.transparent),
-                              for (String text in provider.comentariosText) Text("$text\n", style: TextStyle(fontSize: provider.fontSize)),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text("Fonte: https://opusdei.org/pt-br/gospel/", style: TextStyle(fontSize: provider.fontSize - 2, fontWeight: FontWeight.w300)),
-                            ],
-                          ),
-                        ),
-                      ),
+              child: SelectionArea(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 5.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Divider(height: 15, color: Colors.transparent),
+                        Align(alignment: Alignment.center, child: Text(provider.evangelho, style: TextStyle(fontSize: fs.fontSize + 4, fontWeight: FontWeight.bold))),
+                        const Divider(height: 15, color: Colors.transparent),
+                        Text.rich(TextSpan(children: [for (String text in provider.evangelhoText) TextSpan(text: "$text ".replaceFirst(provider.evangelho, ""), style: TextStyle(fontSize: fs.fontSize))])),
+                        const Divider(height: 25, color: Colors.transparent),
+                        Align(alignment: Alignment.center, child: Text(provider.comentarios, textAlign: TextAlign.center, style: TextStyle(fontSize: fs.fontSize + 4, fontWeight: FontWeight.bold))),
+                        const Divider(height: 15, color: Colors.transparent),
+                        for (String text in provider.comentariosText) Text("$text\n", style: TextStyle(fontSize: fs.fontSize)),
+                        const Divider(height: 15, color: Colors.transparent),
+                        Text("Fonte: https://opusdei.org/pt-br/gospel/", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300)),
+                      ],
                     ),
-                  ));
+                  ),
+                ),
+              ),
+            ));
       }),
     );
   }
