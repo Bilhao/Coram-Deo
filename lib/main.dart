@@ -51,12 +51,15 @@ class CoramDeoApp extends StatelessWidget {
                 theme: ThemeData(
                   colorScheme: provider.dynamicColor && lightDynamic != null
                     ? ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                       seedColor: lightDynamic.primary,
                       primary: lightDynamic.primary,
                       brightness: Brightness.light,
                     )
                     : ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                       seedColor: Color(provider.colorSeed),
+                      primary: Color(provider.colorSeed),
                       brightness: Brightness.light,
                     ),
                   useMaterial3: true,
@@ -64,11 +67,12 @@ class CoramDeoApp extends StatelessWidget {
                 darkTheme: ThemeData(
                   colorScheme: provider.dynamicColor && darkDynamic != null
                     ? ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                       seedColor: darkDynamic.primary,
-                      primary: darkDynamic.primary,
                       brightness: Brightness.dark,
                     )
                     : ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
                       seedColor: Color(provider.colorSeed),
                       brightness: Brightness.dark,
                     ),
@@ -78,7 +82,9 @@ class CoramDeoApp extends StatelessWidget {
                 onGenerateRoute: Routes.onGenerateRoute,
                 navigatorKey: Routes.navigatorKey,
               );
-              lightDynamic == null || darkDynamic == null ? () : FlutterNativeSplash.remove();
+              if (lightDynamic != null && darkDynamic != null) {
+                FlutterNativeSplash.remove();
+              }
               return app;
             },
           );
