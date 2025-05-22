@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png" alt="Coram Deo" width="120" style="border-radius: 24px; box-shadow: 0 2px 8px #0002;"/>
-</p>
+![Coram Deo](https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png)
 
 # Coram Deo
 
