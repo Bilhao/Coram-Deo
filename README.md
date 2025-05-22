@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/logo.png" alt="Coram Deo" width="120" style="background: #fff; border-radius: 24px; box-shadow: 0 2px 8px #0002;"/>
+  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png" alt="Coram Deo" width="120" style="border-radius: 24px; box-shadow: 0 2px 8px #0002;"/>
 </p>
 
 # Coram Deo
@@ -11,6 +11,7 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
 ## Funcionalidades
 
 - **Orações Tradicionais**
+
   - Angelus / Regina Cæli
   - Oferecimento de Obras
   - Lembrai-vos
@@ -25,6 +26,7 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
   - Estampa de São Josemaria Escrivá
 
 - **Meditação e Espiritualidade**
+
   - Meditação diária do "Falar com Deus"
   - Comentário do Evangelho do dia (Opus Dei)
   - Santo do Dia (com fonte e referência)
@@ -38,15 +40,18 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
     - Santo Rosário (livro)
 
 - **Bíblia**
+
   - Leitura da Bíblia NVI (Nova Versão Internacional)
   - Navegação por livros, capítulos e versículos
   - Busca e seleção rápida
 
 - **Plano de Vida**
+
   - Acompanhamento de práticas espirituais diárias
   - Marcação de hábitos e progresso
 
 - **Personalização**
+
   - Ajuste do tamanho da fonte
   - Tema claro/escuro e cores dinâmicas (Material You)
   - Favoritos de orações
@@ -68,12 +73,14 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
 ### Passos
 
 1. Clone o repositório:
+
    ```sh
    git clone https://github.com/Bilhao/Coram-Deo.git
    cd Coram-Deo
    ```
 
 2. Instale as dependências:
+
    ```sh
    flutter pub get
    ```
@@ -148,4 +155,3 @@ Este projeto possui uma **licença pessoal** e não deve ser utilizado, distribu
 Dúvidas, sugestões ou colaborações:  
 [Rafael Bilhão](mailto:rafaelr.bilhao@gmail.com)  
 [github.com/Bilhao/Coram-Deo](https://github.com/Bilhao/Coram-Deo)
-
