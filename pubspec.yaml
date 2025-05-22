@@ -91,6 +91,8 @@ flutter:
     - assets/images/logo.png
     - assets/images/logo_dark.png
     - assets/images/bible.jpeg
+    - assets/images/oracoes/estampajosemaria.png
+    - assets/images/oracoes/lembraivos.jpg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

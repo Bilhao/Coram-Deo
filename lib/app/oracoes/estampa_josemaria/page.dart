@@ -35,7 +35,7 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   const Divider(height: 15, color: Colors.transparent),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
+                    child: Image(
                       frameBuilder: (BuildContext context, Widget child, int? frame, bool? wasSynchronouslyLoaded) {
                         return child;
                       },
@@ -46,7 +46,7 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                           return Center(child: CircularProgressIndicator());
                         }
                       },
-                      "https://s3-eu-west-1.amazonaws.com/images-opus-dei/image/6990017337_852ce064e9_k_crop_20141107141604334507.jpg",
+                      image: AssetImage("assets/images/oracoes/estampajosemaria.png"),
                       width: double.maxFinite,
                       fit: BoxFit.cover,
                     ),
@@ -67,11 +67,11 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   ),
                   const Divider(height: 15, color: Colors.transparent),
                   Text(
-                    "Ó Deus, que, por mediação da Santíssima Virgem Maria, concedestes inumeráveis graças a São Josemaria, sacerdote, escolhendo-o como"
-                    "instrumento fidelíssimo para fundar o Opus Dei caminho de santificação no trabalho profissional e no"
-                    "cumprimento dos deveres cotidianos do cristão, fazei que eu saiba também converter todos os momentos"
-                    "e circunstâncias da minha vida em ocasião de vos amar, e de servir com alegria e com simplicidade a"
-                    "Igreja, o Romano Pontífice e as almas, iluminando os caminhos da terra com o resplendor da fé e do amor."
+                    "Ó Deus, que, por mediação da Santíssima Virgem Maria, concedestes inumeráveis graças a São Josemaria, sacerdote, escolhendo-o como "
+                    "instrumento fidelíssimo para fundar o Opus Dei caminho de santificação no trabalho profissional e no "
+                    "cumprimento dos deveres cotidianos do cristão, fazei que eu saiba também converter todos os momentos "
+                    "e circunstâncias da minha vida em ocasião de vos amar, e de servir com alegria e com simplicidade a "
+                    "Igreja, o Romano Pontífice e as almas, iluminando os caminhos da terra com o resplendor da fé e do amor. "
                     "Concedei-me por intercessão de São Josemaria o favor que vos peço... (peça-se). Amém.",
                     style: TextStyle(fontSize: appProvider.fontSize)),
                   Align(
@@ -79,8 +79,8 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                     child: Text("\nPai Nosso, Ave-Maria e Glória\n", style: TextStyle(fontSize: appProvider.fontSize - 1, fontStyle: FontStyle.italic))
                   ),
                   Text(
-                    "\"Aí onde estão as nossas aspirações, o nosso trabalho, os nossos amores – aí está o lugar do nosso encontro cotidiano com Cristo."
-                    "É no meio das coisas mais materiais da terra que nos devemos santificar, servindo a Deus e a todos os homens."
+                    "\"Aí onde estão as nossas aspirações, o nosso trabalho, os nossos amores – aí está o lugar do nosso encontro cotidiano com Cristo. "
+                    "É no meio das coisas mais materiais da terra que nos devemos santificar, servindo a Deus e a todos os homens. "
                     "Na linha do horizonte, meus filhos, parecem unir-se o céu e a terra. Mas não: onde de verdade se juntam é no coração, quando se vive santamente a vida diária...\"",
                     style: TextStyle(fontSize: appProvider.fontSize - 1, fontStyle: FontStyle.italic),
                   ),
@@ -93,13 +93,13 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   ),
                   const Divider(height: 15, color: Colors.transparent),
                   Text(
-                    "São Josemaria Escrivá nasceu em Barbastro (Espanha) em 9-1-1902. Recebeu a ordenação sacerdotal em Saragoça no"
-                    "dia 28-3-1925. A 2-10-1928 fundou, por inspiração divina, o Opus Dei. Em 26-6-1975 faleceu repentinamente em Roma,"
-                    "logo após ter olhado com imenso carinho uma imagem de Nossa Senhora que presidia ao seu quarto de trabalho."
-                    "Naquele momento, o Opus Dei estava estendido pelos cinco continentes e contava mais de 60.000 membros de 80"
-                    "nacionalidades, a serviço da Igreja com o mesmo espírito de plena união com o Papa e os Bispos que São Josemaria"
-                    "Escrivá sempre viveu. O Santo Padre João Paulo II canonizou o Fundador do Opus Dei em Roma, no dia 6-10-2002. A sua"
-                    "festa litúrgica celebra-se no dia 26 de junho. O corpo de São Josemaria Escrivá repousa na igreja prelatícia de Santa Maria"
+                    "São Josemaria Escrivá nasceu em Barbastro (Espanha) em 9-1-1902. Recebeu a ordenação sacerdotal em Saragoça no "
+                    "dia 28-3-1925. A 2-10-1928 fundou, por inspiração divina, o Opus Dei. Em 26-6-1975 faleceu repentinamente em Roma, "
+                    "logo após ter olhado com imenso carinho uma imagem de Nossa Senhora que presidia ao seu quarto de trabalho. "
+                    "Naquele momento, o Opus Dei estava estendido pelos cinco continentes e contava mais de 60.000 membros de 80 "
+                    "nacionalidades, a serviço da Igreja com o mesmo espírito de plena união com o Papa e os Bispos que São Josemaria "
+                    "Escrivá sempre viveu. O Santo Padre João Paulo II canonizou o Fundador do Opus Dei em Roma, no dia 6-10-2002. A sua "
+                    "festa litúrgica celebra-se no dia 26 de junho. O corpo de São Josemaria Escrivá repousa na igreja prelatícia de Santa Maria "
                     "da Paz (Viale Bruno Buozzi, 75, Roma).",
                     style: TextStyle(fontSize: appProvider.fontSize),
                   ),
