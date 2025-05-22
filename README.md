@@ -1,6 +1,7 @@
-![Coram Deo](https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png)
-
-# Coram Deo
+<div align="center">
+<img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png" alt="coram-deo" width="100" height="100"/>
+</div>
+<h1 align="center">Coram Deo</h1>
 
 Coram Deo é um aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã. Ele reúne diversas orações tradicionais, textos espirituais, leituras bíblicas, livros de espiritualidade, exame de consciência, plano de vida e muito mais, tudo em um só lugar, com interface moderna, personalizável e offline.
 
