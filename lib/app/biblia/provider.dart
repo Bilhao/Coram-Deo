@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:coramdeo/utils/base_provider.dart';
 
-class BibleProvider extends ChangeNotifier {
+class BibleProvider extends BaseProvider {
   BibleProvider() {
-    init();
+    _initialize();
   }
 
   Biblia dbHelper = Biblia();
@@ -18,7 +19,6 @@ class BibleProvider extends ChangeNotifier {
   final Map<String, List<int>> _bookChapters = {};
   List<String> _versesId = [];
   List<String> _verses = [];
-  bool _isLoading = false;
 
   String get testament => _testament;
   int get bookId => _bookId;
@@ -29,78 +29,113 @@ class BibleProvider extends ChangeNotifier {
   Map<String, List<int>> get bookChapters => _bookChapters;
   List<String> get versesId => _versesId;
   List<String> get verses => _verses;
-  bool get isLoading => _isLoading;
 
-  init() async {
-    _isLoading = true;
-    notifyListeners();
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    _testament = pref.getString("biblie.testament") ?? "Old";
-    _bookId = pref.getInt("biblie.book_id") ?? 1;
-    _book = pref.getString("biblie.book") ?? "Gênesis";
-    _oldBooks = await dbHelper.getBooks("Old");
-    _newBooks = await dbHelper.getBooks("New");
-    _chapter = pref.getInt("biblie.chapter") ?? 1;
-    _versesId = pref.getStringList("biblie.verses_id") ?? await dbHelper.getVersesId(_book, _chapter);
-    _verses = pref.getStringList("biblie.verses") ?? await dbHelper.getVerses(_book, _chapter);
-    _isLoading = false;
-    notifyListeners();
+  Future<void> _initialize() async {
+    setLoading(true);
+    
+    await safePrefOperation((prefs) async {
+      // Fixed: Changed "biblie" to "bible" for consistency
+      _testament = prefs.getString("bible.testament") ?? "Old";
+      _bookId = prefs.getInt("bible.book_id") ?? 1;
+      _book = prefs.getString("bible.book") ?? "Gênesis";
+      _chapter = prefs.getInt("bible.chapter") ?? 1;
+      
+      return true;
+    }, errorContext: 'Loading Bible preferences');
+
+    // Load books and verses data
+    await safeAsync(() async {
+      _oldBooks = await dbHelper.getBooks("Old");
+      _newBooks = await dbHelper.getBooks("New");
+      
+      // Load saved verses or fetch them if not cached
+      final prefs = await getPrefs();
+      _versesId = prefs.getStringList("bible.verses_id") ?? await dbHelper.getVersesId(_book, _chapter);
+      _verses = prefs.getStringList("bible.verses") ?? await dbHelper.getVerses(_book, _chapter);
+      
+      return true;
+    }, errorContext: 'Loading Bible data');
+    
+    setLoading(false);
   }
 
-  load() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.setString("biblie.testament", _testament);
-    await pref.setInt("biblie.book_id", _bookId);
-    await pref.setString("biblie.book", _book);
-    await pref.setInt("biblie.chapter", _chapter);
-    await pref.setStringList("biblie.verses_id", _versesId);
-    await pref.setStringList("biblie.verses", _verses);
-    notifyListeners();
+  // Renamed from 'load' to 'save' for clarity
+  Future<void> save() async {
+    await safePrefOperation((prefs) async {
+      // Fixed: Changed "biblie" to "bible" for consistency
+      await prefs.setString("bible.testament", _testament);
+      await prefs.setInt("bible.book_id", _bookId);
+      await prefs.setString("bible.book", _book);
+      await prefs.setInt("bible.chapter", _chapter);
+      await prefs.setStringList("bible.verses_id", _versesId);
+      await prefs.setStringList("bible.verses", _verses);
+      return true;
+    }, errorContext: 'Saving Bible state');
   }
 
-  getBooksFromTestament({required String testament}) async {
-    if (testament == "Old") {
-      return await dbHelper.getBooks("Old");
-    } else {
-      return await dbHelper.getBooks("New");
-    }
+  Future<List<String>?> getBooksFromTestament({required String testament}) async {
+    return safeAsync(() async {
+      if (testament == "Old") {
+        return await dbHelper.getBooks("Old");
+      } else {
+        return await dbHelper.getBooks("New");
+      }
+    }, errorContext: 'Getting books from testament $testament');
   }
 
-  updateBookChapters({required String book}) async {
-    if (!bookChapters.containsKey(book)) {
-      bookChapters[book] = await dbHelper.getChapters(book);
-    }
-    notifyListeners();
+  Future<void> updateBookChapters({required String book}) async {
+    await safeAsync(() async {
+      if (!_bookChapters.containsKey(book)) {
+        _bookChapters[book] = await dbHelper.getChapters(book);
+      }
+      notifyListeners();
+      return true;
+    }, errorContext: 'Updating book chapters for $book');
   }
 
-  goToNextChapter() async {
-    int lastChapter = await dbHelper.getLastChapterOfBook(_book);
+  Future<void> goToNextChapter() async {
+    await safeAsync(() async {
+      int lastChapter = await dbHelper.getLastChapterOfBook(_book);
 
-    if (_chapter < lastChapter) {
-      await updateValues(testament: _testament, book: book, chapter: chapter + 1);
-    } else {
-      String newBook = await dbHelper.getBookById(_bookId + 1);
-      await updateValues(testament: _bookId + 1 > 39 ? "New" : "Old", book: newBook, chapter: 1);
-    }
+      if (_chapter < lastChapter) {
+        await updateValues(testament: _testament, book: _book, chapter: _chapter + 1);
+      } else {
+        String newBook = await dbHelper.getBookById(_bookId + 1);
+        await updateValues(testament: _bookId + 1 > 39 ? "New" : "Old", book: newBook, chapter: 1);
+      }
+      return true;
+    }, errorContext: 'Going to next chapter');
   }
 
-  goToPreviousChapter() async {
-    if (_chapter > 1) {
-      await updateValues(testament: _testament, book: book, chapter: chapter - 1);
-    } else {
-      String newBook = await dbHelper.getBookById(_bookId - 1);
-      int lastChapter = await dbHelper.getLastChapterOfBook(newBook);
-      await updateValues(testament: _bookId - 1 > 39 ? "New" : "Old", book: newBook, chapter: lastChapter);
-    }
+  Future<void> goToPreviousChapter() async {
+    await safeAsync(() async {
+      if (_chapter > 1) {
+        await updateValues(testament: _testament, book: _book, chapter: _chapter - 1);
+      } else {
+        String newBook = await dbHelper.getBookById(_bookId - 1);
+        int lastChapter = await dbHelper.getLastChapterOfBook(newBook);
+        await updateValues(testament: _bookId - 1 > 39 ? "New" : "Old", book: newBook, chapter: lastChapter);
+      }
+      return true;
+    }, errorContext: 'Going to previous chapter');
   }
 
-  updateValues({required String testament, required String book, required int chapter}) async {
-    _testament = testament;
-    _book = book;
-    _bookId = await dbHelper.getBookId(book);
-    _chapter = chapter;
-    _versesId = await dbHelper.getVersesId(book, chapter);
-    _verses = await dbHelper.getVerses(book, chapter);
-    load();
+  Future<void> updateValues({required String testament, required String book, required int chapter}) async {
+    setLoading(true);
+    
+    await safeAsync(() async {
+      _testament = testament;
+      _book = book;
+      _bookId = await dbHelper.getBookId(book);
+      _chapter = chapter;
+      _versesId = await dbHelper.getVersesId(book, chapter);
+      _verses = await dbHelper.getVerses(book, chapter);
+      
+      // Save the updated values
+      await save();
+      return true;
+    }, errorContext: 'Updating Bible values');
+    
+    setLoading(false);
   }
 }
