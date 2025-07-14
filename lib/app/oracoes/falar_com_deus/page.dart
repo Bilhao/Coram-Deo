@@ -18,7 +18,7 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
         create: (context) => FalarComDeusProvider(),
         child: Consumer2<FalarComDeusProvider, AppProvider>(builder: (context, provider, fs, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (provider.error) {
+            if (provider.error != null) {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(

@@ -18,6 +18,11 @@ class ComentarioDoEvangelho {
     }
   }
 
+  // Alias for initCDE to match usage in provider
+  Future<void> initCE() async {
+    await initCDE();
+  }
+
   String getEvangelho() {
     List<String> strongContent = data?.querySelectorAll('#content strong').map((element) => element.text).toList() ?? [];
     return strongContent[0];
@@ -36,5 +41,10 @@ class ComentarioDoEvangelho {
   List<String> getCommentsText() {
     List<String> allText = data?.querySelectorAll('.imperavi-body p').map((element) => element.text).toList() ?? [];
     return allText.join("\n").split("Comentário")[1].split('\n').sublist(1);
+  }
+
+  // Alias for getCommentsText to match usage in provider
+  List<String> getComentarioText() {
+    return getCommentsText();
   }
 }
