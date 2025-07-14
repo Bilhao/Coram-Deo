@@ -47,12 +47,13 @@ class AppProvider extends BaseProvider {
 
 
   Future<bool> checkBiometric() async {
-    return safeAsync<bool>(() async {
+    final result = await safeAsync<bool>(() async {
       LocalAuthentication auth = LocalAuthentication();
       bool canAuthenticateWithBiometrics = await auth.canCheckBiometrics;
       final bool canAuthenticate = canAuthenticateWithBiometrics && await auth.isDeviceSupported();
       return canAuthenticate;
-    }, errorContext: 'Checking biometric authentication') ?? false;
+    }, errorContext: 'Checking biometric authentication');
+    return result ?? false;
   }
 
   Future<void> _initialize() async {

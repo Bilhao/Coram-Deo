@@ -235,7 +235,7 @@ class InfoAlertDialog extends StatelessWidget {
                           onPressed: () async {
                             Notifier.stopNotification(provider.notificationId[title]!);
                             await provider.deactivateItemNotification(title);
-                            await provider.deleteNoticationTime(title, time);
+                            await provider.deleteNotificationTime(title, time);
                           },
                         ),
                       ),

@@ -18,7 +18,7 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
       child: Consumer2<LiturgiaDiariaProvider, AppProvider>(
         builder: (context, provider, fs, child) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (provider.error) {
+            if (provider.error != null) {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(

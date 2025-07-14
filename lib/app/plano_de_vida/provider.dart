@@ -162,7 +162,7 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> deleteNotificationTime(String title, String notificationTime) async {
     await safeAsync(() async {
-      await pdvDb.deleteNoticationTime(title, notificationTime);
+      await pdvDb.deleteNotificationTime(title, notificationTime);
       await update();
       return true;
     }, errorContext: 'Deleting notification time');
