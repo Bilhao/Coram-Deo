@@ -1,46 +1,59 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:coramdeo/utils/base_provider.dart';
+import 'package:coramdeo/utils/constants.dart';
 
-
-class ExameDeConscienciaProvider extends ChangeNotifier {
+class ExameDeConscienciaProvider extends BaseProvider {
 
   ExameDeConscienciaProvider() {
-    init();
+    _initialize();
   }
 
   Map<String, dynamic> _itensExame = {};
 
   Map<String, dynamic> get itensExame => _itensExame;
 
-
-  init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String itemExameString = prefs.getString("exame.itensExame") ?? "";
-    _itensExame = json.decode(itemExameString);
-    notifyListeners();
+  Future<void> _initialize() async {
+    await safePrefOperation((prefs) async {
+      String itemExameString = prefs.getString("exame.itensExame") ?? "{}";
+      try {
+        _itensExame = json.decode(itemExameString) as Map<String, dynamic>;
+      } catch (e) {
+        // If JSON is invalid, start with empty map
+        _itensExame = {};
+      }
+      notifyListeners();
+      return true;
+    }, errorContext: 'Loading examination items');
   }
 
-  addItem(String title, String description) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _itensExame[title] = description;
-    await prefs.setString("exame.itensExame", json.encode(_itensExame));
-    notifyListeners();
+  Future<void> addItem(String title, String description) async {
+    if (title.trim().isEmpty) return;
+    
+    await safePrefOperation((prefs) async {
+      _itensExame[title] = description;
+      await prefs.setString("exame.itensExame", json.encode(_itensExame));
+      notifyListeners();
+      return true;
+    }, errorContext: 'Adding examination item');
   }
 
-  removeItem(String title) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _itensExame.remove(title);
-    await prefs.setString("exame.itensExame", json.encode(_itensExame));
-    notifyListeners();
+  Future<void> removeItem(String title) async {
+    await safePrefOperation((prefs) async {
+      _itensExame.remove(title);
+      await prefs.setString("exame.itensExame", json.encode(_itensExame));
+      notifyListeners();
+      return true;
+    }, errorContext: 'Removing examination item');
   }
 
-  clearItems() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _itensExame.clear();
-    await prefs.setString("exame.itensExame", json.encode(_itensExame));
-    notifyListeners();
+  Future<void> clearItems() async {
+    await safePrefOperation((prefs) async {
+      _itensExame.clear();
+      await prefs.setString("exame.itensExame", json.encode(_itensExame));
+      notifyListeners();
+      return true;
+    }, errorContext: 'Clearing examination items');
   }
-
-
 }

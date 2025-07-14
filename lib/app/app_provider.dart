@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:coramdeo/utils/constants.dart';
 
 class AppProvider extends BaseProvider {
 
@@ -9,17 +10,17 @@ class AppProvider extends BaseProvider {
     _initialize();
   }
 
-  // Variaveis relativas ao tamanho da fonte
-  double _fontSize = 16.0;
+  // Variables related to font size
+  double _fontSize = AppConstants.defaultFontSize;
 
-  // Variaveis relativas ao tema
-  String _currentTheme = "system";
-  bool _dynamicColor = false;
-  int _colorSeed = 0xFF004B8D;
+  // Variables related to theme
+  String _currentTheme = AppConstants.defaultTheme;
+  bool _dynamicColor = AppConstants.defaultDynamicColor;
+  int _colorSeed = AppConstants.defaultColorSeed;
 
-  // Variaveis relativas ao exame
-  bool _blockExame = true;
-  bool _useBiometric = true;
+  // Variables related to examination of conscience
+  bool _blockExame = AppConstants.defaultBlockExame;
+  bool _useBiometric = AppConstants.defaultUseBiometric;
   bool _canAuthenticate = false;
 
   // Getters relativos ao tamanho da fonte
@@ -58,14 +59,14 @@ class AppProvider extends BaseProvider {
     setLoading(true);
     
     await safePrefOperation((prefs) async {
-      _fontSize = prefs.getDouble('fontSize') ?? 16.0;
+      _fontSize = prefs.getDouble(AppConstants.fontSizeKey) ?? AppConstants.defaultFontSize;
 
-      _currentTheme = prefs.getString('theme.theme') ?? "system";
-      _dynamicColor = prefs.getBool('theme.dynamiccolor') ?? false;
-      _colorSeed = prefs.getInt('theme.colorseed') ?? 0xFF004B8D;
+      _currentTheme = prefs.getString(AppConstants.themeKey) ?? AppConstants.defaultTheme;
+      _dynamicColor = prefs.getBool(AppConstants.dynamicColorKey) ?? AppConstants.defaultDynamicColor;
+      _colorSeed = prefs.getInt(AppConstants.colorSeedKey) ?? AppConstants.defaultColorSeed;
 
-      _blockExame = prefs.getBool('exame.block') ?? true;
-      _useBiometric = prefs.getBool('exame.biometric') ?? true;
+      _blockExame = prefs.getBool(AppConstants.blockExameKey) ?? AppConstants.defaultBlockExame;
+      _useBiometric = prefs.getBool(AppConstants.biometricKey) ?? AppConstants.defaultUseBiometric;
       
       return true;
     }, errorContext: 'Loading user preferences');
@@ -83,7 +84,7 @@ class AppProvider extends BaseProvider {
   // Methods related to font size
   Future<void> saveFontSize(double fontSize) async {
     await safePrefOperation((prefs) async {
-      await prefs.setDouble('fontSize', fontSize);
+      await prefs.setDouble(AppConstants.fontSizeKey, fontSize);
       _fontSize = fontSize;
       notifyListeners();
       return true;
@@ -91,13 +92,13 @@ class AppProvider extends BaseProvider {
   }
 
   Future<void> increaseFontSize() async {
-    if (_fontSize < 30.0) { // Add reasonable upper limit
+    if (_fontSize < AppConstants.maxFontSize) {
       await saveFontSize(_fontSize + 1.0);
     }
   }
 
   Future<void> decreaseFontSize() async {
-    if (_fontSize > 12.0) { // Add reasonable lower limit
+    if (_fontSize > AppConstants.minFontSize) {
       await saveFontSize(_fontSize - 1.0);
     }
   }
@@ -105,7 +106,7 @@ class AppProvider extends BaseProvider {
   // Methods related to theme
   Future<void> changeTheme(String theme) async {
     await safePrefOperation((prefs) async {
-      await prefs.setString('theme.theme', theme);
+      await prefs.setString(AppConstants.themeKey, theme);
       _currentTheme = theme;
       notifyListeners();
       return true;
@@ -115,7 +116,7 @@ class AppProvider extends BaseProvider {
   Future<void> toggleDynamicColor() async {
     await safePrefOperation((prefs) async {
       _dynamicColor = !_dynamicColor;
-      await prefs.setBool('theme.dynamiccolor', _dynamicColor);
+      await prefs.setBool(AppConstants.dynamicColorKey, _dynamicColor);
       notifyListeners();
       return true;
     }, errorContext: 'Toggling dynamic color');
@@ -124,7 +125,7 @@ class AppProvider extends BaseProvider {
   Future<void> changeColorSeed(int colorSeed) async {
     await safePrefOperation((prefs) async {
       _colorSeed = colorSeed;
-      await prefs.setInt('theme.colorseed', _colorSeed);
+      await prefs.setInt(AppConstants.colorSeedKey, _colorSeed);
       notifyListeners();
       return true;
     }, errorContext: 'Changing color seed');
@@ -134,7 +135,7 @@ class AppProvider extends BaseProvider {
   Future<void> toggleBlockExame() async {
     await safePrefOperation((prefs) async {
       _blockExame = !_blockExame;
-      await prefs.setBool('exame.block', _blockExame);
+      await prefs.setBool(AppConstants.blockExameKey, _blockExame);
       notifyListeners();
       return true;
     }, errorContext: 'Toggling exam block');
@@ -143,7 +144,7 @@ class AppProvider extends BaseProvider {
   Future<void> toggleUseBiometric() async {
     await safePrefOperation((prefs) async {
       _useBiometric = !_useBiometric;
-      await prefs.setBool('exame.biometric', _useBiometric);
+      await prefs.setBool(AppConstants.biometricKey, _useBiometric);
       notifyListeners();
       return true;
     }, errorContext: 'Toggling biometric usage');
