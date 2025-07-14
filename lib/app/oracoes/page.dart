@@ -26,6 +26,7 @@ class _OracoesPageState extends State<OracoesPage> {
     "salmo-2": "Salmo 2",
     "exame-de-consciencia-oracao": "Exame de Consciência",
     "estampa-josemaria": "Estampa de São Josemaría",
+    "gratias-tibi-ago": "Gratias tibi ago",
   };
 
   Widget itembuild(String title, String route) {
