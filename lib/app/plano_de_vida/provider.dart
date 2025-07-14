@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
+import 'package:coramdeo/utils/base_provider.dart';
 
-class PlanoDeVidaProvider with ChangeNotifier {
+class PlanoDeVidaProvider extends BaseProvider {
   PlanoDeVida pdvDb = PlanoDeVida();
 
   List<String> _titles = [];
@@ -33,19 +34,31 @@ class PlanoDeVidaProvider with ChangeNotifier {
   String get date => _date;
 
   PlanoDeVidaProvider() {
-    init();
+    _initialize();
   }
 
-  init() async {
-    _titles = await pdvDb.getAllTitles();
-    _titlesIsCustom = await pdvDb.getTitleisCustom();
-    _titlesIsSelected = await pdvDb.getTitleisSelected();
-    _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
-    _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
-    _titlesIsNotification = await pdvDb.getTitleisNotification();
-    _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
-    _completedDates = await pdvDb.getTitleAndCompletedDates();
-    _notificationId = await pdvDb.getTitleAndNotificationId();
+  Future<void> _initialize() async {
+    setLoading(true);
+    
+    await safeAsync(() async {
+      _titles = await pdvDb.getAllTitles();
+      _titlesIsCustom = await pdvDb.getTitleisCustom();
+      _titlesIsSelected = await pdvDb.getTitleisSelected();
+      _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
+      _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
+      _titlesIsNotification = await pdvDb.getTitleisNotification();
+      _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
+      _completedDates = await pdvDb.getTitleAndCompletedDates();
+      _notificationId = await pdvDb.getTitleAndNotificationId();
+      
+      return true;
+    }, errorContext: 'Loading life plan data');
+    
+    _updateDateTime();
+    setLoading(false);
+  }
+
+  void _updateDateTime() {
     _year = DateTime.now().year;
     _month = DateTime.now().month;
     _day = DateTime.now().day;
@@ -53,84 +66,123 @@ class PlanoDeVidaProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  update() async {
-    _titles = await pdvDb.getAllTitles();
-    _titlesIsCustom = await pdvDb.getTitleisCustom();
-    _titlesIsSelected = await pdvDb.getTitleisSelected();
-    _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
-    _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
-    _titlesIsNotification = await pdvDb.getTitleisNotification();
-    _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
-    _completedDates = await pdvDb.getTitleAndCompletedDates();
-    _notificationId = await pdvDb.getTitleAndNotificationId();
-    notifyListeners();
+  Future<void> update() async {
+    setLoading(true);
+    
+    await safeAsync(() async {
+      _titles = await pdvDb.getAllTitles();
+      _titlesIsCustom = await pdvDb.getTitleisCustom();
+      _titlesIsSelected = await pdvDb.getTitleisSelected();
+      _titlesIsCompleted = await pdvDb.getTitleisCompleted("$_day/$_month/$_year");
+      _titlesIsCompletedToday = await pdvDb.getTitleisCompleted(date);
+      _titlesIsNotification = await pdvDb.getTitleisNotification();
+      _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
+      _completedDates = await pdvDb.getTitleAndCompletedDates();
+      _notificationId = await pdvDb.getTitleAndNotificationId();
+      notifyListeners();
+      return true;
+    }, errorContext: 'Updating life plan data');
+    
+    setLoading(false);
   }
 
-  changeDate(int year, int month, int day) {
+  Future<void> changeDate(int year, int month, int day) async {
     _year = year;
     _month = month;
     _day = day;
-    update();
+    await update();
     notifyListeners();
   }
 
-  addItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
-    await pdvDb.insertNewItem(title, isCustom, isSelected, isCompleted, isNotification);
-    update();
+  Future<void> addItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
+    if (title.trim().isEmpty) return;
+    
+    await safeAsync(() async {
+      await pdvDb.insertNewItem(title, isCustom, isSelected, isCompleted, isNotification);
+      await update();
+      return true;
+    }, errorContext: 'Adding life plan item');
   }
 
-  removeItem(String title) async {
-    await pdvDb.deleteItem(title);
-    update();
+  Future<void> removeItem(String title) async {
+    await safeAsync(() async {
+      await pdvDb.deleteItem(title);
+      await update();
+      return true;
+    }, errorContext: 'Removing life plan item');
   }
 
-  toggleItemSelection(String title) async {
-    await pdvDb.toggleisSelected(title);
-    update();
+  Future<void> toggleItemSelection(String title) async {
+    await safeAsync(() async {
+      await pdvDb.toggleisSelected(title);
+      await update();
+      return true;
+    }, errorContext: 'Toggling item selection');
   }
 
-  toggleItemCompletion(String title) async {
-    if (!await pdvDb.getIsCompleted(title)) {
-      insertCompletedDate(title, _date);
-    } else {
-      if (_completedDates[title].contains(_date)) {
-        deleteCompletedDate(title, _date);
+  Future<void> toggleItemCompletion(String title) async {
+    await safeAsync(() async {
+      if (!await pdvDb.getIsCompleted(title)) {
+        await insertCompletedDate(title, _date);
+      } else {
+        if (_completedDates[title]?.contains(_date) == true) {
+          await deleteCompletedDate(title, _date);
+        }
       }
-    }
-    update();
+      await update();
+      return true;
+    }, errorContext: 'Toggling item completion');
   }
 
-  activateItemNotification(String title) async {
-    await pdvDb.activateisNotification(title);
-    update();
+  Future<void> activateItemNotification(String title) async {
+    await safeAsync(() async {
+      await pdvDb.activateisNotification(title);
+      await update();
+      return true;
+    }, errorContext: 'Activating item notification');
   }
 
-  deactivateItemNotification(String title) async {
-    await pdvDb.deactivateisNotification(title);
-    update();
+  Future<void> deactivateItemNotification(String title) async {
+    await safeAsync(() async {
+      await pdvDb.deactivateisNotification(title);
+      await update();
+      return true;
+    }, errorContext: 'Deactivating item notification');
   }
 
-  insertNotificationTime(String title, String notificationTime) async {
-    if (!(_notificationTimes[title] ?? "").split(",").contains(notificationTime)) {
-      await pdvDb.insertNotificationTime(title, notificationTime);
-      update();
-    }
+  Future<void> insertNotificationTime(String title, String notificationTime) async {
+    await safeAsync(() async {
+      if (!(_notificationTimes[title] ?? "").split(",").contains(notificationTime)) {
+        await pdvDb.insertNotificationTime(title, notificationTime);
+        await update();
+      }
+      return true;
+    }, errorContext: 'Inserting notification time');
   }
 
-  deleteNoticationTime(String title, String notificationTime) async {
-    await pdvDb.deleteNoticationTime(title, notificationTime);
-    update();
+  Future<void> deleteNotificationTime(String title, String notificationTime) async {
+    await safeAsync(() async {
+      await pdvDb.deleteNoticationTime(title, notificationTime);
+      await update();
+      return true;
+    }, errorContext: 'Deleting notification time');
   }
 
-  insertCompletedDate(String title, String completedDate) async {
-    if (!(_completedDates[title] ?? "").split(",").contains(completedDate)) {
-      await pdvDb.insertCompletedDate(title, completedDate);
-      update();
-    }
+  Future<void> insertCompletedDate(String title, String completedDate) async {
+    await safeAsync(() async {
+      if (!(_completedDates[title] ?? "").split(",").contains(completedDate)) {
+        await pdvDb.insertCompletedDate(title, completedDate);
+        await update();
+      }
+      return true;
+    }, errorContext: 'Inserting completed date');
   }
 
-  deleteCompletedDate(String title, String completedDate) async {
-    await pdvDb.deleteCompletedDate(title, completedDate);
-    update();
+  Future<void> deleteCompletedDate(String title, String completedDate) async {
+    await safeAsync(() async {
+      await pdvDb.deleteCompletedDate(title, completedDate);
+      await update();
+      return true;
+    }, errorContext: 'Deleting completed date');
   }
 }
