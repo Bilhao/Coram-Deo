@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:coramdeo/utils/constants.dart';
 
 class BibleProvider extends BaseProvider {
   BibleProvider() {
@@ -10,12 +11,12 @@ class BibleProvider extends BaseProvider {
 
   Biblia dbHelper = Biblia();
 
-  String _testament = "Old";
-  int _bookId = 1;
-  String _book = "Gênesis";
+  String _testament = AppConstants.defaultTestament;
+  int _bookId = AppConstants.defaultBookId;
+  String _book = AppConstants.defaultBook;
   List<String> _oldBooks = [];
   List<String> _newBooks = [];
-  int _chapter = 1;
+  int _chapter = AppConstants.defaultChapter;
   final Map<String, List<int>> _bookChapters = {};
   List<String> _versesId = [];
   List<String> _verses = [];
@@ -35,10 +36,10 @@ class BibleProvider extends BaseProvider {
     
     await safePrefOperation((prefs) async {
       // Fixed: Changed "biblie" to "bible" for consistency
-      _testament = prefs.getString("bible.testament") ?? "Old";
-      _bookId = prefs.getInt("bible.book_id") ?? 1;
-      _book = prefs.getString("bible.book") ?? "Gênesis";
-      _chapter = prefs.getInt("bible.chapter") ?? 1;
+      _testament = prefs.getString(AppConstants.bibleTestamentKey) ?? AppConstants.defaultTestament;
+      _bookId = prefs.getInt(AppConstants.bibleBookIdKey) ?? AppConstants.defaultBookId;
+      _book = prefs.getString(AppConstants.bibleBookKey) ?? AppConstants.defaultBook;
+      _chapter = prefs.getInt(AppConstants.bibleChapterKey) ?? AppConstants.defaultChapter;
       
       return true;
     }, errorContext: 'Loading Bible preferences');
@@ -50,8 +51,8 @@ class BibleProvider extends BaseProvider {
       
       // Load saved verses or fetch them if not cached
       final prefs = await getPrefs();
-      _versesId = prefs.getStringList("bible.verses_id") ?? await dbHelper.getVersesId(_book, _chapter);
-      _verses = prefs.getStringList("bible.verses") ?? await dbHelper.getVerses(_book, _chapter);
+      _versesId = prefs.getStringList(AppConstants.bibleVersesIdKey) ?? await dbHelper.getVersesId(_book, _chapter);
+      _verses = prefs.getStringList(AppConstants.bibleVersesKey) ?? await dbHelper.getVerses(_book, _chapter);
       
       return true;
     }, errorContext: 'Loading Bible data');
@@ -63,12 +64,12 @@ class BibleProvider extends BaseProvider {
   Future<void> save() async {
     await safePrefOperation((prefs) async {
       // Fixed: Changed "biblie" to "bible" for consistency
-      await prefs.setString("bible.testament", _testament);
-      await prefs.setInt("bible.book_id", _bookId);
-      await prefs.setString("bible.book", _book);
-      await prefs.setInt("bible.chapter", _chapter);
-      await prefs.setStringList("bible.verses_id", _versesId);
-      await prefs.setStringList("bible.verses", _verses);
+      await prefs.setString(AppConstants.bibleTestamentKey, _testament);
+      await prefs.setInt(AppConstants.bibleBookIdKey, _bookId);
+      await prefs.setString(AppConstants.bibleBookKey, _book);
+      await prefs.setInt(AppConstants.bibleChapterKey, _chapter);
+      await prefs.setStringList(AppConstants.bibleVersesIdKey, _versesId);
+      await prefs.setStringList(AppConstants.bibleVersesKey, _verses);
       return true;
     }, errorContext: 'Saving Bible state');
   }
