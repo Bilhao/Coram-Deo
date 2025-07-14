@@ -50,7 +50,7 @@ class BibleProvider extends BaseProvider {
       _newBooks = await dbHelper.getBooks("New");
       
       // Load saved verses or fetch them if not cached
-      final prefs = await getPrefs();
+      final prefs = await BaseProvider.getPrefs();
       _versesId = prefs.getStringList(AppConstants.bibleVersesIdKey) ?? await dbHelper.getVersesId(_book, _chapter);
       _verses = prefs.getStringList(AppConstants.bibleVersesKey) ?? await dbHelper.getVerses(_book, _chapter);
       

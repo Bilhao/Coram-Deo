@@ -77,25 +77,3 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
     }, errorContext: 'Caching gospel commentary data');
   }
 }
-    } else {
-      prefs.setString('comentarioDoEvangelhoDate', _date);
-      await data.initCDE();
-      if (data.data == null) {
-        _error = true;
-        notifyListeners();
-      } else {
-        _evangelho = data.getEvangelho();
-        prefs.setString('comentarioDoEvangelhoEvangelho', _evangelho);
-        _comentario = data.getComentario();
-        prefs.setString('comentarioDoEvangelhoComentario', _comentario);
-        _evangelhoText = data.getEvangelhoText();
-        prefs.setStringList('comentarioDoEvangelhoEvangelhoText', _evangelhoText);
-        _comentarioText = data.getCommentsText();
-        prefs.setStringList('comentarioDoEvangelhoComentarioText', _comentarioText);
-        _error = false;
-        _isLoading = false;
-        notifyListeners();
-      }
-    }
-  }
-}

@@ -17,7 +17,7 @@ class _ComentarioDoEvangelhoPageState extends State<ComentarioDoEvangelhoPage> {
       create: (context) => ComentarioDoEvangelhoProvider(),
       child: Consumer2<ComentarioDoEvangelhoProvider, AppProvider>(builder: (context, provider, fs, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (provider.error) {
+          if (provider.error != null) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(

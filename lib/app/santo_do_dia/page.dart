@@ -17,7 +17,7 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
       create: (context) => SantoDoDiaProvider(),
       child: Consumer2<SantoDoDiaProvider, AppProvider>(builder: (context, provider, fs, child) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (provider.error) {
+          if (provider.error != null) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(

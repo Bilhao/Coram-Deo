@@ -97,7 +97,7 @@ class _OracoesPageState extends State<OracoesPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: SearchableList<MapEntry<String, String>>(
                   initialList: routeToName.entries.toList(),
-                  builder: (MapEntry<String, String> prayer) => buildPrayerItem(prayer),
+                  itemBuilder: (MapEntry<String, String> prayer) => buildPrayerItem(prayer),
                   filter: (value) => routeToName.entries
                       .where((prayer) => 
                           prayer.value.toLowerCase().contains(value.toLowerCase()))

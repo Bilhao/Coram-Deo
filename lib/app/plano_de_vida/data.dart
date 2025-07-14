@@ -172,7 +172,7 @@ class PlanoDeVida {
     }
   }
 
-  deleteNoticationTime(String title, String time) async {
+  deleteNotificationTime(String title, String time) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT notificationTimes FROM data WHERE title = ?', [title]);
     if (maps[0]['notificationTimes'].split(",").length == 1) {
