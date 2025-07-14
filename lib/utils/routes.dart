@@ -1,5 +1,6 @@
 import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
 import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
+import 'package:coramdeo/app/oracoes/gratias_tibi_ago/page.dart';
 import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
@@ -108,6 +109,9 @@ class Routes {
 
       case '/estampa-josemaria':
         return MaterialPageRoute(builder: (context) => const EstampaJosemariaPage());
+
+      case '/gratias-tibi-ago':
+        return MaterialPageRoute(builder: (context) => const GratiasTibiAgoPage());
 
       // livros
       case "/book-reading":
