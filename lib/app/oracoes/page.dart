@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:coramdeo/app/oracoes/provider.dart';
-import 'package:searchable_listview/searchable_listview.dart';
 
 class OracoesPage extends StatefulWidget {
   const OracoesPage({super.key});
@@ -48,24 +47,7 @@ class _OracoesPageState extends State<OracoesPage> {
     );
   }
 
-  /// Creates a prayer item for use in SearchableListView
-  Widget buildPrayerItem(MapEntry<String, String> prayer) {
-    return Consumer<OracoesProvider>(
-      builder: (context, provider, child) => ListTile(
-        title: Text(prayer.value),
-        onTap: () => Navigator.pushNamed(context, '/${prayer.key}'),
-        leading: const Icon(Icons.chevron_right),
-        trailing: IconButton(
-          onPressed: () {
-            provider.toggleFavorita(prayer.key);
-          },
-          icon: provider.favoritas.contains(prayer.key)
-              ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary)
-              : const Icon(Icons.star_border),
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -92,34 +74,6 @@ class _OracoesPageState extends State<OracoesPage> {
                 }
               ),
               
-              // Implemented: Search functionality using SearchableListView
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SearchableList<MapEntry<String, String>>(
-                  initialList: routeToName.entries.toList(),
-                  itemBuilder: (MapEntry<String, String> prayer) => buildPrayerItem(prayer),
-                  filter: (value) => routeToName.entries
-                      .where((prayer) => 
-                          prayer.value.toLowerCase().contains(value.toLowerCase()))
-                      .toList(),
-                  emptyWidget: const Center(
-                    child: Text(
-                      'Nenhuma oração encontrada',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                  inputDecoration: InputDecoration(
-                    labelText: "Pesquisar orações",
-                    fillColor: Colors.white,
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: const BorderSide(),
-                    ),
-                  ),
-                ),
-              ),
-
               ExpansionTile(
                 title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
                 initiallyExpanded: false,
