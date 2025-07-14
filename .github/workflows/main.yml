@@ -27,13 +27,9 @@ jobs:
         flutter-version-file: pubspec.yaml
         cache: true
 
-    - name: Read version from version.txt
+    - name: Read version from pubspec.yaml
       id: read_version
-      run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
-
-    - name: Update pubspec.yaml
-      run: |
-        sed -i "s/^version:.*/version: $VERSION/" pubspec.yaml
+      run: echo "VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2)" >> $GITHUB_ENV
 
     - name: Download Android keystore
       id: android_keystore

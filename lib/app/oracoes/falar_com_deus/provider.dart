@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/falar_com_deus/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:coramdeo/utils/base_provider.dart';
 
-
-class FalarComDeusProvider extends ChangeNotifier {
+class FalarComDeusProvider extends BaseProvider {
   FalarComDeusProvider() {
-    init();
+    _initialize();
   }
 
   FalarComDeus data = FalarComDeus();
@@ -17,8 +17,6 @@ class FalarComDeusProvider extends ChangeNotifier {
   List<String> _note = [];
   List<String> _content = [];
   List<String> _reference = [];
-  bool _isLoading = false;
-  bool _error = false;
 
   String get date => _date;
   List<String> get day => _day;
@@ -27,45 +25,65 @@ class FalarComDeusProvider extends ChangeNotifier {
   List<String> get note => _note;
   List<String> get content => _content;
   List<String> get reference => _reference;
-  bool get isLoading => _isLoading;
-  bool get error => _error;
 
-  init() async {
-    _isLoading = true;
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    final storedDate = prefs.getString('falarComDeusDate');
-    if (storedDate == _date) {
-      _day = prefs.getStringList('falarComDeusDay') ?? [];
-      _title = prefs.getStringList('falarComDeusTitle') ?? [];
-      _subtitle = prefs.getStringList('falarComDeusSubtitle') ?? [];
-      _note = prefs.getStringList('falarComDeusNote') ?? [];
-      _content = prefs.getStringList('falarComDeusContent') ?? [];
-      _reference = prefs.getStringList('falarComDeusReference') ?? [];
-      _isLoading = false;
-      notifyListeners();
-    } else {
+  Future<void> _initialize() async {
+    setLoading(true);
+    
+    await safePrefOperation((prefs) async {
+      final storedDate = prefs.getString('falarComDeusDate');
+      if (storedDate == _date) {
+        _day = prefs.getStringList('falarComDeusDay') ?? [];
+        _title = prefs.getStringList('falarComDeusTitle') ?? [];
+        _subtitle = prefs.getStringList('falarComDeusSubtitle') ?? [];
+        _note = prefs.getStringList('falarComDeusNote') ?? [];
+        _content = prefs.getStringList('falarComDeusContent') ?? [];
+        _reference = prefs.getStringList('falarComDeusReference') ?? [];
+        return true;
+      } else {
+        return false;
+      }
+    }, errorContext: 'Loading cached FalarComDeus data');
+
+    // Check if we need to fetch fresh data
+    if (error != null || _title.isEmpty) {
+      clearError();
+      await _fetchFreshData();
+    }
+    
+    setLoading(false);
+  }
+
+  Future<void> _fetchFreshData() async {
+    await safeAsync(() async {
       await data.initFCD();
       if (data.data == null) {
-        _error = true;
-        notifyListeners();
+        setError('Erro ao carregar Falar com Deus');
+        return false;
       } else {
-        prefs.setString('falarComDeusDate', _date);
         _day = data.getDay();
-        prefs.setStringList('falarComDeusDay', _day);
         _title = data.getTitle();
-        prefs.setStringList('falarComDeusTitle', _title);
         _subtitle = data.getSubtitle();
-        prefs.setStringList('falarComDeusSubtitle', _subtitle);
         _note = data.getNote();
-        prefs.setStringList('falarComDeusNote', _note);
         _content = data.getContent();
-        prefs.setStringList('falarComDeusContent', _content);
         _reference = data.getReference();
-        prefs.setStringList('falarComDeusReference', _reference);
-        _isLoading = false;
-        notifyListeners();
+        
+        // Cache the data
+        await _cacheData();
+        return true;
       }
-    }
+    }, errorContext: 'Fetching FalarComDeus data');
+  }
+
+  Future<void> _cacheData() async {
+    await safePrefOperation((prefs) async {
+      await prefs.setString('falarComDeusDate', _date);
+      await prefs.setStringList('falarComDeusDay', _day);
+      await prefs.setStringList('falarComDeusTitle', _title);
+      await prefs.setStringList('falarComDeusSubtitle', _subtitle);
+      await prefs.setStringList('falarComDeusNote', _note);
+      await prefs.setStringList('falarComDeusContent', _content);
+      await prefs.setStringList('falarComDeusReference', _reference);
+      return true;
+    }, errorContext: 'Caching FalarComDeus data');
   }
 }

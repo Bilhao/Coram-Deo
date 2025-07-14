@@ -5,8 +5,16 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
 void _onSelectNotification(NotificationResponse? response) {
-  if (response != null && response.payload != null) {
-    Navigator.of(Routes.navigatorKey.currentContext!).pushNamed(response.payload!);
+  try {
+    if (response != null && response.payload != null) {
+      final context = Routes.navigatorKey.currentContext;
+      if (context != null) {
+        Navigator.of(context).pushNamed(response.payload!);
+      }
+    }
+  } catch (e) {
+    // Log error but don't crash the app
+    debugPrint('Error handling notification: $e');
   }
 }
 
@@ -34,36 +42,60 @@ class Notifier {
     tz.initializeTimeZones();
   }
 
-  static scheduledNotification(CustomNotification notification, TimeOfDay time) async {
-    final date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, time.hour, time.minute);
+  static Future<void> scheduledNotification(CustomNotification notification, TimeOfDay time) async {
+    try {
+      final date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, time.hour, time.minute);
 
-    var androidDetails = const AndroidNotificationDetails(
-      'lembretes',
-      'Lembretes',
-      importance: Importance.max,
-      priority: Priority.max,
-      playSound: true,
-      enableVibration: true,
-    );
-    var iosDetails = const DarwinNotificationDetails();
+      var androidDetails = const AndroidNotificationDetails(
+        'lembretes',
+        'Lembretes',
+        importance: Importance.max,
+        priority: Priority.max,
+        playSound: true,
+        enableVibration: true,
+      );
+      var iosDetails = const DarwinNotificationDetails();
 
-    var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
+      var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
-    await _notification.zonedSchedule(notification.id, notification.title, notification.body, tz.TZDateTime.from(date, tz.local), notificationDetails,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, payload: notification.payload, matchDateTimeComponents: DateTimeComponents.time);
+      await _notification.zonedSchedule(
+        notification.id, 
+        notification.title, 
+        notification.body, 
+        tz.TZDateTime.from(date, tz.local), 
+        notificationDetails,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, 
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, 
+        payload: notification.payload, 
+        matchDateTimeComponents: DateTimeComponents.time
+      );
+    } catch (e) {
+      debugPrint('Error scheduling notification: $e');
+      rethrow;
+    }
   }
 
-  static stopNotification(int id) async {
-    await _notification.cancel(id);
+  static Future<void> stopNotification(int id) async {
+    try {
+      await _notification.cancel(id);
+    } catch (e) {
+      debugPrint('Error stopping notification: $e');
+      rethrow;
+    }
   }
 
   static Future<bool?> verifyNotificationPermission() async {
-    bool? permission = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
-    bool? permission2 = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()!.requestExactAlarmsPermission();
+    try {
+      bool? permission = await _notification
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+      bool? permission2 = await _notification
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestExactAlarmsPermission();
 
-    if (permission == true && permission2 == true) {
-      return true;
-    } else {
+      return permission == true && permission2 == true;
+    } catch (e) {
+      debugPrint('Error verifying notification permission: $e');
       return false;
     }
   }
