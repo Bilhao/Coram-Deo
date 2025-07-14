@@ -60,6 +60,13 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
 - **Segurança**
   - Bloqueio do exame de consciência com biometria (opcional)
 
+- **Otimizações Recentes (v0.1.9)**
+  - Arquitetura otimizada com padrão BaseProvider para melhor performance
+  - Correção de bugs críticos e melhor tratamento de erros
+  - Busca implementada na página de orações
+  - Gerenciamento centralizado de constantes e configurações
+  - Melhoria significativa na velocidade de carregamento
+
 ---
 
 ## Instalação
@@ -108,6 +115,11 @@ lib/
     oracoes/
     plano_de_vida/
     ...
+  utils/
+    base_provider.dart
+    constants.dart
+    notification.dart
+    routes.dart
 assets/
   biblia_nvi.db
   plano_de_vida.db
@@ -128,6 +140,7 @@ assets/
 - **lib/app/oracoes/**: Todas as telas de orações e espiritualidade.
 - **lib/app/livros/**: Telas e lógica dos livros espirituais.
 - **lib/app/biblia/**: Lógica e interface da Bíblia.
+- **lib/utils/**: Utilitários compartilhados (BaseProvider, constantes, rotas).
 - **assets/books/**: Bancos de dados SQLite dos livros.
 - **assets/biblia_nvi.db**: Banco de dados da Bíblia NVI.
 - **assets/images/**: Logos e imagens do app.
