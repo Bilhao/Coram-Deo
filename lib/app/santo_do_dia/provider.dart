@@ -90,9 +90,14 @@ class SantoDoDiaProvider extends BaseProvider {
   }
 
   Future<void> changeDate(int day, int month) async {
+    setLoading(true);
     _day = day;
     _month = month;
-    await _initialize();
+    
+    // Force fresh data fetch for the new date
+    await _fetchFreshData();
+    
+    setLoading(false);
     notifyListeners();
   }
 }
