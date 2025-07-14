@@ -1,37 +1,47 @@
-import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
-import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
-import 'package:coramdeo/app/oracoes/gratias_tibi_ago/page.dart';
-import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:flutter/material.dart';
-import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
+
+// Core app pages
+import 'package:coramdeo/app/home_page.dart';
+import 'package:coramdeo/app/settings_page.dart';
+
+// Bible pages
+import 'package:coramdeo/app/biblia/page_1.dart';
+import 'package:coramdeo/app/biblia/page_2.dart';
+
+// Books pages
+import 'package:coramdeo/app/livros/livros_page.dart';
 import 'package:coramdeo/app/livros/point_book_reading_page.dart';
 import 'package:coramdeo/app/livros/1_caminho/page.dart';
-import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page.dart';
-import 'package:coramdeo/app/livros/3_forja/page.dart';
-import 'package:coramdeo/app/livros/6_santo_rosario/page.dart';
 import 'package:coramdeo/app/livros/2_sulco/page.dart';
+import 'package:coramdeo/app/livros/3_forja/page.dart';
+import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
+import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page.dart';
+import 'package:coramdeo/app/livros/6_santo_rosario/page.dart';
 import 'package:coramdeo/app/livros/7_via_sacra/page.dart';
+
+// Prayer pages
+import 'package:coramdeo/app/oracoes/page.dart';
+import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
+import 'package:coramdeo/app/oracoes/angelus_regina_caeli/page.dart';
+import 'package:coramdeo/app/oracoes/comentario_evangelho/page.dart';
 import 'package:coramdeo/app/oracoes/credo/page.dart';
+import 'package:coramdeo/app/oracoes/estampa_josemaria/page.dart';
+import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
+import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
+import 'package:coramdeo/app/oracoes/gratias_tibi_ago/page.dart';
 import 'package:coramdeo/app/oracoes/lembrai_vos/page.dart';
 import 'package:coramdeo/app/oracoes/oferecimento_de_obras/page.dart';
 import 'package:coramdeo/app/oracoes/preces/page.dart';
+import 'package:coramdeo/app/oracoes/salmo_2/page.dart';
 import 'package:coramdeo/app/oracoes/santo_rosario/page.dart';
-import 'package:coramdeo/app/biblia/page_1.dart';
-import 'package:coramdeo/app/biblia/page_2.dart';
-import 'package:coramdeo/app/home_page.dart';
-import 'package:coramdeo/app/liturgia_diaria/page.dart';
-import 'package:coramdeo/app/livros/livros_page.dart';
-import 'package:coramdeo/app/oracoes/angelus_regina_caeli/page.dart';
-import 'package:coramdeo/app/oracoes/comentario_evangelho/page.dart';
-import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
-import 'package:coramdeo/app/oracoes/page.dart';
 import 'package:coramdeo/app/oracoes/te_deum/page.dart';
 import 'package:coramdeo/app/oracoes/visita_ao_santissimo/page.dart';
-import 'package:coramdeo/app/oracoes/estampa_josemaria/page.dart';
+
+// Other feature pages
+import 'package:coramdeo/app/liturgia_diaria/page.dart';
 import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
 import 'package:coramdeo/app/exame_de_consciencia/page.dart';
-import 'package:coramdeo/app/settings_page.dart';
 
 
 class Routes {
@@ -115,8 +125,13 @@ class Routes {
 
       // livros
       case "/book-reading":
-        final args = settings.arguments as Map<String, dynamic>;
-        return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to books page
+          return MaterialPageRoute(builder: (context) => const LivrosPage());
+        }
 
       case "/caminho":
         return MaterialPageRoute(builder: (context) => const CaminhoPage());
@@ -140,6 +155,7 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const ViaSacraLivroPage());
 
       default:
+        // Return home page for any unrecognized route
         return MaterialPageRoute(builder: (_) => const HomePage());
     }
   }
