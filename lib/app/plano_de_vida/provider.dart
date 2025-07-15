@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:coramdeo/utils/notification.dart';
 
 class PlanoDeVidaProvider extends BaseProvider {
   PlanoDeVida pdvDb = PlanoDeVida();
@@ -106,6 +107,12 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> removeItem(String title) async {
     await safeAsync(() async {
+      // Cancel all notifications for this title before deleting
+      List<int> notificationIds = await getAllNotificationIdsForTitle(title);
+      for (int id in notificationIds) {
+        await Notifier.stopNotification(id);
+      }
+      
       await pdvDb.deleteItem(title);
       await update();
       return true;
@@ -166,6 +173,16 @@ class PlanoDeVidaProvider extends BaseProvider {
       await update();
       return true;
     }, errorContext: 'Deleting notification time');
+  }
+
+  // Get notification ID for specific time
+  Future<int> getNotificationIdForTime(String title, String time) async {
+    return await pdvDb.getNotificationIdForTime(title, time);
+  }
+
+  // Get all notification IDs for a title (used when deleting all notifications for an item)
+  Future<List<int>> getAllNotificationIdsForTitle(String title) async {
+    return await pdvDb.getAllNotificationIdsForTitle(title);
   }
 
   Future<void> insertCompletedDate(String title, String completedDate) async {

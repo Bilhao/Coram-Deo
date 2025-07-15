@@ -216,6 +216,51 @@ class PlanoDeVida {
     await db.rawDelete('DELETE FROM data WHERE title = ?', [title]);
   }
 
+  // Generate unique notification ID for a specific time within a title
+  int generateNotificationId(int itemId, int timeIndex) {
+    return int.parse("${itemId + 1}${timeIndex.toString().padLeft(3, '0')}");
+  }
+
+  // Get notification ID for a specific title and time
+  Future<int> getNotificationIdForTime(String title, String time) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
+    
+    if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
+      return -1;
+    }
+    
+    int itemId = maps[0]['id'];
+    List<String> times = maps[0]['notificationTimes'].split(',');
+    int timeIndex = times.indexOf(time);
+    
+    if (timeIndex == -1) {
+      return -1;
+    }
+    
+    return generateNotificationId(itemId, timeIndex);
+  }
+
+  // Get all notification IDs for a title
+  Future<List<int>> getAllNotificationIdsForTitle(String title) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
+    
+    if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
+      return [];
+    }
+    
+    int itemId = maps[0]['id'];
+    List<String> times = maps[0]['notificationTimes'].split(',');
+    List<int> notificationIds = [];
+    
+    for (int i = 0; i < times.length; i++) {
+      notificationIds.add(generateNotificationId(itemId, i));
+    }
+    
+    return notificationIds;
+  }
+
   getTitleAndNotificationId() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, title, notificationTimes FROM data');
