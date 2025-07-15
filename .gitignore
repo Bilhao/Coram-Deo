@@ -12,6 +12,11 @@
 .swiftpm/
 migrate_working_dir/
 
+# Downloaded temporary files
+*.tar.gz
+*.tar.xz
+*.deb
+
 # IntelliJ related
 *.iml
 *.ipr
