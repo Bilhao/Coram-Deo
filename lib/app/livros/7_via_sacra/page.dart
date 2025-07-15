@@ -19,7 +19,7 @@ class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Via Sacra"),
+            title: const Text("Via Sacra (Livro)"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(
