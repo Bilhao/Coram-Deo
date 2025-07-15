@@ -63,7 +63,6 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
 - **Otimizações Recentes (v0.1.9)**
   - Arquitetura otimizada com padrão BaseProvider para melhor performance
   - Correção de bugs críticos e melhor tratamento de erros
-  - Busca implementada na página de orações
   - Gerenciamento centralizado de constantes e configurações
   - Melhoria significativa na velocidade de carregamento
 
