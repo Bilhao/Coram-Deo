@@ -121,7 +121,7 @@ class Biblia {
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT book FROM bible WHERE testament = ? ORDER BY book_id', [testament]);
 
     return List.generate(maps.length, (i) {
-      return maps[i]['book'] as String;
+      return maps[i]['book'];
     });
   }
 
@@ -130,7 +130,7 @@ class Biblia {
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT chapter FROM bible WHERE book = ? ORDER BY chapter', [book]);
 
     return List.generate(maps.length, (i) {
-      return maps[i]['chapter'] as int;
+      return maps[i]['chapter'];
     });
   }
 
@@ -148,7 +148,7 @@ class Biblia {
     final maps = await db.rawQuery('SELECT verse FROM bible WHERE book = ? AND chapter = ? ORDER BY verse_id', [book, chapter]);
 
     return List.generate(maps.length, (i) {
-      return maps[i]['verse'] as String;
+      return maps[i]['verse'];
     });
   }
 
@@ -156,21 +156,21 @@ class Biblia {
     final db = await initDb(versionId);
     final maps = await db.rawQuery('SELECT DISTINCT book FROM bible WHERE book_id = ?', [bookId]);
 
-    return maps.isNotEmpty ? maps[0]['book'] as String : '';
+    return maps.isNotEmpty ? maps[0]['book'] : '';
   }
 
   Future<int> getLastChapterOfBook(String book, [String? versionId]) async {
     final db = await initDb(versionId);
     final maps = await db.rawQuery('SELECT MAX(chapter) FROM bible WHERE book = ?', [book]);
 
-    return maps[0]['MAX(chapter)'] as int;
+    return maps[0]['MAX(chapter)'];
   }
 
   Future<int> getBookId(String book, [String? versionId]) async {
     final db = await initDb(versionId);
     final maps = await db.rawQuery('SELECT book_id FROM bible WHERE book = ? LIMIT 1', [book]);
 
-    return maps.isNotEmpty ? maps[0]['book_id'] as int : 1;
+    return maps.isNotEmpty ? maps[0]['book_id'] : 1;
   }
 
   Future<String> getVerseAudioUrl(String book, int chapter, int verse, [String? versionId]) async {
@@ -196,4 +196,5 @@ class Biblia {
     final bookId = await getBookId(book, versionId);
     return 'https://beblia.com/audio/${version.language.toLowerCase()}/$bookId/$chapter.mp3';
   }
+}
 }
