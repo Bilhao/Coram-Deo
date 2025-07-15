@@ -217,8 +217,11 @@ class PlanoDeVida {
   }
 
   // Generate unique notification ID for a specific time within a title
-  int generateNotificationId(int itemId, int timeIndex) {
-    return int.parse("${itemId + 1}${timeIndex.toString().padLeft(3, '0')}");
+  // Uses the time string itself to ensure ID stability regardless of array order
+  int generateNotificationId(int itemId, String time) {
+    // Convert time string to numeric representation (remove colons and non-digits)
+    String timeOnly = time.replaceAll(RegExp(r'[^0-9]'), '');
+    return int.parse("${itemId + 1}$timeOnly");
   }
 
   // Get notification ID for a specific title and time
@@ -232,13 +235,13 @@ class PlanoDeVida {
     
     int itemId = maps[0]['id'];
     List<String> times = maps[0]['notificationTimes'].split(',');
-    int timeIndex = times.indexOf(time);
     
-    if (timeIndex == -1) {
+    // Check if the time exists in the list
+    if (!times.contains(time)) {
       return -1;
     }
     
-    return generateNotificationId(itemId, timeIndex);
+    return generateNotificationId(itemId, time);
   }
 
   // Get all notification IDs for a title
@@ -254,8 +257,8 @@ class PlanoDeVida {
     List<String> times = maps[0]['notificationTimes'].split(',');
     List<int> notificationIds = [];
     
-    for (int i = 0; i < times.length; i++) {
-      notificationIds.add(generateNotificationId(itemId, i));
+    for (String time in times) {
+      notificationIds.add(generateNotificationId(itemId, time));
     }
     
     return notificationIds;
