@@ -20,7 +20,6 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
       child: Scaffold(
           appBar: AppBar(
             title: const Text("Santo Rosário"),
-            subtitle: const Text("Baseado nos ensinamentos de São Josemaría"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(

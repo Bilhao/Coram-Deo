@@ -20,7 +20,6 @@ class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
       child: Scaffold(
           appBar: AppBar(
             title: const Text("Via Sacra"),
-            subtitle: const Text("Baseado nos ensinamentos de São Josemaría"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(
