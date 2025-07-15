@@ -2,7 +2,6 @@ import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
-import 'package:coramdeo/app/biblia/audio_controls.dart';
 import 'package:provider/provider.dart';
 
 class BibliaPage2 extends StatefulWidget {
@@ -21,18 +20,8 @@ class _BibliaPage2State extends State<BibliaPage2> {
       builder: (context, provider, fs, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(provider.book),
-                Text(
-                  provider.currentVersionInfo.name,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
+            title: Text(provider.book),
             actions: [
-              const SimpleAudioButton(),
               IconButton(
                 onPressed: fs.decreaseFontSize,
                 icon: const Icon(Icons.remove),
@@ -47,10 +36,6 @@ class _BibliaPage2State extends State<BibliaPage2> {
             child: SelectionArea(
               child: Column(
                 children: [
-                  // Audio controls
-                  if (provider.audioEnabled && provider.currentVersionInfo.hasAudio)
-                    const AudioControls(),
-                  
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10.0),

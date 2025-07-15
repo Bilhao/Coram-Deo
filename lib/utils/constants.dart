@@ -59,16 +59,12 @@ class AppConstants {
   static const String biometricKey = 'exame.biometric';
   
   // Bible preferences keys
-  static const String bibleVersionKey = 'bible.version';
   static const String bibleTestamentKey = 'bible.testament';
   static const String bibleBookIdKey = 'bible.book_id';
   static const String bibleBookKey = 'bible.book';
   static const String bibleChapterKey = 'bible.chapter';
   static const String bibleVersesIdKey = 'bible.verses_id';
   static const String bibleVersesKey = 'bible.verses';
-  static const String bibleAudioEnabledKey = 'bible.audio_enabled';
-  static const String bibleAutoPlayKey = 'bible.auto_play';
-  static const String biblePlaybackSpeedKey = 'bible.playback_speed';
   
   // Prayer preferences
   static const String favoritePrayersKey = 'oracoes.favoritas';
@@ -82,14 +78,10 @@ class AppConstants {
   static const int defaultColorSeed = 0xFF004B8D;
   static const bool defaultBlockExame = true;
   static const bool defaultUseBiometric = true;
-  static const String defaultBibleVersion = 'nvi_pt';
   static const String defaultTestament = 'Old';
   static const int defaultBookId = 1;
   static const String defaultBook = 'Gênesis';
   static const int defaultChapter = 1;
-  static const bool defaultAudioEnabled = false;
-  static const bool defaultAutoPlay = false;
-  static const double defaultPlaybackSpeed = 1.0;
 
   // Notification settings
   static const String notificationChannelId = 'lembretes';
