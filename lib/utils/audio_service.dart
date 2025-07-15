@@ -33,7 +33,7 @@ class AudioService extends ChangeNotifier {
   bool get isLoading => _state == AudioState.loading;
   bool get hasError => _state == AudioState.error;
 
-  AudioService() {
+  AudioService._internal() {
     _initializePlayer();
   }
 
