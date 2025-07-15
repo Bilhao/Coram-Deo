@@ -216,6 +216,54 @@ class PlanoDeVida {
     await db.rawDelete('DELETE FROM data WHERE title = ?', [title]);
   }
 
+  // Generate unique notification ID for a specific time within a title
+  // Uses the time string itself to ensure ID stability regardless of array order
+  int generateNotificationId(int itemId, String time) {
+    // Convert time string to numeric representation (remove colons and non-digits)
+    String timeOnly = time.replaceAll(RegExp(r'[^0-9]'), '');
+    return int.parse("${itemId + 1}$timeOnly");
+  }
+
+  // Get notification ID for a specific title and time
+  Future<int> getNotificationIdForTime(String title, String time) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
+    
+    if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
+      return -1;
+    }
+    
+    int itemId = maps[0]['id'];
+    List<String> times = maps[0]['notificationTimes'].split(',');
+    
+    // Check if the time exists in the list
+    if (!times.contains(time)) {
+      return -1;
+    }
+    
+    return generateNotificationId(itemId, time);
+  }
+
+  // Get all notification IDs for a title
+  Future<List<int>> getAllNotificationIdsForTitle(String title) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
+    
+    if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
+      return [];
+    }
+    
+    int itemId = maps[0]['id'];
+    List<String> times = maps[0]['notificationTimes'].split(',');
+    List<int> notificationIds = [];
+    
+    for (String time in times) {
+      notificationIds.add(generateNotificationId(itemId, time));
+    }
+    
+    return notificationIds;
+  }
+
   getTitleAndNotificationId() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, title, notificationTimes FROM data');
