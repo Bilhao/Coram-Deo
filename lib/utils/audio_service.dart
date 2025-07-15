@@ -12,7 +12,6 @@ enum AudioState {
 class AudioService extends ChangeNotifier {
   static final AudioService _instance = AudioService._internal();
   factory AudioService() => _instance;
-  AudioService._internal();
 
   final AudioPlayer _player = AudioPlayer();
   AudioState _state = AudioState.stopped;
@@ -33,7 +32,7 @@ class AudioService extends ChangeNotifier {
   bool get isLoading => _state == AudioState.loading;
   bool get hasError => _state == AudioState.error;
 
-  AudioService() {
+  AudioService._internal() {
     _initializePlayer();
   }
 
