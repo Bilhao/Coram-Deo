@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
+import 'package:coramdeo/app/biblia/version_selector.dart';
 import 'package:provider/provider.dart';
 
 class BibliaPage1 extends StatelessWidget {
@@ -11,7 +12,29 @@ class BibliaPage1 extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bíblia"),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Bíblia"),
+            Text(
+              provider.currentVersionInfo.name,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.library_books),
+            tooltip: 'Selecionar versão',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => const BibleVersionDialog(),
+              );
+            },
+          ),
+          const BibleVersionSelector(),
+        ],
       ),
       body: SafeArea(
         child: Column(
