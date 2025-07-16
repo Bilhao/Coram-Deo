@@ -216,7 +216,8 @@ class PlanoDeVidaProvider extends BaseProvider {
           selectedDays.add((i + 1).toString()); // 1=Monday, 2=Tuesday, etc.
         }
       }
-      String weekdaysString = selectedDays.join(',');
+      // If no days selected, default to all days
+      String weekdaysString = selectedDays.isEmpty ? "1,2,3,4,5,6,7" : selectedDays.join(',');
       await pdvDb.updateWeekdays(title, weekdaysString);
       await update();
       return true;
@@ -225,11 +226,13 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   List<bool> getItemWeekdays(String title) {
     String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
-    List<String> selectedDays = weekdaysString.split(',');
+    if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
+    
+    List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
     List<bool> weekdaySelection = List.filled(7, false);
     
     for (String day in selectedDays) {
-      int dayIndex = int.tryParse(day);
+      int dayIndex = int.tryParse(day.trim());
       if (dayIndex != null && dayIndex >= 1 && dayIndex <= 7) {
         weekdaySelection[dayIndex - 1] = true; // Convert to 0-based indexing
       }
@@ -243,7 +246,9 @@ class PlanoDeVidaProvider extends BaseProvider {
     
     for (String title in _titlesIsSelected) {
       String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
-      List<String> selectedDays = weekdaysString.split(',');
+      if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
+      
+      List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
       if (selectedDays.contains(currentWeekday.toString())) {
         todaysItems.add(title);
       }

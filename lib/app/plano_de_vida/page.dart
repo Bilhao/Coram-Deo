@@ -214,7 +214,8 @@ class InfoAlertDialog extends StatelessWidget {
                 child: WeekdaySelector(
                   onChanged: (int day) {
                     List<bool> currentSelection = provider.getItemWeekdays(title);
-                    currentSelection[day % 7] = !currentSelection[day % 7];
+                    // day parameter is 0-based (0=Monday, 6=Sunday)
+                    currentSelection[day] = !currentSelection[day];
                     provider.updateItemWeekdays(title, currentSelection);
                   },
                   values: provider.getItemWeekdays(title),
