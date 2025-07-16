@@ -362,6 +362,7 @@ class _WeekdaySelectorAdapter extends StatefulWidget {
   final Color? color;
 
   const _WeekdaySelectorAdapter({
+    super.key,
     required this.values,
     required this.onChanged,
     this.selectedFillColor,
@@ -392,6 +393,12 @@ class _WeekdaySelectorAdapterState extends State<_WeekdaySelectorAdapter> {
     if (oldWidget.values != widget.values) {
       _updateControllerFromValues();
     }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void _updateControllerFromValues() {
