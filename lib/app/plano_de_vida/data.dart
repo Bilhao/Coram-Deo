@@ -223,7 +223,12 @@ class PlanoDeVida {
 
   insertNewItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
     final db = await initDb();
-    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification) VALUES(?, ?, ?, ?, ?)", [title, isCustom, isSelected, isCompleted, isNotification]);
+    // Ensure weekdays column exists
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification, weekdays) VALUES(?, ?, ?, ?, ?, ?)", 
+        [title, isCustom, isSelected, isCompleted, isNotification, "1,2,3,4,5,6,7"]);
   }
 
   deleteItem(String title) async {
