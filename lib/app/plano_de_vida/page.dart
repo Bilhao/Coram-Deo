@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:provider/provider.dart';
+import 'package:weekday_selector/weekday_selector.dart';
 
 class PlanoDeVidaPage extends StatefulWidget {
   const PlanoDeVidaPage({super.key});
@@ -116,6 +117,21 @@ class _TodosOsItensState extends State<TodosOsItens> {
                           provider.toggleItemSelection(provider.titles[i]);
                         },
                       ),
+                      // Show more options button only for selected items
+                      provider.titlesIsSelected.contains(provider.titles[i])
+                          ? IconButton(
+                              icon: const Icon(Icons.more_vert),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => ChangeNotifierProvider.value(
+                                    value: provider,
+                                    child: InfoAlertDialog(title: provider.titles[i]),
+                                  ),
+                                );
+                              },
+                            )
+                          : Container(),
                     ],
                   ),
                   onTap: () => provider.toggleItemSelection(provider.titles[i]),
@@ -134,42 +150,34 @@ class Selecionados extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
+      // Get today's items based on weekday selection
+      List<String> todaysItems = provider.getTodaysItems();
+      
       return Column(children: [
         Expanded(
           child: ListView.builder(
-            itemCount: provider.titlesIsSelected.length,
+            itemCount: todaysItems.length,
             itemBuilder: (context, index) {
+              String title = todaysItems[index];
               return ListTile(
                 title: Text(
-                  provider.titlesIsSelected[index],
-                  style: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index])
+                  title,
+                  style: provider.titlesIsCompletedToday.contains(title)
                     ? const TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough)
                     : const TextStyle(fontSize: 18)
                 ),
-                leading: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]) ? const Icon(Icons.check) : const Icon(Icons.watch_later_outlined),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Checkbox(
-                      value: provider.titlesIsCompletedToday.contains(provider.titlesIsSelected[index]),
-                      onChanged: (value) {
-                        provider.toggleItemCompletion(provider.titlesIsSelected[index]);
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => ChangeNotifierProvider.value(
-                            value: provider,
-                            child: InfoAlertDialog(title: provider.titlesIsSelected[index]),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                leading: provider.titlesIsCompletedToday.contains(title) 
+                    ? const Icon(Icons.check) 
+                    : const Icon(Icons.watch_later_outlined),
+                trailing: Checkbox(
+                  value: provider.titlesIsCompletedToday.contains(title),
+                  onChanged: (value) {
+                    provider.toggleItemCompletion(title);
+                  },
                 ),
+                onTap: () {
+                  provider.toggleItemCompletion(title);
+                },
               );
             })
         ),
@@ -196,13 +204,30 @@ class InfoAlertDialog extends StatelessWidget {
               Container(
                 width: double.maxFinite,
               ),
-              ListTile(
-                title: provider.titlesIsCompletedToday.contains(title) ? const Text("Marcar como pendente") : const Text("Marcar como concluído"),
-                leading: provider.titlesIsCompletedToday.contains(title) ? const Icon(Icons.watch_later_outlined) : const Icon(Icons.check),
-                onTap: () {
-                  provider.toggleItemCompletion(title);
-                },
+              // Weekday Selector
+              const ListTile(
+                title: Text("Dias da semana"),
+                leading: Icon(Icons.calendar_today),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: WeekdaySelector(
+                  onChanged: (int day) {
+                    List<bool> currentSelection = provider.getItemWeekdays(title);
+                    // day parameter is 0-based (0=Monday, 6=Sunday)
+                    currentSelection[day] = !currentSelection[day];
+                    provider.updateItemWeekdays(title, currentSelection);
+                  },
+                  values: provider.getItemWeekdays(title),
+                  selectedFillColor: Theme.of(context).primaryColor,
+                  selectedColor: Colors.white,
+                  disabledFillColor: Colors.grey.shade300,
+                  disabledColor: Colors.grey.shade600,
+                  fillColor: Colors.grey.shade200,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              const Divider(),
               ExpansionTile(
                 title: const Text("Adicionar lembrete"),
                 leading: const Icon(Icons.alarm),
@@ -274,7 +299,7 @@ class InfoAlertDialog extends StatelessWidget {
                 title: const Text("Excluir"),
                 leading: const Icon(Icons.delete),
                 onTap: () {
-                  provider.toggleItemSelection(title);
+                  provider.removeItem(provider.titles[i]);
                   Navigator.of(context).pop();
                 },
               ),

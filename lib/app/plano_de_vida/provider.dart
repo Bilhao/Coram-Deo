@@ -14,6 +14,7 @@ class PlanoDeVidaProvider extends BaseProvider {
   List<String> _titlesIsNotification = [];
   Map<String, dynamic> _notificationTimes = {};
   Map<String, dynamic> _completedDates = {};
+  Map<String, dynamic> _weekdays = {};
   Map<String, int> _notificationId = {};
   int _year = DateTime.now().year;
   int _month = DateTime.now().month;
@@ -28,6 +29,7 @@ class PlanoDeVidaProvider extends BaseProvider {
   List<String> get titlesIsNotification => _titlesIsNotification;
   Map<String, dynamic> get notificationTimes => _notificationTimes;
   Map<String, dynamic> get completedDates => _completedDates;
+  Map<String, dynamic> get weekdays => _weekdays;
   Map<String, int> get notificationId => _notificationId;
   int get year => _year;
   int get month => _month;
@@ -50,6 +52,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       _titlesIsNotification = await pdvDb.getTitleisNotification();
       _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
       _completedDates = await pdvDb.getTitleAndCompletedDates();
+      _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
       
       return true;
@@ -79,6 +82,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       _titlesIsNotification = await pdvDb.getTitleisNotification();
       _notificationTimes = await pdvDb.getTitleAndNotificationTimes();
       _completedDates = await pdvDb.getTitleAndCompletedDates();
+      _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
       notifyListeners();
       return true;
@@ -201,5 +205,54 @@ class PlanoDeVidaProvider extends BaseProvider {
       await update();
       return true;
     }, errorContext: 'Deleting completed date');
+  }
+
+  Future<void> updateItemWeekdays(String title, List<bool> weekdaySelection) async {
+    await safeAsync(() async {
+      // Convert boolean list to string representation (1-based indexing for weekdays)
+      List<String> selectedDays = [];
+      for (int i = 0; i < weekdaySelection.length; i++) {
+        if (weekdaySelection[i]) {
+          selectedDays.add((i + 1).toString()); // 1=Monday, 2=Tuesday, etc.
+        }
+      }
+      // If no days selected, default to all days
+      String weekdaysString = selectedDays.isEmpty ? "1,2,3,4,5,6,7" : selectedDays.join(',');
+      await pdvDb.updateWeekdays(title, weekdaysString);
+      await update();
+      return true;
+    }, errorContext: 'Updating item weekdays');
+  }
+
+  List<bool> getItemWeekdays(String title) {
+    String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
+    if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
+    
+    List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
+    List<bool> weekdaySelection = List.filled(7, false);
+    
+    for (String day in selectedDays) {
+      int dayIndex = int.tryParse(day.trim());
+      if (dayIndex != null && dayIndex >= 1 && dayIndex <= 7) {
+        weekdaySelection[dayIndex - 1] = true; // Convert to 0-based indexing
+      }
+    }
+    return weekdaySelection;
+  }
+
+  List<String> getTodaysItems() {
+    int currentWeekday = DateTime.now().weekday; // 1=Monday, 7=Sunday
+    List<String> todaysItems = [];
+    
+    for (String title in _titlesIsSelected) {
+      String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
+      if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
+      
+      List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
+      if (selectedDays.contains(currentWeekday.toString())) {
+        todaysItems.add(title);
+      }
+    }
+    return todaysItems;
   }
 }

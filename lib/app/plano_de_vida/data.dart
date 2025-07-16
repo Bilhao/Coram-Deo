@@ -96,6 +96,21 @@ class PlanoDeVida {
     return resultMap;
   }
 
+  Future<Map<String, dynamic>> getTitleAndWeekdays() async {
+    final db = await initDb();
+    // Add weekdays column if it doesn't exist
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+    
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT title, weekdays FROM data');
+    Map<String, dynamic> resultMap = {};
+    for (Map<String, dynamic> map in maps) {
+      resultMap.addAll({map["title"]: map["weekdays"] ?? "1,2,3,4,5,6,7"});
+    }
+    return resultMap;
+  }
+
   Future<List<String>> getAllTitles() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT title FROM data ORDER BY id');
@@ -208,12 +223,36 @@ class PlanoDeVida {
 
   insertNewItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
     final db = await initDb();
-    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification) VALUES(?, ?, ?, ?, ?)", [title, isCustom, isSelected, isCompleted, isNotification]);
+    // Ensure weekdays column exists
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification, weekdays) VALUES(?, ?, ?, ?, ?, ?)", 
+        [title, isCustom, isSelected, isCompleted, isNotification, "1,2,3,4,5,6,7"]);
   }
 
   deleteItem(String title) async {
     final db = await initDb();
     await db.rawDelete('DELETE FROM data WHERE title = ?', [title]);
+  }
+
+  updateWeekdays(String title, String weekdays) async {
+    final db = await initDb();
+    // Ensure weekdays column exists
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+    await db.rawUpdate('UPDATE data SET weekdays = ? WHERE title = ?', [weekdays, title]);
+  }
+
+  Future<String> getWeekdays(String title) async {
+    final db = await initDb();
+    // Ensure weekdays column exists
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT weekdays FROM data WHERE title = ?', [title]);
+    return maps.isNotEmpty ? (maps[0]['weekdays'] ?? "1,2,3,4,5,6,7") : "1,2,3,4,5,6,7";
   }
 
   // Generate unique notification ID for a specific time within a title
