@@ -255,4 +255,97 @@ class PlanoDeVidaProvider extends BaseProvider {
     }
     return todaysItems;
   }
+
+  // New methods for progress tracking
+  
+  /// Get completion percentage for a specific item over the last N days
+  double getItemCompletionPercentage(String title, int days) {
+    int completedDays = 0;
+    DateTime now = DateTime.now();
+    
+    for (int i = 0; i < days; i++) {
+      DateTime checkDate = now.subtract(Duration(days: i));
+      String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+      
+      if ((_completedDates[title] ?? "").contains(dateString)) {
+        completedDays++;
+      }
+    }
+    
+    return days > 0 ? (completedDays / days) * 100 : 0.0;
+  }
+
+  /// Get current streak for an item (consecutive days completed)
+  int getItemCurrentStreak(String title) {
+    int streak = 0;
+    DateTime now = DateTime.now();
+    
+    // Check backwards from today
+    for (int i = 0; i < 365; i++) { // Max 365 days to prevent infinite loop
+      DateTime checkDate = now.subtract(Duration(days: i));
+      String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+      
+      if ((_completedDates[title] ?? "").contains(dateString)) {
+        streak++;
+      } else {
+        break; // Streak broken
+      }
+    }
+    
+    return streak;
+  }
+
+  /// Get total completed days for an item
+  int getItemTotalCompletedDays(String title) {
+    String completedDatesString = _completedDates[title] ?? "";
+    if (completedDatesString.isEmpty) return 0;
+    
+    return completedDatesString.split(',').where((date) => date.isNotEmpty).length;
+  }
+
+  /// Get completion data for the last 30 days for charts
+  Map<String, double> getItemLast30DaysData(String title) {
+    Map<String, double> data = {};
+    DateTime now = DateTime.now();
+    
+    for (int i = 29; i >= 0; i--) {
+      DateTime checkDate = now.subtract(Duration(days: i));
+      String dateString = "${checkDate.day}/${checkDate.month}";
+      String fullDateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+      
+      bool completed = (_completedDates[title] ?? "").contains(fullDateString);
+      data[dateString] = completed ? 1.0 : 0.0;
+    }
+    
+    return data;
+  }
+
+  /// Get weekly completion summary (last 4 weeks)
+  List<Map<String, dynamic>> getWeeklyCompletionSummary(String title) {
+    List<Map<String, dynamic>> weeks = [];
+    DateTime now = DateTime.now();
+    
+    for (int week = 0; week < 4; week++) {
+      DateTime weekStart = now.subtract(Duration(days: (week * 7) + now.weekday - 1));
+      int completedDays = 0;
+      
+      for (int day = 0; day < 7; day++) {
+        DateTime checkDate = weekStart.add(Duration(days: day));
+        String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+        
+        if ((_completedDates[title] ?? "").contains(dateString)) {
+          completedDays++;
+        }
+      }
+      
+      weeks.add({
+        'week': 'Semana ${week + 1}',
+        'completed': completedDays,
+        'total': 7,
+        'percentage': (completedDays / 7) * 100,
+      });
+    }
+    
+    return weeks.reversed.toList(); // Most recent first
+  }
 }
