@@ -117,21 +117,19 @@ class _TodosOsItensState extends State<TodosOsItens> {
                           provider.toggleItemSelection(provider.titles[i]);
                         },
                       ),
-                      // Show more options button only for selected items
-                      provider.titlesIsSelected.contains(provider.titles[i])
-                          ? IconButton(
-                              icon: const Icon(Icons.more_vert),
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => ChangeNotifierProvider.value(
-                                    value: provider,
-                                    child: InfoAlertDialog(title: provider.titles[i]),
-                                  ),
-                                );
-                              },
-                            )
-                          : Container(),
+                      // Show more options button for all items
+                      IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ChangeNotifierProvider.value(
+                              value: provider,
+                              child: InfoAlertDialog(title: provider.titles[i]),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                   onTap: () => provider.toggleItemSelection(provider.titles[i]),
@@ -199,11 +197,11 @@ class InfoAlertDialog extends StatelessWidget {
         return AlertDialog(
           title: Text(title, textAlign: TextAlign.center),
           scrollable: true,
-          content: Column(
-            children: [
-              Container(
-                width: double.maxFinite,
-              ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
               // Weekday Selector
               const ListTile(
                 title: Text("Dias da semana"),
@@ -303,7 +301,8 @@ class InfoAlertDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
               ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -317,36 +316,275 @@ class Concluidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      return Column(children: [
-        ListTile(
-            title: Text("Concluídos do dia ${provider.day}/${provider.month}/${provider.year}", style: const TextStyle(fontSize: 19)),
-            trailing: IconButton(
-              onPressed: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2030),
-                  initialDate: DateTime(provider.year, provider.month, provider.day),
-                );
-                if (pickedDate != null) {
-                  provider.changeDate(pickedDate.year, pickedDate.month, pickedDate.day);
-                }
-              },
-              icon: const Icon(Icons.calendar_month),
-            )),
-        Expanded(
-            child: ListView.builder(
-                itemCount: provider.titlesIsCompleted.length,
-                itemBuilder: (context, index) {
-                  return (provider.completedDates[provider.titlesIsCompleted[index]] ?? "").split(",").contains("${provider.day}/${provider.month}/${provider.year}")
-                      ? ListTile(
-                    title: Text(provider.titlesIsCompleted[index], style: const TextStyle(fontSize: 18)),
-                    leading: const Icon(Icons.check),
-                  )
-                      : Container();
-                })),
-      ]);
+      return DefaultTabController(
+        length: 2,
+        child: Column(
+          children: [
+            const TabBar(
+              tabs: [
+                Tab(text: "Por Data", icon: Icon(Icons.calendar_today)),
+                Tab(text: "Progresso", icon: Icon(Icons.analytics)),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildDateView(context, provider),
+                  _buildProgressView(context, provider),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     });
+  }
+
+  Widget _buildDateView(BuildContext context, PlanoDeVidaProvider provider) {
+    return Column(
+      children: [
+        ListTile(
+          title: Text(
+            "Concluídos do dia ${provider.day}/${provider.month}/${provider.year}",
+            style: const TextStyle(fontSize: 19),
+          ),
+          trailing: IconButton(
+            onPressed: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                firstDate: DateTime(2020),
+                lastDate: DateTime(2030),
+                initialDate: DateTime(provider.year, provider.month, provider.day),
+              );
+              if (pickedDate != null) {
+                provider.changeDate(pickedDate.year, pickedDate.month, pickedDate.day);
+              }
+            },
+            icon: const Icon(Icons.calendar_month),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: provider.titlesIsCompleted.length,
+            itemBuilder: (context, index) {
+              return (provider.completedDates[provider.titlesIsCompleted[index]] ?? "")
+                      .split(",")
+                      .contains("${provider.day}/${provider.month}/${provider.year}")
+                  ? ListTile(
+                      title: Text(provider.titlesIsCompleted[index], style: const TextStyle(fontSize: 18)),
+                      leading: const Icon(Icons.check),
+                    )
+                  : Container();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressView(BuildContext context, PlanoDeVidaProvider provider) {
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        const Text(
+          "Análise de Progresso",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        
+        // Overall Statistics Card
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Estatísticas Gerais",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text("Itens selecionados: ${provider.titlesIsSelected.length}"),
+                Text("Itens completados hoje: ${provider.titlesIsCompletedToday.length}"),
+                if (provider.titlesIsSelected.isNotEmpty)
+                  Text(
+                    "Taxa de conclusão hoje: ${((provider.titlesIsCompletedToday.length / provider.titlesIsSelected.length) * 100).toStringAsFixed(1)}%"
+                  ),
+              ],
+            ),
+          ),
+        ),
+        
+        const SizedBox(height: 20),
+        
+        // Individual Item Progress
+        const Text(
+          "Progresso por Item",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        
+        ...provider.titlesIsSelected.map((title) => _buildItemProgressCard(context, provider, title)),
+      ],
+    );
+  }
+
+  Widget _buildItemProgressCard(BuildContext context, PlanoDeVidaProvider provider, String title) {
+    double completion7Days = provider.getItemCompletionPercentage(title, 7);
+    double completion30Days = provider.getItemCompletionPercentage(title, 30);
+    int currentStreak = provider.getItemCurrentStreak(title);
+    int totalCompleted = provider.getItemTotalCompletedDays(title);
+    List<Map<String, dynamic>> weeklyData = provider.getWeeklyCompletionSummary(title);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      child: ExpansionTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  currentStreak > 0 ? Icons.local_fire_department : Icons.radio_button_unchecked,
+                  color: currentStreak > 0 ? Colors.orange : Colors.grey,
+                  size: 16,
+                ),
+                const SizedBox(width: 4),
+                Text("Sequência: $currentStreak dias"),
+              ],
+            ),
+            const SizedBox(height: 2),
+            LinearProgressIndicator(
+              value: completion7Days / 100,
+              backgroundColor: Colors.grey[300],
+              valueColor: AlwaysStoppedAnimation<Color>(
+                completion7Days >= 80 ? Colors.green :
+                completion7Days >= 60 ? Colors.orange :
+                Colors.red
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              "7 dias: ${completion7Days.toStringAsFixed(1)}%",
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Statistics Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildStatItem("Sequência Atual", "$currentStreak dias", Icons.local_fire_department),
+                    _buildStatItem("Total Concluído", "$totalCompleted", Icons.check_circle),
+                    _buildStatItem("30 Dias", "${completion30Days.toStringAsFixed(1)}%", Icons.calendar_month),
+                  ],
+                ),
+                
+                const SizedBox(height: 20),
+                
+                // Weekly Progress
+                const Text(
+                  "Progresso Semanal",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                
+                ...weeklyData.map((week) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(week['week'], style: const TextStyle(fontSize: 12)),
+                      ),
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          value: week['completed'] / week['total'],
+                          backgroundColor: Colors.grey[300],
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            week['percentage'] >= 80 ? Colors.green :
+                            week['percentage'] >= 60 ? Colors.orange :
+                            Colors.red
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        width: 60,
+                        child: Text(
+                          "${week['completed']}/${week['total']}",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
+                
+                // Motivational Message
+                const SizedBox(height: 15),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    _getMotivationalMessage(completion7Days, currentStreak),
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, IconData icon) {
+    return Column(
+      children: [
+        Icon(icon, color: Colors.blue),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  String _getMotivationalMessage(double completion7Days, int streak) {
+    if (streak >= 7) {
+      return "🔥 Incrível! Você está em uma sequência de $streak dias!";
+    } else if (completion7Days >= 80) {
+      return "🌟 Excelente progresso! Continue assim!";
+    } else if (completion7Days >= 60) {
+      return "💪 Bom ritmo! Você pode melhorar ainda mais!";
+    } else if (completion7Days >= 40) {
+      return "🎯 Você está no caminho certo, continue!";
+    } else {
+      return "🌱 Todo grande objetivo começa com pequenos passos!";
+    }
   }
 }
 
