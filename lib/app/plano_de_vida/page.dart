@@ -196,7 +196,7 @@ class InfoAlertDialog extends StatelessWidget {
               // Weekday Selector
               const ListTile(
                 title: Text("Dias da semana"),
-                leading: Icon(Icons.calendar_today),
+                leading: Icon(Icons.calendar_month),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -280,9 +280,7 @@ class InfoAlertDialog extends StatelessWidget {
                     ),
                 ],
               ),
-              // Show delete option only for custom items
-              if (provider.titlesIsCustom.contains(title))
-                ListTile(
+              ListTile(
                   title: const Text("Excluir"),
                   leading: const Icon(Icons.delete),
                   onTap: () {
