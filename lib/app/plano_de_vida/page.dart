@@ -299,7 +299,7 @@ class InfoAlertDialog extends StatelessWidget {
                 title: const Text("Excluir"),
                 leading: const Icon(Icons.delete),
                 onTap: () {
-                  provider.removeItem(provider.titles[i]);
+                  provider.removeItem(title);
                   Navigator.of(context).pop();
                 },
               ),
