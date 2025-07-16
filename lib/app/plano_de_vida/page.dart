@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_weekday_selector/flutter_weekday_selector.dart';
 
 class PlanoDeVidaPage extends StatefulWidget {
   const PlanoDeVidaPage({super.key});
@@ -27,7 +26,7 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
                   tabs: [
                     Tab(text: "Todos os itens", icon: Icon(Icons.list)),
                     Tab(text: "Itens do dia", icon: Icon(Icons.watch_later_outlined)),
-                    Tab(text: "Completos", icon: Icon(Icons.check_box)),
+                    Tab(text: "Progresso", icon: Icon(Icons.analytics)),
                   ],
                 ),
               ),
@@ -35,7 +34,7 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
                 children: [
                   TodosOsItens(),
                   Selecionados(),
-                  Concluidos(),
+                  Progresso(),
                 ],
               ),
             ),
@@ -103,14 +102,6 @@ class _TodosOsItensState extends State<TodosOsItens> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      provider.titlesIsCustom.contains(provider.titles[i])
-                          ? IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          provider.removeItem(provider.titles[i]);
-                        },
-                      )
-                          : Container(),
                       Checkbox(
                         value: provider.titlesIsSelected.contains(provider.titles[i]),
                         onChanged: (value) {
@@ -209,7 +200,7 @@ class InfoAlertDialog extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: _WeekdaySelectorAdapter(
+                child: _CustomWeekdaySelector(
                   values: provider.getItemWeekdays(title),
                   onChanged: (int day) {
                     List<bool> currentSelection = provider.getItemWeekdays(title);
@@ -217,12 +208,8 @@ class InfoAlertDialog extends StatelessWidget {
                     currentSelection[day] = !currentSelection[day];
                     provider.updateItemWeekdays(title, currentSelection);
                   },
-                  selectedFillColor: Theme.of(context).primaryColor,
-                  selectedColor: Colors.white,
-                  disabledFillColor: Colors.grey.shade300,
-                  disabledColor: Colors.grey.shade600,
-                  fillColor: Colors.grey.shade200,
-                  color: Colors.grey.shade700,
+                  selectedColor: Theme.of(context).primaryColor,
+                  unselectedColor: Colors.grey.shade300,
                 ),
               ),
               const Divider(),
@@ -293,14 +280,16 @@ class InfoAlertDialog extends StatelessWidget {
                     ),
                 ],
               ),
-              ListTile(
-                title: const Text("Excluir"),
-                leading: const Icon(Icons.delete),
-                onTap: () {
-                  provider.removeItem(title);
-                  Navigator.of(context).pop();
-                },
-              ),
+              // Show delete option only for custom items
+              if (provider.titlesIsCustom.contains(title))
+                ListTile(
+                  title: const Text("Excluir"),
+                  leading: const Icon(Icons.delete),
+                  onTap: () {
+                    provider.removeItem(title);
+                    Navigator.of(context).pop();
+                  },
+                ),
               ],
             ),
           ),
@@ -310,76 +299,14 @@ class InfoAlertDialog extends StatelessWidget {
   }
 }
 
-class Concluidos extends StatelessWidget {
-  const Concluidos({super.key});
+class Progresso extends StatelessWidget {
+  const Progresso({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      return DefaultTabController(
-        length: 2,
-        child: Column(
-          children: [
-            const TabBar(
-              tabs: [
-                Tab(text: "Por Data", icon: Icon(Icons.calendar_today)),
-                Tab(text: "Progresso", icon: Icon(Icons.analytics)),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _buildDateView(context, provider),
-                  _buildProgressView(context, provider),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
+      return _buildProgressView(context, provider);
     });
-  }
-
-  Widget _buildDateView(BuildContext context, PlanoDeVidaProvider provider) {
-    return Column(
-      children: [
-        ListTile(
-          title: Text(
-            "Concluídos do dia ${provider.day}/${provider.month}/${provider.year}",
-            style: const TextStyle(fontSize: 19),
-          ),
-          trailing: IconButton(
-            onPressed: () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: context,
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2030),
-                initialDate: DateTime(provider.year, provider.month, provider.day),
-              );
-              if (pickedDate != null) {
-                provider.changeDate(pickedDate.year, pickedDate.month, pickedDate.day);
-              }
-            },
-            icon: const Icon(Icons.calendar_month),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: provider.titlesIsCompleted.length,
-            itemBuilder: (context, index) {
-              return (provider.completedDates[provider.titlesIsCompleted[index]] ?? "")
-                      .split(",")
-                      .contains("${provider.day}/${provider.month}/${provider.year}")
-                  ? ListTile(
-                      title: Text(provider.titlesIsCompleted[index], style: const TextStyle(fontSize: 18)),
-                      leading: const Icon(Icons.check),
-                    )
-                  : Container();
-            },
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildProgressView(BuildContext context, PlanoDeVidaProvider provider) {
@@ -395,21 +322,32 @@ class Concluidos extends StatelessWidget {
         
         // Overall Statistics Card
         Card(
+          elevation: 2,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Estatísticas Gerais",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    Icon(Icons.analytics, color: Theme.of(context).primaryColor),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Estatísticas Gerais",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text("Itens selecionados: ${provider.titlesIsSelected.length}"),
-                Text("Itens completados hoje: ${provider.titlesIsCompletedToday.length}"),
+                const SizedBox(height: 16),
+                _buildStatRow("Itens selecionados", "${provider.titlesIsSelected.length}", Icons.list),
+                const SizedBox(height: 8),
+                _buildStatRow("Itens completados hoje", "${provider.titlesIsCompletedToday.length}", Icons.check_circle),
+                const SizedBox(height: 8),
                 if (provider.titlesIsSelected.isNotEmpty)
-                  Text(
-                    "Taxa de conclusão hoje: ${((provider.titlesIsCompletedToday.length / provider.titlesIsSelected.length) * 100).toStringAsFixed(1)}%"
+                  _buildStatRow(
+                    "Taxa de conclusão hoje",
+                    "${((provider.titlesIsCompletedToday.length / provider.titlesIsSelected.length) * 100).toStringAsFixed(1)}%",
+                    Icons.trending_up
                   ),
               ],
             ),
@@ -419,13 +357,35 @@ class Concluidos extends StatelessWidget {
         const SizedBox(height: 20),
         
         // Individual Item Progress
-        const Text(
-          "Progresso por Item",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Icon(Icons.insights, color: Theme.of(context).primaryColor),
+            const SizedBox(width: 8),
+            const Text(
+              "Progresso por Item",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         
         ...provider.titlesIsSelected.map((title) => _buildItemProgressCard(context, provider, title)),
+      ],
+    );
+  }
+
+  Widget _buildStatRow(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(label, style: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -439,24 +399,25 @@ class Concluidos extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
+      elevation: 2,
       child: ExpansionTile(
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Icon(
-                  currentStreak > 0 ? Icons.local_fire_department : Icons.radio_button_unchecked,
-                  color: currentStreak > 0 ? Colors.orange : Colors.grey,
+                  currentStreak > 0 ? Icons.trending_up : Icons.radio_button_unchecked,
+                  color: currentStreak > 0 ? Colors.green : Colors.grey,
                   size: 16,
                 ),
                 const SizedBox(width: 4),
-                Text("Sequência: $currentStreak dias"),
+                Text("Sequência: $currentStreak dias", style: const TextStyle(fontSize: 12)),
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 8),
             LinearProgressIndicator(
               value: completion7Days / 100,
               backgroundColor: Colors.grey[300],
@@ -466,7 +427,7 @@ class Concluidos extends StatelessWidget {
                 Colors.red
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               "7 dias: ${completion7Days.toStringAsFixed(1)}%",
               style: const TextStyle(fontSize: 12),
@@ -481,9 +442,9 @@ class Concluidos extends StatelessWidget {
               children: [
                 // Statistics Row
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildStatItem("Sequência Atual", "$currentStreak dias", Icons.local_fire_department),
+                    _buildStatItem("Sequência Atual", "$currentStreak dias", Icons.trending_up),
                     _buildStatItem("Total Concluído", "$totalCompleted", Icons.check_circle),
                     _buildStatItem("30 Dias", "${completion30Days.toStringAsFixed(1)}%", Icons.calendar_month),
                   ],
@@ -492,23 +453,29 @@ class Concluidos extends StatelessWidget {
                 const SizedBox(height: 20),
                 
                 // Weekly Progress
-                const Text(
-                  "Progresso Semanal",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Row(
+                  children: [
+                    Icon(Icons.bar_chart, color: Theme.of(context).primaryColor, size: 16),
+                    const SizedBox(width: 8),
+                    const Text(
+                      "Progresso Semanal",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 
                 ...weeklyData.map((week) => Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 80,
-                        child: Text(week['week'], style: const TextStyle(fontSize: 12)),
+                        width: 70,
+                        child: Text(week['week'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
                       ),
                       Expanded(
                         child: LinearProgressIndicator(
-                          value: week['completed'] / week['total'],
+                          value: week['total'] > 0 ? week['completed'] / week['total'] : 0,
                           backgroundColor: Colors.grey[300],
                           valueColor: AlwaysStoppedAnimation<Color>(
                             week['percentage'] >= 80 ? Colors.green :
@@ -519,10 +486,11 @@ class Concluidos extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       SizedBox(
-                        width: 60,
+                        width: 50,
                         child: Text(
                           "${week['completed']}/${week['total']}",
                           style: const TextStyle(fontSize: 12),
+                          textAlign: TextAlign.right,
                         ),
                       ),
                     ],
@@ -530,21 +498,37 @@ class Concluidos extends StatelessWidget {
                 )),
                 
                 // Motivational Message
-                const SizedBox(height: 15),
+                const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    _getMotivationalMessage(completion7Days, currentStreak),
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontStyle: FontStyle.italic,
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor.withOpacity(0.3),
+                      width: 1,
                     ),
-                    textAlign: TextAlign.center,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _getMotivationalIcon(completion7Days, currentStreak),
+                        color: Theme.of(context).primaryColor,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _getMotivationalMessage(completion7Days, currentStreak),
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -558,131 +542,119 @@ class Concluidos extends StatelessWidget {
   Widget _buildStatItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, color: Colors.blue),
-        const SizedBox(height: 4),
+        Icon(icon, color: Colors.blue, size: 20),
+        const SizedBox(height: 6),
         Text(
           value,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
+        const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 11, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
+  IconData _getMotivationalIcon(double completion7Days, int streak) {
+    if (streak >= 7) {
+      return Icons.local_fire_department;
+    } else if (completion7Days >= 80) {
+      return Icons.stars;
+    } else if (completion7Days >= 60) {
+      return Icons.trending_up;
+    } else if (completion7Days >= 40) {
+      return Icons.track_changes;
+    } else {
+      return Icons.eco;
+    }
+  }
+
   String _getMotivationalMessage(double completion7Days, int streak) {
     if (streak >= 7) {
-      return "🔥 Incrível! Você está em uma sequência de $streak dias!";
+      return "Excelente! Você está mantendo uma sequência de $streak dias!";
     } else if (completion7Days >= 80) {
-      return "🌟 Excelente progresso! Continue assim!";
+      return "Ótimo progresso! Continue assim!";
     } else if (completion7Days >= 60) {
-      return "💪 Bom ritmo! Você pode melhorar ainda mais!";
+      return "Bom ritmo! Você pode melhorar ainda mais!";
     } else if (completion7Days >= 40) {
-      return "🎯 Você está no caminho certo, continue!";
+      return "Você está no caminho certo, continue!";
     } else {
-      return "🌱 Todo grande objetivo começa com pequenos passos!";
+      return "Todo grande objetivo começa com pequenos passos!";
     }
   }
 }
 
-// Adapter class to maintain compatibility with old WeekdaySelector API
-class _WeekdaySelectorAdapter extends StatefulWidget {
+// Simple custom weekday selector to replace the problematic flutter_weekday_selector
+class _CustomWeekdaySelector extends StatelessWidget {
   final List<bool> values;
   final Function(int) onChanged;
-  final Color? selectedFillColor;
-  final Color? selectedColor;
-  final Color? disabledFillColor;
-  final Color? disabledColor;
-  final Color? fillColor;
-  final Color? color;
+  final Color selectedColor;
+  final Color unselectedColor;
 
-  const _WeekdaySelectorAdapter({
+  const _CustomWeekdaySelector({
     super.key,
     required this.values,
     required this.onChanged,
-    this.selectedFillColor,
-    this.selectedColor,
-    this.disabledFillColor,
-    this.disabledColor,
-    this.fillColor,
-    this.color,
+    required this.selectedColor,
+    required this.unselectedColor,
   });
 
   @override
-  State<_WeekdaySelectorAdapter> createState() => _WeekdaySelectorAdapterState();
-}
-
-class _WeekdaySelectorAdapterState extends State<_WeekdaySelectorAdapter> {
-  late WeekDaySelectorController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WeekDaySelectorController();
-    _updateControllerFromValues();
-  }
-
-  @override
-  void didUpdateWidget(_WeekdaySelectorAdapter oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.values != widget.values) {
-      _updateControllerFromValues();
-    }
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  void _updateControllerFromValues() {
-    // Convert List<bool> to individual weekday selections
-    // values[0] = Monday, values[1] = Tuesday, ..., values[6] = Sunday
-    controller.setMonday(isSelected: widget.values.length > 0 ? widget.values[0] : false);
-    controller.setTuesday(isSelected: widget.values.length > 1 ? widget.values[1] : false);
-    controller.setWednesday(isSelected: widget.values.length > 2 ? widget.values[2] : false);
-    controller.setThursday(isSelected: widget.values.length > 3 ? widget.values[3] : false);
-    controller.setFriday(isSelected: widget.values.length > 4 ? widget.values[4] : false);
-    controller.setSaturday(isSelected: widget.values.length > 5 ? widget.values[5] : false);
-    controller.setSunday(isSelected: widget.values.length > 6 ? widget.values[6] : false);
-  }
-
-  int _weekDayNameToIndex(String name) {
-    // Convert weekday name to 0-based index (Monday=0, Sunday=6)
-    switch (name.toLowerCase()) {
-      case 'monday': return 0;
-      case 'tuesday': return 1;
-      case 'wednesday': return 2;
-      case 'thursday': return 3;
-      case 'friday': return 4;
-      case 'saturday': return 5;
-      case 'sunday': return 6;
-      default: return 0;
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return WeekDaySelector(
-      controller: controller,
-      weekDayStart: WeekDayName.monday, // Start with Monday to match old behavior
-      onSubmitted: (WeekDay day) {
-        int dayIndex = _weekDayNameToIndex(day.name);
-        widget.onChanged(dayIndex);
-      },
-      daySelectedColor: widget.selectedFillColor,
-      dayUnselectedColor: widget.fillColor,
-      styleSelected: TextStyle(
-        color: widget.selectedColor ?? Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
-      style: TextStyle(
-        color: widget.color ?? Colors.grey.shade700,
-      ),
+    final List<String> weekdayLabels = ['S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
+    final List<String> weekdayNames = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: List.generate(7, (index) {
+        final bool isSelected = index < values.length ? values[index] : false;
+        
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: GestureDetector(
+              onTap: () => onChanged(index),
+              child: Container(
+                height: 45,
+                decoration: BoxDecoration(
+                  color: isSelected ? selectedColor : unselectedColor,
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(
+                    color: isSelected ? selectedColor : Colors.grey.shade400,
+                    width: 1.0,
+                  ),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        weekdayLabels[index],
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.grey.shade700,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        weekdayNames[index],
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.grey.shade700,
+                          fontSize: 8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }
