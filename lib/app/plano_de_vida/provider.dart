@@ -232,7 +232,7 @@ class PlanoDeVidaProvider extends BaseProvider {
     List<bool> weekdaySelection = List.filled(7, false);
     
     for (String day in selectedDays) {
-      int dayIndex = int.tryParse(day.trim());
+      int? dayIndex = int.tryParse(day.trim());
       if (dayIndex != null && dayIndex >= 1 && dayIndex <= 7) {
         weekdaySelection[dayIndex - 1] = true; // Convert to 0-based indexing
       }
