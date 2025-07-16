@@ -53,7 +53,7 @@ dependencies:
   fl_chart: ^0.70.2
   local_auth: ^2.3.0
   url_launcher: ^6.3.1
-  weekday_selector: ^1.1.0
+  weekday_selector: ^1.2.0
 
 dev_dependencies:
   flutter_test:
