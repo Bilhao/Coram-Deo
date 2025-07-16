@@ -103,6 +103,20 @@ class _TodosOsItensState extends State<TodosOsItens> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      provider.titlesIsCustom.contains(provider.titles[i])
+                          ? IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          provider.removeItem(provider.titles[i]);
+                        },
+                      )
+                          : Container(),
+                      Checkbox(
+                        value: provider.titlesIsSelected.contains(provider.titles[i]),
+                        onChanged: (value) {
+                          provider.toggleItemSelection(provider.titles[i]);
+                        },
+                      ),
                       // Show more options button only for selected items
                       provider.titlesIsSelected.contains(provider.titles[i])
                           ? IconButton(
@@ -118,20 +132,6 @@ class _TodosOsItensState extends State<TodosOsItens> {
                               },
                             )
                           : Container(),
-                      provider.titlesIsCustom.contains(provider.titles[i])
-                          ? IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          provider.removeItem(provider.titles[i]);
-                        },
-                      )
-                          : Container(),
-                      Checkbox(
-                        value: provider.titlesIsSelected.contains(provider.titles[i]),
-                        onChanged: (value) {
-                          provider.toggleItemSelection(provider.titles[i]);
-                        },
-                      ),
                     ],
                   ),
                   onTap: () => provider.toggleItemSelection(provider.titles[i]),
@@ -299,7 +299,7 @@ class InfoAlertDialog extends StatelessWidget {
                 title: const Text("Excluir"),
                 leading: const Icon(Icons.delete),
                 onTap: () {
-                  provider.toggleItemSelection(title);
+                  provider.removeItem(provider.titles[i]);
                   Navigator.of(context).pop();
                 },
               ),
