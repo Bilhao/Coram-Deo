@@ -326,26 +326,40 @@ class PlanoDeVidaProvider extends BaseProvider {
     DateTime now = DateTime.now();
     
     for (int week = 0; week < 4; week++) {
-      DateTime weekStart = now.subtract(Duration(days: (week * 7) + now.weekday - 1));
+      // Calculate the start of each week (Monday)
+      // week = 0 is current week, week = 1 is last week, etc.
+      DateTime weekStart = now.subtract(Duration(days: (week * 7) + (now.weekday - 1)));
       int completedDays = 0;
+      int totalPossibleDays = 0;
+      
+      // Get the item's weekday selection
+      List<bool> weekdaySelection = getItemWeekdays(title);
       
       for (int day = 0; day < 7; day++) {
         DateTime checkDate = weekStart.add(Duration(days: day));
-        String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
         
-        if ((_completedDates[title] ?? "").contains(dateString)) {
-          completedDays++;
+        // Only count days that are selected for this item
+        if (weekdaySelection[day]) {
+          totalPossibleDays++;
+          String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+          
+          if ((_completedDates[title] ?? "").contains(dateString)) {
+            completedDays++;
+          }
         }
       }
       
+      // If no days are selected for this week, set total to 1 to avoid division by zero
+      if (totalPossibleDays == 0) totalPossibleDays = 1;
+      
       weeks.add({
-        'week': 'Semana ${week + 1}',
+        'week': week == 0 ? 'Esta semana' : 'Há ${week} semana${week > 1 ? 's' : ''}',
         'completed': completedDays,
-        'total': 7,
-        'percentage': (completedDays / 7) * 100,
+        'total': totalPossibleDays,
+        'percentage': (completedDays / totalPossibleDays) * 100,
       });
     }
     
-    return weeks.reversed.toList(); // Most recent first
+    return weeks; // Keep chronological order (current week first)
   }
 }
