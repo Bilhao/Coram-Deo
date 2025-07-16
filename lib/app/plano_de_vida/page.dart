@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:provider/provider.dart';
-import 'package:weekday_selector/weekday_selector.dart';
+import 'package:flutter_weekday_selector/flutter_weekday_selector.dart';
 
 class PlanoDeVidaPage extends StatefulWidget {
   const PlanoDeVidaPage({super.key});
@@ -211,14 +211,14 @@ class InfoAlertDialog extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: WeekdaySelector(
+                child: _WeekdaySelectorAdapter(
+                  values: provider.getItemWeekdays(title),
                   onChanged: (int day) {
                     List<bool> currentSelection = provider.getItemWeekdays(title);
                     // day parameter is 0-based (0=Monday, 6=Sunday)
                     currentSelection[day] = !currentSelection[day];
                     provider.updateItemWeekdays(title, currentSelection);
                   },
-                  values: provider.getItemWeekdays(title),
                   selectedFillColor: Theme.of(context).primaryColor,
                   selectedColor: Colors.white,
                   disabledFillColor: Colors.grey.shade300,
@@ -347,5 +347,104 @@ class Concluidos extends StatelessWidget {
                 })),
       ]);
     });
+  }
+}
+
+// Adapter class to maintain compatibility with old WeekdaySelector API
+class _WeekdaySelectorAdapter extends StatefulWidget {
+  final List<bool> values;
+  final Function(int) onChanged;
+  final Color? selectedFillColor;
+  final Color? selectedColor;
+  final Color? disabledFillColor;
+  final Color? disabledColor;
+  final Color? fillColor;
+  final Color? color;
+
+  const _WeekdaySelectorAdapter({
+    super.key,
+    required this.values,
+    required this.onChanged,
+    this.selectedFillColor,
+    this.selectedColor,
+    this.disabledFillColor,
+    this.disabledColor,
+    this.fillColor,
+    this.color,
+  });
+
+  @override
+  State<_WeekdaySelectorAdapter> createState() => _WeekdaySelectorAdapterState();
+}
+
+class _WeekdaySelectorAdapterState extends State<_WeekdaySelectorAdapter> {
+  late WeekDaySelectorController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WeekDaySelectorController();
+    _updateControllerFromValues();
+  }
+
+  @override
+  void didUpdateWidget(_WeekdaySelectorAdapter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.values != widget.values) {
+      _updateControllerFromValues();
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void _updateControllerFromValues() {
+    // Convert List<bool> to individual weekday selections
+    // values[0] = Monday, values[1] = Tuesday, ..., values[6] = Sunday
+    controller.setMonday(isSelected: widget.values.length > 0 ? widget.values[0] : false);
+    controller.setTuesday(isSelected: widget.values.length > 1 ? widget.values[1] : false);
+    controller.setWednesday(isSelected: widget.values.length > 2 ? widget.values[2] : false);
+    controller.setThursday(isSelected: widget.values.length > 3 ? widget.values[3] : false);
+    controller.setFriday(isSelected: widget.values.length > 4 ? widget.values[4] : false);
+    controller.setSaturday(isSelected: widget.values.length > 5 ? widget.values[5] : false);
+    controller.setSunday(isSelected: widget.values.length > 6 ? widget.values[6] : false);
+  }
+
+  int _weekDayNameToIndex(String name) {
+    // Convert weekday name to 0-based index (Monday=0, Sunday=6)
+    switch (name.toLowerCase()) {
+      case 'monday': return 0;
+      case 'tuesday': return 1;
+      case 'wednesday': return 2;
+      case 'thursday': return 3;
+      case 'friday': return 4;
+      case 'saturday': return 5;
+      case 'sunday': return 6;
+      default: return 0;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WeekDaySelector(
+      controller: controller,
+      weekDayStart: WeekDayName.monday, // Start with Monday to match old behavior
+      onSubmitted: (WeekDay day) {
+        int dayIndex = _weekDayNameToIndex(day.name);
+        widget.onChanged(dayIndex);
+      },
+      daySelectedColor: widget.selectedFillColor,
+      dayUnselectedColor: widget.fillColor,
+      styleSelected: TextStyle(
+        color: widget.selectedColor ?? Colors.white,
+        fontWeight: FontWeight.bold,
+      ),
+      style: TextStyle(
+        color: widget.color ?? Colors.grey.shade700,
+      ),
+    );
   }
 }
