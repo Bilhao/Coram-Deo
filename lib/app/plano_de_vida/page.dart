@@ -356,7 +356,7 @@ class Progresso extends StatelessWidget {
   Widget _buildStatRow(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey.shade600),
+        Icon(icon, size: 16),
         const SizedBox(width: 8),
         Expanded(
           child: Text(label, style: const TextStyle(fontSize: 14)),
