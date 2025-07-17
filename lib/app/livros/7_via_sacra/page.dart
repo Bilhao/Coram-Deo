@@ -43,7 +43,7 @@ class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
           body: TabBarView(
             children: [
               const Indice(),
-              Container(),
+              const Sobre(),
             ],
           ),
           floatingActionButton: _selectedIndex == 0
@@ -86,6 +86,46 @@ class _IndiceState extends State<Indice> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class Sobre extends StatelessWidget {
+  const Sobre({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Sobre a Via Sacra",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Text(
+            "A Via Sacra é uma devoção cristã que comemora a paixão e morte de Jesus Cristo. É constituída por catorze estações que representam episódios da última jornada de Cristo, desde a sua condenação à morte por Pilatos até ao momento em que é colocado no sepulcro.",
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 12),
+          Text(
+            "Esta versão da Via Sacra foi escrita por São Josemaria Escrivá, fundador do Opus Dei, e oferece uma meditação profunda sobre cada momento da Paixão de Cristo. Através de cada estação, somos convidados a acompanhar Jesus no seu caminho de sofrimento e amor, refletindo sobre o significado da Cruz em nossas vidas.",
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 12),
+          Text(
+            "As meditações de São Josemaria nos ajudam a compreender melhor o amor de Deus por nós e nos inspiram a viver uma vida cristã mais intensa, seguindo o exemplo de Cristo em nossa jornada diária.",
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(height: 12),
+          Text(
+            "Cada estação inclui tanto a narrativa dos acontecimentos quanto pontos específicos de meditação que nos ajudam a aplicar os ensinamentos da Paixão de Cristo em nossa vida espiritual.",
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
       ),
     );
   }
