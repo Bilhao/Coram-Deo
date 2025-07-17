@@ -12,7 +12,7 @@ class SantoRosarioPage extends StatefulWidget {
 class _SantoRosarioPageState extends State<SantoRosarioPage> {
   int weekday = DateTime.now().weekday;
   String? selectedMisterio;
-  ExpansibleController expansionTileController = ExpansibleController();
+  ExpansionTileController expansionTileController = ExpansionTileController();
 
   @override
   void initState() {
