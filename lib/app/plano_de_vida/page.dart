@@ -170,7 +170,7 @@ class InfoAlertDialog extends StatelessWidget {
   InfoAlertDialog({super.key, required this.title});
 
   final String title;
-  final ExpansibleController controller = ExpansibleController();
+  final ExpansionTileController controller = ExpansionTileController();
 
   @override
   Widget build(BuildContext context) {
