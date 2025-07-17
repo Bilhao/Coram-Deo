@@ -46,8 +46,15 @@ class BookIndexProvider extends BaseProvider {
 
     await safeAsync(() async {
       Livros book = Livros(bookName: bookName);
-      _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-      _content = await book.getContentByIds(contentIds: _contentIds);
+      
+      // Handle databases without content_id (like via_sacra)
+      if (bookName == "via_sacra_livro") {
+        _contentIds = [0]; // Single content item
+        _content = await book.getContentByChapterId(chapterId: _currentChapterId);
+      } else {
+        _contentIds = await book.getContentIds(chapterId: _currentChapterId);
+        _content = await book.getContentByIds(contentIds: _contentIds);
+      }
       
       return true;
     }, errorContext: 'Loading book content');
@@ -68,8 +75,16 @@ class BookIndexProvider extends BaseProvider {
       Livros book = Livros(bookName: bookName);
       _currentChapterId = chapterId + _fistChapterId;
       _currentChapterName = _chapterNames[chapterId];
-      _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-      _content = await book.getContentByIds(contentIds: _contentIds);
+      
+      // Handle databases without content_id (like via_sacra)
+      if (bookName == "via_sacra_livro") {
+        _contentIds = [0]; // Single content item
+        _content = await book.getContentByChapterId(chapterId: _currentChapterId);
+      } else {
+        _contentIds = await book.getContentIds(chapterId: _currentChapterId);
+        _content = await book.getContentByIds(contentIds: _contentIds);
+      }
+      
       return true;
     }, errorContext: 'Loading new chapter content');
     

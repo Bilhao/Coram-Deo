@@ -62,20 +62,47 @@ class Livros {
 
   Future<List<int>> getContentIds({required int chapterId}) async {
     final db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT content_id FROM book WHERE chapter_id = ?', [chapterId]);
-    return List.generate(maps.length, (i) {
-      return maps[i]['content_id'];
-    });
+    
+    // Check if content_id column exists
+    final List<Map<String, dynamic>> schemaResult = await db.rawQuery("PRAGMA table_info(book)");
+    final bool hasContentId = schemaResult.any((column) => column['name'] == 'content_id');
+    
+    if (hasContentId) {
+      final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT content_id FROM book WHERE chapter_id = ?', [chapterId]);
+      return List.generate(maps.length, (i) {
+        return maps[i]['content_id'];
+      });
+    } else {
+      // For databases without content_id (like via_sacra), return [0] as a single content item
+      return [0];
+    }
   }
 
   Future<List<String>> getContentByIds({required List<int> contentIds}) async {
     final db = await initDb();
-    List<String> contents = [];
-    for (int id in contentIds) {
-      final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE content_id = ?', [id]);
-      contents.add(maps[0]['content']);
+    
+    // Check if content_id column exists
+    final List<Map<String, dynamic>> schemaResult = await db.rawQuery("PRAGMA table_info(book)");
+    final bool hasContentId = schemaResult.any((column) => column['name'] == 'content_id');
+    
+    if (hasContentId) {
+      List<String> contents = [];
+      for (int id in contentIds) {
+        final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE content_id = ?', [id]);
+        contents.add(maps[0]['content']);
+      }
+      return contents;
+    } else {
+      // For databases without content_id, this method shouldn't be used
+      // Use getContentByChapterId instead
+      throw UnsupportedError('getContentByIds not supported for databases without content_id. Use getContentByChapterId instead.');
     }
-    return contents;
+  }
+
+  Future<List<String>> getContentByChapterId({required int chapterId}) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE chapter_id = ?', [chapterId]);
+    return maps.isNotEmpty ? [maps[0]['content']] : [''];
   }
 
   // Via Sacra specific methods for content without content_id
