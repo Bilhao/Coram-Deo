@@ -66,8 +66,4 @@ abstract class BaseProvider extends ChangeNotifier {
     }, errorContext: errorContext);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }

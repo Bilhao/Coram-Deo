@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/falar_com_deus/data.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class FalarComDeusProvider extends BaseProvider {

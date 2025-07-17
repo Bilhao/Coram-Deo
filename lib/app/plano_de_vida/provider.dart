@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/notification.dart';
@@ -42,7 +41,7 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safeAsync(() async {
       _titles = await pdvDb.getAllTitles();
       _titlesIsCustom = await pdvDb.getTitleisCustom();
@@ -54,10 +53,10 @@ class PlanoDeVidaProvider extends BaseProvider {
       _completedDates = await pdvDb.getTitleAndCompletedDates();
       _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
-      
+
       return true;
     }, errorContext: 'Loading life plan data');
-    
+
     _updateDateTime();
     setLoading(false);
   }
@@ -72,7 +71,7 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> update() async {
     setLoading(true);
-    
+
     await safeAsync(() async {
       _titles = await pdvDb.getAllTitles();
       _titlesIsCustom = await pdvDb.getTitleisCustom();
@@ -87,7 +86,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       notifyListeners();
       return true;
     }, errorContext: 'Updating life plan data');
-    
+
     setLoading(false);
   }
 
@@ -101,7 +100,7 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> addItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
     if (title.trim().isEmpty) return;
-    
+
     await safeAsync(() async {
       await pdvDb.insertNewItem(title, isCustom, isSelected, isCompleted, isNotification);
       await update();
@@ -116,7 +115,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       for (int id in notificationIds) {
         await Notifier.stopNotification(id);
       }
-      
+
       await pdvDb.deleteItem(title);
       await update();
       return true;
@@ -220,6 +219,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       String weekdaysString = selectedDays.isEmpty ? "1,2,3,4,5,6,7" : selectedDays.join(',');
       await pdvDb.updateWeekdays(title, weekdaysString);
       await update();
+      notifyListeners();
       return true;
     }, errorContext: 'Updating item weekdays');
   }
@@ -227,14 +227,15 @@ class PlanoDeVidaProvider extends BaseProvider {
   List<bool> getItemWeekdays(String title) {
     String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
     if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
-    
+
     List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
     List<bool> weekdaySelection = List.filled(7, false);
-    
+
     for (String day in selectedDays) {
       int? dayIndex = int.tryParse(day.trim());
       if (dayIndex != null && dayIndex >= 1 && dayIndex <= 7) {
-        weekdaySelection[dayIndex - 1] = true; // Convert to 0-based indexing
+        // Map: 1=Monday (0), ..., 7=Sunday (6)
+        weekdaySelection[dayIndex == 7 ? 6 : dayIndex - 1] = true;
       }
     }
     return weekdaySelection;
@@ -242,14 +243,12 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   List<String> getTodaysItems() {
     int currentWeekday = DateTime.now().weekday; // 1=Monday, 7=Sunday
+    int weekdayIndex = currentWeekday == 7 ? 6 : currentWeekday - 1;
     List<String> todaysItems = [];
-    
+
     for (String title in _titlesIsSelected) {
-      String weekdaysString = _weekdays[title] ?? "1,2,3,4,5,6,7";
-      if (weekdaysString.isEmpty) weekdaysString = "1,2,3,4,5,6,7";
-      
-      List<String> selectedDays = weekdaysString.split(',').where((s) => s.isNotEmpty).toList();
-      if (selectedDays.contains(currentWeekday.toString())) {
+      List<bool> weekdaySelection = getItemWeekdays(title);
+      if (weekdaySelection[weekdayIndex]) {
         todaysItems.add(title);
       }
     }
@@ -257,41 +256,94 @@ class PlanoDeVidaProvider extends BaseProvider {
   }
 
   // New methods for progress tracking
-  
-  /// Get completion percentage for a specific item over the last N days
-  double getItemCompletionPercentage(String title, int days) {
-    int completedDays = 0;
+
+  /// Get completion percentage for a specific item in the current week
+  double getItemCompletionPercentageWeek(String title) {
     DateTime now = DateTime.now();
-    
-    for (int i = 0; i < days; i++) {
-      DateTime checkDate = now.subtract(Duration(days: i));
-      String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
-      
-      if ((_completedDates[title] ?? "").contains(dateString)) {
-        completedDays++;
+    int currentWeekday = now.weekday; // 1=Monday, 7=Sunday
+    DateTime weekStart = now.subtract(Duration(days: currentWeekday - 1));
+    int completedDays = 0;
+    int totalDays = 0;
+    List<bool> weekdaySelection = getItemWeekdays(title);
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+    for (int i = 0; i < 7; i++) {
+      DateTime checkDate = weekStart.add(Duration(days: i));
+      int weekdayIdx = checkDate.weekday - 1;
+      if (weekdaySelection[weekdayIdx]) {
+        totalDays++;
+        String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+        if (completedDates.contains(dateString)) completedDays++;
       }
     }
-    
-    return days > 0 ? (completedDays / days) * 100 : 0.0;
+    return totalDays > 0 ? (completedDays / totalDays) * 100 : 0.0;
+  }
+
+  /// Get completion percentage for a specific item in the current month
+  double getItemCompletionPercentageMonth(String title) {
+    DateTime now = DateTime.now();
+    int year = now.year;
+    int month = now.month;
+    int completedDays = 0;
+    int totalDays = 0;
+    List<bool> weekdaySelection = getItemWeekdays(title);
+    int daysInMonth = DateTime(year, month + 1, 0).day;
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+    for (int i = 1; i <= daysInMonth; i++) {
+      DateTime checkDate = DateTime(year, month, i);
+      int weekdayIdx = checkDate.weekday - 1;
+      if (weekdaySelection[weekdayIdx]) {
+        totalDays++;
+        String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+        if (completedDates.contains(dateString)) completedDays++;
+      }
+    }
+    return totalDays > 0 ? (completedDays / totalDays) * 100 : 0.0;
+  }
+
+  /// Get completion percentage for a specific item in the current year
+  double getItemCompletionPercentageYear(String title) {
+    DateTime now = DateTime.now();
+    int year = now.year;
+    int completedDays = 0;
+    int totalDays = 0;
+    List<bool> weekdaySelection = getItemWeekdays(title);
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+    for (int m = 1; m <= 12; m++) {
+      int daysInMonth = DateTime(year, m + 1, 0).day;
+      for (int d = 1; d <= daysInMonth; d++) {
+        DateTime checkDate = DateTime(year, m, d);
+        int weekdayIdx = checkDate.weekday - 1;
+        if (weekdaySelection[weekdayIdx]) {
+          totalDays++;
+          String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+          if (completedDates.contains(dateString)) completedDays++;
+        }
+      }
+    }
+    return totalDays > 0 ? (completedDays / totalDays) * 100 : 0.0;
   }
 
   /// Get current streak for an item (consecutive days completed)
   int getItemCurrentStreak(String title) {
     int streak = 0;
     DateTime now = DateTime.now();
-    
+
     // Check backwards from today
-    for (int i = 0; i < 365; i++) { // Max 365 days to prevent infinite loop
+    for (int i = 0; i < 365; i++) {
+      // Max 365 days to prevent infinite loop
       DateTime checkDate = now.subtract(Duration(days: i));
       String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
-      
+
       if ((_completedDates[title] ?? "").contains(dateString)) {
         streak++;
       } else {
         break; // Streak broken
       }
     }
-    
+
     return streak;
   }
 
@@ -299,7 +351,7 @@ class PlanoDeVidaProvider extends BaseProvider {
   int getItemTotalCompletedDays(String title) {
     String completedDatesString = _completedDates[title] ?? "";
     if (completedDatesString.isEmpty) return 0;
-    
+
     return completedDatesString.split(',').where((date) => date.isNotEmpty).length;
   }
 
@@ -307,59 +359,130 @@ class PlanoDeVidaProvider extends BaseProvider {
   Map<String, double> getItemLast30DaysData(String title) {
     Map<String, double> data = {};
     DateTime now = DateTime.now();
-    
+
     for (int i = 29; i >= 0; i--) {
       DateTime checkDate = now.subtract(Duration(days: i));
       String dateString = "${checkDate.day}/${checkDate.month}";
       String fullDateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
-      
+
       bool completed = (_completedDates[title] ?? "").contains(fullDateString);
       data[dateString] = completed ? 1.0 : 0.0;
     }
-    
+
     return data;
   }
 
-  /// Get weekly completion summary (last 4 weeks)
-  List<Map<String, dynamic>> getWeeklyCompletionSummary(String title) {
+  /// Get weekly completion summary for the current month (primeira, segunda, terceira, quarta semana)
+  List<Map<String, dynamic>> getMonthlyWeekCompletionSummary(String title) {
     List<Map<String, dynamic>> weeks = [];
     DateTime now = DateTime.now();
-    
-    for (int week = 0; week < 4; week++) {
-      // Calculate the start of each week (Monday)
-      // week = 0 is current week, week = 1 is last week, etc.
-      DateTime weekStart = now.subtract(Duration(days: (week * 7) + (now.weekday - 1)));
-      int completedDays = 0;
+    int year = now.year;
+    int month = now.month;
+    int daysInMonth = DateTime(year, month + 1, 0).day;
+    List<bool> weekdaySelection = getItemWeekdays(title);
+
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+
+    int weekCount = ((daysInMonth - 1) ~/ 7) + 1; // número de semanas (4 ou 5)
+    for (int w = 0; w < weekCount; w++) {
+      int startDay = w * 7 + 1;
+      int endDay = ((w + 1) * 7);
+      if (endDay > daysInMonth) endDay = daysInMonth;
       int totalPossibleDays = 0;
-      
-      // Get the item's weekday selection
-      List<bool> weekdaySelection = getItemWeekdays(title);
-      
-      for (int day = 0; day < 7; day++) {
-        DateTime checkDate = weekStart.add(Duration(days: day));
-        
-        // Only count days that are selected for this item
-        if (weekdaySelection[day]) {
+      Set<String> weekDates = {};
+      for (int d = startDay; d <= endDay; d++) {
+        DateTime checkDate = DateTime(year, month, d);
+        int weekdayIdx = checkDate.weekday - 1;
+        if (weekdaySelection[weekdayIdx]) {
           totalPossibleDays++;
           String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
-          
-          if ((_completedDates[title] ?? "").contains(dateString)) {
-            completedDays++;
+          weekDates.add(dateString);
+        }
+      }
+      int completedDays = weekDates.intersection(completedDates).length;
+      String weekLabel = "${w + 1}º semana do mês";
+      weeks.add({
+        'week': weekLabel,
+        'completed': completedDays,
+        'total': totalPossibleDays,
+        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
+      });
+    }
+    return weeks;
+  }
+
+  /// Get monthly completion summary for the last 3 months
+  List<Map<String, dynamic>> getLast3MonthsCompletionSummary(String title) {
+    List<Map<String, dynamic>> months = [];
+    DateTime now = DateTime.now();
+    List<bool> weekdaySelection = getItemWeekdays(title);
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+    for (int m = 0; m < 3; m++) {
+      DateTime monthDate = DateTime(now.year, now.month - m, 1);
+      int year = monthDate.year;
+      int month = monthDate.month;
+      int daysInMonth = DateTime(year, month + 1, 0).day;
+      int totalPossibleDays = 0;
+      Set<String> monthDates = {};
+      for (int d = 1; d <= daysInMonth; d++) {
+        DateTime checkDate = DateTime(year, month, d);
+        int weekdayIdx = checkDate.weekday - 1;
+        if (weekdaySelection[weekdayIdx]) {
+          totalPossibleDays++;
+          String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+          monthDates.add(dateString);
+        }
+      }
+      int completedDays = monthDates.intersection(completedDates).length;
+      String monthLabel = m == 0
+          ? "Este mês"
+          : m == 1
+              ? "Mês passado"
+              : "Há 2 meses";
+      months.add({
+        'month': monthLabel,
+        'completed': completedDays,
+        'total': totalPossibleDays,
+        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
+      });
+    }
+    return months;
+  }
+
+  /// Get yearly completion summary for the last 2 years
+  List<Map<String, dynamic>> getLast2YearsCompletionSummary(String title) {
+    List<Map<String, dynamic>> years = [];
+    DateTime now = DateTime.now();
+    List<bool> weekdaySelection = getItemWeekdays(title);
+    String completedDatesString = _completedDates[title] ?? "";
+    Set<String> completedDates = completedDatesString.split(',').toSet();
+    for (int y = 0; y < 2; y++) {
+      int year = now.year - y;
+      int totalPossibleDays = 0;
+      Set<String> yearDates = {};
+      for (int m = 1; m <= 12; m++) {
+        int daysInMonth = DateTime(year, m + 1, 0).day;
+        for (int d = 1; d <= daysInMonth; d++) {
+          DateTime checkDate = DateTime(year, m, d);
+          int weekdayIdx = checkDate.weekday - 1;
+          if (weekdaySelection[weekdayIdx]) {
+            totalPossibleDays++;
+            String dateString = "${checkDate.day}/${checkDate.month}/${checkDate.year}";
+            yearDates.add(dateString);
           }
         }
       }
-      
-      // If no days are selected for this week, set total to 1 to avoid division by zero
-      if (totalPossibleDays == 0) totalPossibleDays = 1;
-      
-      weeks.add({
-        'week': week == 0 ? 'Esta semana' : 'Há ${week} semana${week > 1 ? 's' : ''}',
+      int completedDays = yearDates.intersection(completedDates).length;
+      String yearLabel = y == 0 ? "Este ano" : "Ano passado";
+      years.add({
+        'year': yearLabel,
         'completed': completedDays,
         'total': totalPossibleDays,
-        'percentage': (completedDays / totalPossibleDays) * 100,
+        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
       });
     }
-    
-    return weeks; // Keep chronological order (current week first)
+    return years;
   }
 }
