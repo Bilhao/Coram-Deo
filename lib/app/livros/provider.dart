@@ -46,15 +46,8 @@ class BookIndexProvider extends BaseProvider {
 
     await safeAsync(() async {
       Livros book = Livros(bookName: bookName);
-      
-      // Handle databases without content_id (like via_sacra)
-      if (bookName == "via_sacra_livro") {
-        _contentIds = [0]; // Single content item
-        _content = await book.getContentByChapterId(chapterId: _currentChapterId);
-      } else {
-        _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-        _content = await book.getContentByIds(contentIds: _contentIds);
-      }
+      _contentIds = await book.getContentIds(chapterId: _currentChapterId);
+      _content = await book.getContentByIds(contentIds: _contentIds);
       
       return true;
     }, errorContext: 'Loading book content');
@@ -75,16 +68,8 @@ class BookIndexProvider extends BaseProvider {
       Livros book = Livros(bookName: bookName);
       _currentChapterId = chapterId + _fistChapterId;
       _currentChapterName = _chapterNames[chapterId];
-      
-      // Handle databases without content_id (like via_sacra)
-      if (bookName == "via_sacra_livro") {
-        _contentIds = [0]; // Single content item
-        _content = await book.getContentByChapterId(chapterId: _currentChapterId);
-      } else {
-        _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-        _content = await book.getContentByIds(contentIds: _contentIds);
-      }
-      
+      _contentIds = await book.getContentIds(chapterId: _currentChapterId);
+      _content = await book.getContentByIds(contentIds: _contentIds);
       return true;
     }, errorContext: 'Loading new chapter content');
     
@@ -104,96 +89,5 @@ class BookIndexProvider extends BaseProvider {
     }, errorContext: 'Loading theme content');
     
     setLoading(false);
-  }
-}
-
-class ViaSacraProvider extends BaseProvider {
-  final String bookName;
-
-  ViaSacraProvider({required this.bookName}) {
-    _initialize();
-  }
-
-  List<int> _chapterIds = [];
-  List<String> _chapterNames = [];
-  int _fistChapterId = 0;
-  int _currentChapterId = 0;
-  String _currentChapterName = "";
-  String _currentStationContent = "";
-  String _currentMeditationContent = "";
-  bool _showingMeditation = false;
-
-  List<int> get chapterIds => _chapterIds;
-  List<String> get chapterNames => _chapterNames;
-  int get fistChapterId => _fistChapterId;
-  int get currentChapterId => _currentChapterId;
-  String get currentChapterName => _currentChapterName;
-  String get currentStationContent => _currentStationContent;
-  String get currentMeditationContent => _currentMeditationContent;
-  bool get showingMeditation => _showingMeditation;
-  bool get hasMeditation => _currentMeditationContent.isNotEmpty;
-
-  Future<void> _initialize() async {
-    setLoading(true);
-    
-    await safeAsync(() async {
-      Livros book = Livros(bookName: bookName);
-      _chapterIds = await book.getChapterIds();
-      _chapterNames = await book.getChapterNames();
-      _fistChapterId = await book.getFirstChapter();
-      
-      return true;
-    }, errorContext: 'Loading book structure');
-
-    await safePrefOperation((prefs) async {
-      Livros book = Livros(bookName: bookName);
-      _currentChapterId = prefs.getInt('livros.$bookName.currentChapterId') ?? await book.getFirstChapter();
-      _currentChapterName = prefs.getString('livros.$bookName.currentChapterName') ?? await book.getFirstChapterName();
-      
-      return true;
-    }, errorContext: 'Loading book preferences');
-
-    await safeAsync(() async {
-      Livros book = Livros(bookName: bookName);
-      final content = await book.getChapterContent(chapterId: _currentChapterId);
-      final parsedContent = book.parseViaSacraContent(content);
-      _currentStationContent = parsedContent['station']!;
-      _currentMeditationContent = parsedContent['meditation']!;
-      
-      return true;
-    }, errorContext: 'Loading book content');
-    
-    setLoading(false);
-  }
-
-  Future<void> changeChapter(int chapterId) async {
-    setLoading(true);
-    
-    await safePrefOperation((prefs) async {
-      await prefs.setInt('livros.$bookName.currentChapterId', chapterId + _fistChapterId);
-      await prefs.setString('livros.$bookName.currentChapterName', _chapterNames[chapterId]);
-      return true;
-    }, errorContext: 'Saving chapter change');
-
-    await safeAsync(() async {
-      Livros book = Livros(bookName: bookName);
-      _currentChapterId = chapterId + _fistChapterId;
-      _currentChapterName = _chapterNames[chapterId];
-      
-      final content = await book.getChapterContent(chapterId: _currentChapterId);
-      final parsedContent = book.parseViaSacraContent(content);
-      _currentStationContent = parsedContent['station']!;
-      _currentMeditationContent = parsedContent['meditation']!;
-      _showingMeditation = false; // Reset to station view when changing chapters
-      
-      return true;
-    }, errorContext: 'Loading new chapter content');
-    
-    setLoading(false);
-  }
-
-  void toggleContent() {
-    _showingMeditation = !_showingMeditation;
-    notifyListeners();
   }
 }

@@ -11,7 +11,6 @@ import 'package:coramdeo/app/biblia/page_2.dart';
 // Books pages
 import 'package:coramdeo/app/livros/livros_page.dart';
 import 'package:coramdeo/app/livros/point_book_reading_page.dart';
-import 'package:coramdeo/app/livros/via_sacra_reading_page.dart';
 import 'package:coramdeo/app/livros/1_caminho/page.dart';
 import 'package:coramdeo/app/livros/2_sulco/page.dart';
 import 'package:coramdeo/app/livros/3_forja/page.dart';
@@ -128,14 +127,7 @@ class Routes {
       case "/book-reading":
         try {
           final args = settings.arguments as Map<String, dynamic>;
-          final bookName = args['bookName'] as String;
-          
-          // Use specialized Via Sacra reading page for via_sacra_livro
-          if (bookName == 'via_sacra_livro') {
-            return MaterialPageRoute(builder: (context) => const ViaSacraReadingPage());
-          } else {
-            return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: bookName));
-          }
+          return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
         } catch (e) {
           // If arguments are invalid, redirect to books page
           return MaterialPageRoute(builder: (context) => const LivrosPage());
