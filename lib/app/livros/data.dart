@@ -114,8 +114,8 @@ class Livros {
 
   // Parse Via Sacra content to separate station description from meditation points
   Map<String, String> parseViaSacraContent(String content) {
-    // Split content by numbered meditation points (preceded by 5 newlines and starting with "1.")
-    final RegExp regExp = RegExp(r'\n\n\n\n\n1\.');
+    // Split content by numbered meditation points (preceded by 4 newlines and starting with "1.")
+    final RegExp regExp = RegExp(r'\n\n\n\n1\.');
     final match = regExp.firstMatch(content);
     
     if (match == null) {
@@ -127,7 +127,7 @@ class Livros {
     }
 
     final stationContent = content.substring(0, match.start).trim();
-    final meditationContent = content.substring(match.start + 5).trim(); // +5 to skip the newlines
+    final meditationContent = content.substring(match.start + 4).trim(); // +4 to skip the newlines
 
     return {
       'station': stationContent,
