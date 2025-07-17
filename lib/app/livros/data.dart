@@ -77,4 +77,34 @@ class Livros {
     }
     return contents;
   }
+
+  // Via Sacra specific methods for content without content_id
+  Future<String> getChapterContent({required int chapterId}) async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE chapter_id = ?', [chapterId]);
+    return maps.isNotEmpty ? maps[0]['content'] : '';
+  }
+
+  // Parse Via Sacra content to separate station description from meditation points
+  Map<String, String> parseViaSacraContent(String content) {
+    // Split content by numbered meditation points (preceded by 4 empty lines and starting with "1.")
+    final RegExp regExp = RegExp(r'\n\n\n\n1\.');
+    final match = regExp.firstMatch(content);
+    
+    if (match == null) {
+      // No meditation points found, return full content as station
+      return {
+        'station': content.trim(),
+        'meditation': ''
+      };
+    }
+
+    final stationContent = content.substring(0, match.start).trim();
+    final meditationContent = content.substring(match.start + 4).trim(); // +4 to skip the newlines
+
+    return {
+      'station': stationContent,
+      'meditation': meditationContent
+    };
+  }
 }
