@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:local_auth/local_auth.dart';
+// ignore: depend_on_referenced_packages
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:provider/provider.dart';
 
@@ -82,6 +83,7 @@ class HomePageButtons extends StatelessWidget {
                   options: AuthenticationOptions(biometricOnly: appProvider.useBiometric),
                 );
                 if (didAuthenticate) {
+                  // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, route);
                 }
               } on PlatformException{

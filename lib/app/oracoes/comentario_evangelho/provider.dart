@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/comentario_evangelho/data.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class ComentarioDoEvangelhoProvider extends BaseProvider {
