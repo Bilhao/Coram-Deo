@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:coramdeo/utils/base_provider.dart';
-import 'package:coramdeo/utils/constants.dart';
 
 class ExameDeConscienciaProvider extends BaseProvider {
 

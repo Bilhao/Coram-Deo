@@ -1,5 +1,5 @@
 name: coramdeo
-description: "A new Flutter project."
+description: "Aplicativo de plano de vida cristão: acompanhe hábitos, orações, leituras, progresso e notificações diárias."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,17 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 0.1.14
+version: 0.1.15
+
+homepage: https://github.com/Bilhao/Coram-Deo
+repository: https://github.com/Bilhao/Coram-Deo
+keywords:
+  - cristão
+  - hábitos
+  - progresso
+  - orações
+  - notificações
+  - plano de vida
 
 environment:
   sdk: ^3.6.1
@@ -36,24 +46,30 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Estado e armazenamento
   provider: ^6.1.2
   shared_preferences: ^2.2.3
-  flutter_local_notifications: ^18.0.1
   flutter_secure_storage: ^9.2.2
+  sqflite: ^2.3.3+1
+  path: ^1.9.0
+
+  # Notificações e autenticação
+  flutter_local_notifications: ^18.0.1
+  timezone: any
+  local_auth: ^2.3.0
+
+  # UI e experiência
   flutter_native_splash: ^2.4.1
   flutter_launcher_icons: ^0.14.1
   flutter_carousel_widget: ^3.0.1
   flex_color_picker: ^3.5.1
   dynamic_color: ^1.7.0
-  sqflite: ^2.3.3+1
+  fl_chart: ^0.70.2
+
+  # Rede e utilidades
   http: ^1.2.2
   html: ^0.15.4
-  path: ^1.9.0
-  timezone: any
-  fl_chart: ^0.70.2
-  local_auth: ^2.3.0
   url_launcher: ^6.3.1
-  flutter_weekday_selector: ^0.0.12
 
 dev_dependencies:
   flutter_test:
