@@ -304,14 +304,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_weekday_selector:
-    dependency: "direct main"
-    description:
-      name: flutter_weekday_selector
-      sha256: "15e6e46aea591c200fff6d39eaddf490d78e6f4106f04ca35d9f7a47d18185ae"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.12"
   html:
     dependency: "direct main"
     description:
