@@ -18,6 +18,7 @@ import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
 import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page.dart';
 import 'package:coramdeo/app/livros/6_santo_rosario/page.dart';
 import 'package:coramdeo/app/livros/7_via_sacra/page.dart';
+import 'package:coramdeo/app/livros/7_via_sacra/reading_page.dart';
 
 // Prayer pages
 import 'package:coramdeo/app/oracoes/page.dart';
@@ -153,6 +154,9 @@ class Routes {
 
       case "/via-sacra-livro":
         return MaterialPageRoute(builder: (context) => const ViaSacraLivroPage());
+
+      case "/via-sacra-reading":
+        return MaterialPageRoute(builder: (context) => const ViaSacraReadingPage());
 
       default:
         // Return home page for any unrecognized route
