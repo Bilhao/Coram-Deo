@@ -44,12 +44,12 @@ class _LivrosPageState extends State<LivrosPage> {
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Santo Rosário (Livro)", style: TextStyle(fontSize: 18)),
+                title: const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/santo-rosario-livro'),
                 trailing: const Icon(Icons.chevron_right),
               ),
               ListTile(
-                title: const Text("Via Sacra (Livro)", style: TextStyle(fontSize: 18)),
+                title: const Text("Via Sacra", style: TextStyle(fontSize: 18)),
                 onTap: () => Navigator.pushNamed(context, '/via-sacra-livro'),
                 trailing: const Icon(Icons.chevron_right),
               ),

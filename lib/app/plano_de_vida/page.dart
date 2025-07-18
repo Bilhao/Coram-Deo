@@ -287,7 +287,11 @@ class Progresso extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      return _buildProgressView(context, provider);
+      return Column(
+        children: [
+          Expanded(child: _buildProgressView(context, provider)),
+        ],
+      );
     });
   }
 
