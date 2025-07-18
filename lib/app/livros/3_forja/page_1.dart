@@ -2,14 +2,14 @@ import 'package:coramdeo/app/livros/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SulcoPage extends StatefulWidget {
-  const SulcoPage({super.key});
+class ForjaPage extends StatefulWidget {
+  const ForjaPage({super.key});
 
   @override
-  State<SulcoPage> createState() => _SulcoPageState();
+  State<ForjaPage> createState() => _ForjaPageState();
 }
 
-class _SulcoPageState extends State<SulcoPage> {
+class _ForjaPageState extends State<ForjaPage> {
   int _selectedIndex = 0;
 
   @override
@@ -19,7 +19,7 @@ class _SulcoPageState extends State<SulcoPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Sulco"),
+            title: const Text("Forja"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(
@@ -59,7 +59,7 @@ class _SulcoPageState extends State<SulcoPage> {
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
+                    Navigator.pushNamed(context, '/forja-reading', arguments: {"bookName": "forja"});
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -80,9 +80,10 @@ class _IndiceState extends State<Indice> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => BookIndexProvider(bookName: "sulco"),
+      create: (context) => BookIndexProvider(bookName: "forja"),
       child: Consumer<BookIndexProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: const EdgeInsets.only(bottom: 80),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
@@ -91,7 +92,7 @@ class _IndiceState extends State<Indice> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
+                Navigator.pushNamed(context, '/forja-reading', arguments: {"bookName": "forja"});
               },
             );
           },

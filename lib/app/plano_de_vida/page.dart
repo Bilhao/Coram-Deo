@@ -294,61 +294,67 @@ class Progresso extends StatelessWidget {
   Widget _buildProgressView(BuildContext context, PlanoDeVidaProvider provider) {
     List<String> todaysItems = provider.getTodaysItems();
     int completedToday = todaysItems.where((title) => provider.titlesIsCompletedToday.contains(title)).length;
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
+    return Column(
       children: [
-        const Text(
-          "Análise de Progresso",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 20),
-
-        // Overall Statistics Card
-        Card(
-          elevation: 2,
-          child: Padding(
+        Expanded(
+          child: ListView(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
-                    const SizedBox(width: 8),
-                    const Text(
-                      "Estatísticas Gerais",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+            children: [
+              const Text(
+                "Análise de Progresso",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+          
+              // Overall Statistics Card
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 8),
+                          const Text(
+                            "Estatísticas Gerais",
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildStatRow("Itens do dia", "${todaysItems.length}", Icons.list),
+                      const SizedBox(height: 8),
+                      _buildStatRow("Itens completados hoje", "$completedToday", Icons.check_circle),
+                      const SizedBox(height: 8),
+                      if (todaysItems.isNotEmpty) _buildStatRow("Taxa de conclusão hoje", "${((completedToday / todaysItems.length) * 100).toStringAsFixed(1)}%", Icons.trending_up),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _buildStatRow("Itens do dia", "${todaysItems.length}", Icons.list),
-                const SizedBox(height: 8),
-                _buildStatRow("Itens completados hoje", "$completedToday", Icons.check_circle),
-                const SizedBox(height: 8),
-                if (todaysItems.isNotEmpty) _buildStatRow("Taxa de conclusão hoje", "${((completedToday / todaysItems.length) * 100).toStringAsFixed(1)}%", Icons.trending_up),
-              ],
-            ),
+              ),
+          
+              const SizedBox(height: 20),
+          
+              // Individual Item Progress
+              Row(
+                children: [
+                  Icon(Icons.insights, color: Theme.of(context).colorScheme.primary),
+                  const SizedBox(width: 8),
+                  const Text(
+                    "Progresso por Item",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+          
+              ...provider.titlesIsSelected.map((title) => _buildItemProgressCard(context, provider, title)),
+            ],
           ),
         ),
-
-        const SizedBox(height: 20),
-
-        // Individual Item Progress
-        Row(
-          children: [
-            Icon(Icons.insights, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 8),
-            const Text(
-              "Progresso por Item",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-
-        ...provider.titlesIsSelected.map((title) => _buildItemProgressCard(context, provider, title)),
       ],
     );
   }

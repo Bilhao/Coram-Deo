@@ -101,9 +101,7 @@ flutter:
     - assets/books/caminho.db
     - assets/books/e_cristo_que_passa.db
     - assets/books/forja.db
-    - assets/books/santo_rosario.db
     - assets/books/sulco.db
-    - assets/books/via_sacra.db
     - assets/images/logo.png
     - assets/images/logo_dark.png
     - assets/images/bible.jpeg

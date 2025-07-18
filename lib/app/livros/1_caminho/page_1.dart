@@ -57,14 +57,14 @@ class _CaminhoPageState extends State<CaminhoPage> {
             ],
           ),
           floatingActionButton: _selectedIndex == 0
-            ? FloatingActionButton.extended(
-                onPressed: () async {
-                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
-                },
-                label: const Text("Continuar leitura"),
-                icon: const Icon(Icons.chevron_right),
-              )
-            : null),
+              ? FloatingActionButton.extended(
+                  onPressed: () async {
+                    Navigator.pushNamed(context, '/caminho-reading', arguments: {"bookName": "caminho"});
+                  },
+                  label: const Text("Continuar leitura"),
+                  icon: const Icon(Icons.chevron_right),
+                )
+              : null),
     );
   }
 }
@@ -83,6 +83,7 @@ class _IndiceState extends State<Indice> {
       create: (context) => BookIndexProvider(bookName: "caminho"),
       child: Consumer<BookIndexProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: const EdgeInsets.only(bottom: 80),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
@@ -91,7 +92,7 @@ class _IndiceState extends State<Indice> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
+                Navigator.pushNamed(context, '/caminho-reading', arguments: {"bookName": "caminho"});
               },
             );
           },
@@ -161,7 +162,7 @@ class ClickableText extends StatelessWidget {
         builder: (context, provider, child) => InkWell(
           onTap: () {
             provider.changeContentForThemeIndex(points, text);
-            Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
+            Navigator.pushNamed(context, '/caminho-reading', arguments: {"bookName": "caminho"});
           },
           child: Text(text, style: TextStyle(fontSize: isTitle ? 22 : 18, decoration: points.isNotEmpty ? TextDecoration.underline : TextDecoration.none)),
         ),

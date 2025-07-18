@@ -59,7 +59,7 @@ class _AmigosDeDeusPageState extends State<AmigosDeDeusPage> {
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "amigos_de_deus"});
+                    Navigator.pushNamed(context, '/amigos-de-deus-reading', arguments: {"bookName": "amigos_de_deus"});
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -83,6 +83,7 @@ class _IndiceState extends State<Indice> {
       create: (context) => BookIndexProvider(bookName: "amigos_de_deus"),
       child: Consumer<BookIndexProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: const EdgeInsets.only(bottom: 80),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
@@ -91,7 +92,7 @@ class _IndiceState extends State<Indice> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "amigos_de_deus"});
+                Navigator.pushNamed(context, '/amigos-de-deus-reading', arguments: {"bookName": "amigos_de_deus"});
               },
             );
           },

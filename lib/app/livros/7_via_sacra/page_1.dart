@@ -1,25 +1,25 @@
-import 'package:coramdeo/app/livros/provider.dart';
+import 'package:coramdeo/app/livros/7_via_sacra/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ForjaPage extends StatefulWidget {
-  const ForjaPage({super.key});
+class ViaSacraLivroPage extends StatefulWidget {
+  const ViaSacraLivroPage({super.key});
 
   @override
-  State<ForjaPage> createState() => _ForjaPageState();
+  State<ViaSacraLivroPage> createState() => _ViaSacraLivroPageState();
 }
 
-class _ForjaPageState extends State<ForjaPage> {
+class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Forja"),
+            title: const Text("Via Sacra (Livro)"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(
@@ -35,10 +35,6 @@ class _ForjaPageState extends State<ForjaPage> {
                     text: "Índice",
                   ),
                   Tab(
-                    icon: Icon(Icons.format_list_bulleted),
-                    text: "Índice Temático",
-                  ),
-                  Tab(
                     icon: Icon(Icons.info_outline),
                     text: "Sobre",
                   ),
@@ -47,19 +43,13 @@ class _ForjaPageState extends State<ForjaPage> {
           body: TabBarView(
             children: [
               const Indice(),
-              const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.watch_later_outlined, size: 80), Divider(height: 15, color: Colors.transparent), Text("Em desenvimento", style: TextStyle(fontSize: 18))],
-                ),
-              ),
               Container(),
             ],
           ),
           floatingActionButton: _selectedIndex == 0
               ? FloatingActionButton.extended(
                   onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "forja"});
+                    Navigator.pushNamed(context, '/via-sacra-reading');
                   },
                   label: const Text("Continuar leitura"),
                   icon: const Icon(Icons.chevron_right),
@@ -80,18 +70,23 @@ class _IndiceState extends State<Indice> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => BookIndexProvider(bookName: "forja"),
-      child: Consumer<BookIndexProvider>(
+      create: (context) => ViaSacraProvider(),
+      child: Consumer<ViaSacraProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: const EdgeInsets.only(bottom: 80),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
+            final match = RegExp(r'^[IVXLCDM]+ Estação:').firstMatch(provider.chapterNames[index]);
+            final leadingText = match?.group(0) ?? '';
+            final titleText = leadingText.isNotEmpty ? provider.chapterNames[index].substring(leadingText.length).trim() : provider.chapterNames[index];
+
             return ListTile(
-              title: Text(provider.chapterNames[index], style: const TextStyle(fontSize: 18)),
-              leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
+              leading: provider.chapterNames[index] == "Introdução" ? null : Text(leadingText, style: const TextStyle(fontSize: 17)),
+              title: Text(titleText, style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "forja"});
+                Navigator.pushNamed(context, '/via-sacra-reading');
               },
             );
           },

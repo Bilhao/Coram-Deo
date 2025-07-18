@@ -10,14 +10,19 @@ import 'package:coramdeo/app/biblia/page_2.dart';
 
 // Books pages
 import 'package:coramdeo/app/livros/livros_page.dart';
-import 'package:coramdeo/app/livros/point_book_reading_page.dart';
-import 'package:coramdeo/app/livros/1_caminho/page.dart';
-import 'package:coramdeo/app/livros/2_sulco/page.dart';
-import 'package:coramdeo/app/livros/3_forja/page.dart';
-import 'package:coramdeo/app/livros/4_amigos_de_deus/page.dart';
-import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page.dart';
+import 'package:coramdeo/app/livros/1_caminho/page_1.dart';
+import 'package:coramdeo/app/livros/1_caminho/page_2.dart';
+import 'package:coramdeo/app/livros/2_sulco/page_1.dart';
+import 'package:coramdeo/app/livros/2_sulco/page_2.dart';
+import 'package:coramdeo/app/livros/3_forja/page_1.dart';
+import 'package:coramdeo/app/livros/3_forja/page_2.dart';
+import 'package:coramdeo/app/livros/4_amigos_de_deus/page_1.dart';
+import 'package:coramdeo/app/livros/4_amigos_de_deus/page_2.dart';
+import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page_1.dart';
+import 'package:coramdeo/app/livros/5_e_cristo_que_passa/page_2.dart';
 import 'package:coramdeo/app/livros/6_santo_rosario/page.dart';
-import 'package:coramdeo/app/livros/7_via_sacra/page.dart';
+import 'package:coramdeo/app/livros/7_via_sacra/page_1.dart';
+import 'package:coramdeo/app/livros/7_via_sacra/page_2.dart';
 
 // Prayer pages
 import 'package:coramdeo/app/oracoes/page.dart';
@@ -124,35 +129,74 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const GratiasTibiAgoPage());
 
       // livros
-      case "/book-reading":
-        try {
-          final args = settings.arguments as Map<String, dynamic>;
-          return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
-        } catch (e) {
-          // If arguments are invalid, redirect to books page
-          return MaterialPageRoute(builder: (context) => const LivrosPage());
-        }
-
       case "/caminho":
         return MaterialPageRoute(builder: (context) => const CaminhoPage());
 
+      case "/caminho-reading":
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => CaminhoReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to Caminho page
+          return MaterialPageRoute(builder: (context) => const CaminhoPage());
+        }
+
       case "/sulco":
         return MaterialPageRoute(builder: (context) => const SulcoPage());
+      
+      case "/sulco-reading":
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => SulcoReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to Sulco page
+          return MaterialPageRoute(builder: (context) => const SulcoPage());
+        }
 
       case "/forja":
         return MaterialPageRoute(builder: (context) => const ForjaPage());
+      
+      case "/forja-reading":
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => ForjaReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to Forja page
+          return MaterialPageRoute(builder: (context) => const ForjaPage());
+        }
 
       case "/amigos-de-deus":
         return MaterialPageRoute(builder: (context) => const AmigosDeDeusPage());
+      
+      case "/amigos-de-deus-reading":
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => AmigosDeDeusReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to Amigos de Deus page
+          return MaterialPageRoute(builder: (context) => const AmigosDeDeusPage());
+        }
 
       case "/e-cristo-que-passa":
         return MaterialPageRoute(builder: (context) => const ECristoQuePassaPage());
+      
+      case "/e-cristo-que-passa-reading":
+        try {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(builder: (context) => ECristoQuePassaReadingPage(bookName: args['bookName']));
+        } catch (e) {
+          // If arguments are invalid, redirect to E Cristo Que Passa page
+          return MaterialPageRoute(builder: (context) => const ECristoQuePassaPage());
+        }
 
       case "/santo-rosario-livro":
         return MaterialPageRoute(builder: (context) => const SantoRosarioLivroPage());
 
       case "/via-sacra-livro":
         return MaterialPageRoute(builder: (context) => const ViaSacraLivroPage());
+      
+      case "/via-sacra-reading":
+        return MaterialPageRoute(builder: (context) => const ViaSacraReadingPage());
 
       default:
         // Return home page for any unrecognized route
