@@ -73,6 +73,7 @@ class _IndiceState extends State<Indice> {
       create: (context) => BookIndexProvider(bookName: "santo_rosario_livro"),
       child: Consumer<BookIndexProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: EdgeInsets.only(bottom: 80.0),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(

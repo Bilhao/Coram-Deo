@@ -19,7 +19,7 @@ class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
-            title: const Text("Via Sacra (Livro)"),
+            title: const Text("Via Sacra"),
           ),
           bottomNavigationBar: SafeArea(
             child: TabBar(
@@ -73,16 +73,12 @@ class _IndiceState extends State<Indice> {
       create: (context) => ViaSacraProvider(),
       child: Consumer<ViaSacraProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: EdgeInsets.only(bottom: 80.0),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
-            final isIntroduction = provider.chapterIds[index] == 0;
-            final leadingText = isIntroduction 
-                ? "Intro" 
-                : "${_numberToRoman(provider.chapterIds[index])} Estação:";
-            
             return ListTile(
-              title: Text(provider.chapterNames[index], style: const TextStyle(fontSize: 18)),
-              leading: Text(leadingText, style: const TextStyle(fontSize: 18)),
+              title: Text(provider.chapterNames[index].split(': ').last, style: const TextStyle(fontSize: 18)),
+              leading: provider.chapterIds[index] == 0 ? null : Text(provider.chapterNames[index].split(': ').first, style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 provider.changeChapter(index);
@@ -113,29 +109,36 @@ class _SobreState extends State<Sobre> {
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  provider.aboutContent,
-                  style: const TextStyle(fontSize: 16, height: 1.6),
-                  textAlign: TextAlign.justify,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(
+                        frameBuilder: (BuildContext context, Widget child, int? frame, bool? wasSynchronouslyLoaded) {
+                          return child;
+                        },
+                        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                        image: AssetImage("assets/images/capas_livros/via-sacra.jpg"),
+                        width: 250,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const Divider(height: 15, color: Colors.transparent),
+                    Text(
+                      provider.aboutContent,
+                      style: const TextStyle(fontSize: 16, height: 1.6),
+                      textAlign: TextAlign.justify,
+                    ),
+                  ],
                 ),
               ),
       ),
     );
   }
-}
-
-String _numberToRoman(int number) {
-  if (number <= 0) return '';
-  
-  final values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
-  final symbols = ['M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I'];
-  
-  String result = '';
-  for (int i = 0; i < values.length; i++) {
-    while (number >= values[i]) {
-      result += symbols[i];
-      number -= values[i];
-    }
-  }
-  return result;
 }

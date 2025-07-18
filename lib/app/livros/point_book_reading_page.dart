@@ -82,46 +82,57 @@ class _BookReadingPageState extends State<BookReadingPage> {
                                 ],
                               )),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            IconButton(
-                              onPressed: provider.currentChapterId == provider.fistChapterId
+                        Container(
+                          padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 4.0),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            border: Border(
+                              top: BorderSide(
+                                color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                onPressed: provider.currentChapterId == provider.fistChapterId
                                   ? null
                                   : () {
                                       provider.changeChapter(provider.currentChapterId - provider.fistChapterId - 1);
                                     },
-                              icon: const Icon(Icons.arrow_back),
-                              color: Theme.of(context).colorScheme.primary,
-                              style: IconButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                              ),
-                            ),
-                            Flexible(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 6.0, bottom: 2.0),
-                                child: Text(
-                                  "${provider.currentChapterId} - ${provider.currentChapterName}",
-                                  style: const TextStyle(fontSize: 16.0),
-                                  textAlign: TextAlign.center,
+                                icon: const Icon(Icons.arrow_back),
+                                color: Theme.of(context).colorScheme.primary,
+                                style: IconButton.styleFrom(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                                 ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: provider.currentChapterId == provider.chapterIds.length + provider.fistChapterId - 1
-                                  ? null
-                                  : () {
-                                      setState(() {
-                                        provider.changeChapter(provider.currentChapterId - provider.fistChapterId + 1);
-                                      });
-                                    },
-                              icon: const Icon(Icons.arrow_forward),
-                              color: Theme.of(context).colorScheme.primary,
-                              style: IconButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                              Flexible(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 6.0, bottom: 2.0),
+                                  child: Text(
+                                    "${provider.currentChapterId} - ${provider.currentChapterName}",
+                                    style: const TextStyle(fontSize: 16.0),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                              IconButton(
+                                onPressed: provider.currentChapterId == provider.chapterIds.length + provider.fistChapterId - 1
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          provider.changeChapter(provider.currentChapterId - provider.fistChapterId + 1);
+                                        });
+                                      },
+                                icon: const Icon(Icons.arrow_forward),
+                                color: Theme.of(context).colorScheme.primary,
+                                style: IconButton.styleFrom(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

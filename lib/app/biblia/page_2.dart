@@ -75,41 +75,52 @@ class _BibliaPage2State extends State<BibliaPage2> {
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                        onPressed: provider.bookId == 1 && provider.chapter == 1
-                            ? null
-                            : () {
-                                provider.goToPreviousChapter();
-                                Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
-                              },
-                        icon: const Icon(Icons.arrow_back),
-                        color: Theme.of(context).colorScheme.primary,
-                        style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  Container(
+                    padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 4.0),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      border: Border(
+                        top: BorderSide(
+                          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                         ),
                       ),
-                      Text(
-                        "${provider.book} - ${provider.chapter}",
-                        style: const TextStyle(fontSize: 16.0),
-                        textAlign: TextAlign.center,
-                      ),
-                      IconButton(
-                        onPressed: provider.bookId == 66 && provider.chapter == 22
-                            ? null
-                            : () {
-                                provider.goToNextChapter();
-                                Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
-                              },
-                        icon: const Icon(Icons.arrow_forward),
-                        color: Theme.of(context).colorScheme.primary,
-                        style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: provider.bookId == 1 && provider.chapter == 1
+                              ? null
+                              : () {
+                                  provider.goToPreviousChapter();
+                                  Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
+                                },
+                          icon: const Icon(Icons.arrow_back),
+                          color: Theme.of(context).colorScheme.primary,
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                          ),
                         ),
-                      ),
-                    ],
+                        Text(
+                          "${provider.book} - ${provider.chapter}",
+                          style: const TextStyle(fontSize: 16.0),
+                          textAlign: TextAlign.center,
+                        ),
+                        IconButton(
+                          onPressed: provider.bookId == 66 && provider.chapter == 22
+                              ? null
+                              : () {
+                                  provider.goToNextChapter();
+                                  Scrollable.ensureVisible(const GlobalObjectKey('chapter').currentContext!, duration: const Duration(milliseconds: 500));
+                                },
+                          icon: const Icon(Icons.arrow_forward),
+                          color: Theme.of(context).colorScheme.primary,
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -57,14 +57,14 @@ class _CaminhoPageState extends State<CaminhoPage> {
             ],
           ),
           floatingActionButton: _selectedIndex == 0
-            ? FloatingActionButton.extended(
-                onPressed: () async {
-                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
-                },
-                label: const Text("Continuar leitura"),
-                icon: const Icon(Icons.chevron_right),
-              )
-            : null),
+              ? FloatingActionButton.extended(
+                  onPressed: () async {
+                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
+                  },
+                  label: const Text("Continuar leitura"),
+                  icon: const Icon(Icons.chevron_right),
+                )
+              : null),
     );
   }
 }
@@ -83,6 +83,7 @@ class _IndiceState extends State<Indice> {
       create: (context) => BookIndexProvider(bookName: "caminho"),
       child: Consumer<BookIndexProvider>(
         builder: (context, provider, child) => ListView.builder(
+          padding: EdgeInsets.only(bottom: 80.0),
           itemCount: provider.chapterIds.length,
           itemBuilder: (context, index) {
             return ListTile(
