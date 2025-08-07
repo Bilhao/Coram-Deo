@@ -16,6 +16,7 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
   - Lembrai-vos
   - Preces do Opus Dei
   - Credo Niceno-Constantinopolitano
+  - Credo Atanasiano
   - Santo Rosário (com mistérios diários e ladainha)
   - Te Deum
   - Adoro Te Devote
