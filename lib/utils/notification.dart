@@ -59,7 +59,7 @@ class Notifier {
       var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
       await _notification.zonedSchedule(notification.id, notification.title, notification.body, tz.TZDateTime.from(date, tz.local), notificationDetails,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, payload: notification.payload, matchDateTimeComponents: DateTimeComponents.time);
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, payload: notification.payload, matchDateTimeComponents: DateTimeComponents.time);
     } catch (e) {
       debugPrint('Error scheduling notification: $e');
       rethrow;
