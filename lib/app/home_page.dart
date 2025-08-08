@@ -75,22 +75,23 @@ class HomePageButtons extends StatelessWidget {
               try {
                 final bool didAuthenticate = await auth.authenticate(
                   localizedReason: ' ',
-                  authMessages: [const AndroidAuthMessages(
-                    signInTitle: 'Verifique sua identidade',
-                    cancelButton: 'Cancelar',
-                    biometricHint: 'Use sua digital para acessar o Exame de Consciência',
-                  )],
+                  authMessages: [
+                    const AndroidAuthMessages(
+                      signInTitle: 'Verifique sua identidade',
+                      cancelButton: 'Cancelar',
+                      biometricHint: 'Use sua digital para acessar o Exame de Consciência',
+                    )
+                  ],
                   options: AuthenticationOptions(biometricOnly: appProvider.useBiometric),
                 );
                 if (didAuthenticate) {
                   // ignore: use_build_context_synchronously
                   Navigator.pushNamed(context, route);
                 }
-              } on PlatformException{
+              } on PlatformException {
                 return;
               }
-            }
-            else {
+            } else {
               Navigator.pushNamed(context, route);
             }
           },
@@ -229,12 +230,11 @@ class HomePageCardCarusel extends StatelessWidget {
         enlargeFactor: 0.18,
         indicatorMargin: 10.0,
         slideIndicator: CircularSlideIndicator(
-          slideIndicatorOptions: SlideIndicatorOptions(
-            currentIndicatorColor: Theme.of(context).colorScheme.primary,
-            indicatorRadius: 3.0,
-            itemSpacing: 12.0,
-          )
-        ),
+            slideIndicatorOptions: SlideIndicatorOptions(
+          currentIndicatorColor: Theme.of(context).colorScheme.primary,
+          indicatorRadius: 3.0,
+          itemSpacing: 12.0,
+        )),
       ),
       items: const [
         SantoDoDiaCard(),
