@@ -26,6 +26,7 @@ import 'package:coramdeo/app/oracoes/adorote_devote/page.dart';
 import 'package:coramdeo/app/oracoes/angelus_regina_caeli/page.dart';
 import 'package:coramdeo/app/oracoes/comentario_evangelho/page.dart';
 import 'package:coramdeo/app/oracoes/credo/page.dart';
+import 'package:coramdeo/app/oracoes/credo_atanasiano/page.dart';
 import 'package:coramdeo/app/oracoes/estampa_josemaria/page.dart';
 import 'package:coramdeo/app/oracoes/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/oracoes/falar_com_deus/page.dart';
@@ -43,7 +44,6 @@ import 'package:coramdeo/app/liturgia_diaria/page.dart';
 import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
 import 'package:coramdeo/app/exame_de_consciencia/page.dart';
-
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -90,6 +90,9 @@ class Routes {
 
       case "/credo":
         return MaterialPageRoute(builder: (context) => const CredoPage());
+
+      case "/credo-atanasiano":
+        return MaterialPageRoute(builder: (context) => const CredoAtanPage());
 
       case "/lembrai-vos":
         return MaterialPageRoute(builder: (context) => const LembraiVosPage());

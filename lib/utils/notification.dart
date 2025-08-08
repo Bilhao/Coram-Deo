@@ -58,17 +58,8 @@ class Notifier {
 
       var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
-      await _notification.zonedSchedule(
-        notification.id, 
-        notification.title, 
-        notification.body, 
-        tz.TZDateTime.from(date, tz.local), 
-        notificationDetails,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime, 
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, 
-        payload: notification.payload, 
-        matchDateTimeComponents: DateTimeComponents.time
-      );
+      await _notification.zonedSchedule(notification.id, notification.title, notification.body, tz.TZDateTime.from(date, tz.local), notificationDetails,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle, payload: notification.payload, matchDateTimeComponents: DateTimeComponents.time);
     } catch (e) {
       debugPrint('Error scheduling notification: $e');
       rethrow;
@@ -86,12 +77,8 @@ class Notifier {
 
   static Future<bool?> verifyNotificationPermission() async {
     try {
-      bool? permission = await _notification
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
-      bool? permission2 = await _notification
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestExactAlarmsPermission();
+      bool? permission = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+      bool? permission2 = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestExactAlarmsPermission();
 
       return permission == true && permission2 == true;
     } catch (e) {
