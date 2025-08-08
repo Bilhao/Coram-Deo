@@ -26,11 +26,11 @@ class SantoDoDiaProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       final storedDay = prefs.getInt('santoDoDiaDay');
       final storedMonth = prefs.getInt('santoDoDiaMonth');
-      
+
       if (storedDay == _day && storedMonth == _month) {
         // Load cached data
         _portrait = prefs.getString('santoDoDiaPortrait') ?? '';
@@ -50,7 +50,7 @@ class SantoDoDiaProvider extends BaseProvider {
       clearError(); // Clear any previous cache loading error
       await _fetchFreshData();
     }
-    
+
     setLoading(false);
   }
 
@@ -66,7 +66,7 @@ class SantoDoDiaProvider extends BaseProvider {
         _text = data.getText();
         _boldText = data.getBoldText();
         _italicText = data.getItalicText();
-        
+
         // Cache the data
         await _cacheData();
         return true;
@@ -91,10 +91,10 @@ class SantoDoDiaProvider extends BaseProvider {
     setLoading(true);
     _day = day;
     _month = month;
-    
+
     // Force fresh data fetch for the new date
     await _fetchFreshData();
-    
+
     setLoading(false);
     notifyListeners();
   }

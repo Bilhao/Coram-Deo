@@ -31,51 +31,50 @@ class _OracoesPageState extends State<OracoesPage> {
 
   Widget itembuild(String title, String route) {
     return Consumer<OracoesProvider>(
-        builder: (context, provider, child) => ListTile(
-            title: Text(title, style: const TextStyle(fontSize: 17.0)),
-            onTap: () => Navigator.pushNamed(context, '/$route'),
-            leading: const Icon(Icons.chevron_right),
-            trailing: IconButton(
-              onPressed: () {
-                provider.toggleFavorita(route);
-              },
-              icon: provider.favoritas.contains(route) ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary) : const Icon(Icons.star_border),
-            )));
+      builder: (context, provider, child) => ListTile(
+        title: Text(title, style: const TextStyle(fontSize: 17.0)),
+        onTap: () => Navigator.pushNamed(context, '/$route'),
+        leading: const Icon(Icons.chevron_right),
+        trailing: IconButton(
+          onPressed: () {
+            provider.toggleFavorita(route);
+          },
+          icon: provider.favoritas.contains(route) ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary) : const Icon(Icons.star_border),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<OracoesProvider>(
-        create: (context) => OracoesProvider(),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Orações'),
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Consumer<OracoesProvider>(builder: (context, provider, child) {
+      create: (context) => OracoesProvider(),
+      child: Scaffold(
+        appBar: AppBar(title: Text('Orações', style: TextStyle(fontSize: 20))),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Consumer<OracoesProvider>(
+                builder: (context, provider, child) {
                   return ExpansionTile(
                     title: Text("Favoritas", style: TextStyle(fontSize: 18.0)),
                     initiallyExpanded: true,
                     shape: const Border(),
-                    children: [
-                      for (String route in provider.favoritas) itembuild(routeToName[route]!, route),
-                    ],
+                    children: [for (String route in provider.favoritas) itembuild(routeToName[route]!, route)],
                   );
-                }),
-                ExpansionTile(
-                  title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
-                  initiallyExpanded: false,
-                  shape: const Border(),
-                  children: [
-                    for (String route in routeToName.keys) itembuild(routeToName[route]!, route),
-                  ],
-                ),
-                const Divider(height: 40, color: Colors.transparent),
-              ],
-            ),
+                },
+              ),
+              ExpansionTile(
+                title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
+                initiallyExpanded: false,
+                shape: const Border(),
+                children: [for (String route in routeToName.keys) itembuild(routeToName[route]!, route)],
+              ),
+              const Divider(height: 40, color: Colors.transparent),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

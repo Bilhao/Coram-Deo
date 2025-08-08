@@ -10,9 +10,7 @@ class BibliaPage1 extends StatelessWidget {
     final provider = Provider.of<BibleProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Bíblia"),
-      ),
+      appBar: AppBar(title: const Text("Bíblia", maxLines: 2, style: TextStyle(fontSize: 20))),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -43,11 +41,7 @@ class BibliaPage1 extends StatelessWidget {
                                         provider.updateValues(testament: "Old", book: book, chapter: chapter);
                                         Navigator.pushNamed(context, "/biblia-page-2");
                                       },
-                                      style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                        ),
-                                      ),
+                                      style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
                                       child: Text("$chapter"),
                                     ),
                                 ],
@@ -55,7 +49,7 @@ class BibliaPage1 extends StatelessWidget {
                             ),
                           ],
                         ),
-                      }
+                      },
                     ],
                   ),
                   ExpansionTile(
@@ -81,13 +75,7 @@ class BibliaPage1 extends StatelessWidget {
                                         provider.updateValues(testament: "New", book: book, chapter: chapter);
                                         Navigator.pushNamed(context, "/biblia-page-2");
                                       },
-                                      style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(10.0),
-                                          ),
-                                        ),
-                                      ),
+                                      style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
                                       child: Text("$chapter"),
                                     ),
                                 ],
@@ -107,13 +95,7 @@ class BibliaPage1 extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, '/biblia-page-2');
                 },
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
+                style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
                 child: const Text("Continuar última leitura", style: TextStyle(fontSize: 16)),
               ),
             ),

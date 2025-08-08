@@ -14,14 +14,15 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => PlanoDeVidaProvider(),
-        child: Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
+      create: (context) => PlanoDeVidaProvider(),
+      child: Consumer<PlanoDeVidaProvider>(
+        builder: (context, provider, child) {
           return DefaultTabController(
             length: 3,
             initialIndex: 1,
             child: Scaffold(
               appBar: AppBar(
-                title: const Text("Plano de Vida"),
+                title: const Text("Plano de Vida", maxLines: 2, style: TextStyle(fontSize: 20)),
                 bottom: const TabBar(
                   tabs: [
                     Tab(text: "Todos os itens", icon: Icon(Icons.list)),
@@ -30,16 +31,12 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
                   ],
                 ),
               ),
-              body: const TabBarView(
-                children: [
-                  TodosOsItens(),
-                  Selecionados(),
-                  Progresso(),
-                ],
-              ),
+              body: const TabBarView(children: [TodosOsItens(), Selecionados(), Progresso()]),
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 }
 
@@ -60,75 +57,80 @@ class _TodosOsItensState extends State<TodosOsItens> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      return Column(children: [
-        Expanded(
-            child: ListView(
+    return Consumer<PlanoDeVidaProvider>(
+      builder: (context, provider, child) {
+        return Column(
           children: [
-            const Divider(height: 20, color: Colors.transparent),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Row(children: [
-                Expanded(
-                  child: TextField(
-                    controller: titleController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Novo item',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        titleController.text = value;
-                      });
-                    },
-                  ),
-                ),
-                const VerticalDivider(width: 10, color: Colors.transparent),
-                IconButton.filledTonal(
-                    icon: const Icon(Icons.add),
-                    style: ButtonStyle(shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
-                    onPressed: titleController.text.isEmpty
-                        ? null
-                        : () {
-                            provider.addItem(titleController.text, 1, 0, 0, 0);
-                            titleController.text = "";
-                          }),
-              ]),
-            ),
-            const Divider(height: 15, color: Colors.transparent),
-            for (int i = 0; i < provider.titles.length; i++)
-              ListTile(
-                title: Text(provider.titles[i], style: const TextStyle(fontSize: 18)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Checkbox(
-                      value: provider.titlesIsSelected.contains(provider.titles[i]),
-                      onChanged: (value) {
-                        provider.toggleItemSelection(provider.titles[i]);
-                      },
-                    ),
-                    // Show more options button for all items
-                    IconButton(
-                      icon: const Icon(Icons.more_vert),
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => ChangeNotifierProvider.value(
-                            value: provider,
-                            child: InfoAlertDialog(title: provider.titles[i]),
+            Expanded(
+              child: ListView(
+                children: [
+                  const Divider(height: 20, color: Colors.transparent),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: titleController,
+                            decoration: const InputDecoration(border: OutlineInputBorder(), labelText: 'Novo item'),
+                            onChanged: (value) {
+                              setState(() {
+                                titleController.text = value;
+                              });
+                            },
                           ),
-                        );
-                      },
+                        ),
+                        const VerticalDivider(width: 10, color: Colors.transparent),
+                        IconButton.filledTonal(
+                          icon: const Icon(Icons.add),
+                          style: ButtonStyle(shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
+                          onPressed: titleController.text.isEmpty
+                              ? null
+                              : () {
+                                  provider.addItem(titleController.text, 1, 0, 0, 0);
+                                  titleController.text = "";
+                                },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                onTap: () => provider.toggleItemSelection(provider.titles[i]),
+                  ),
+                  const Divider(height: 15, color: Colors.transparent),
+                  for (int i = 0; i < provider.titles.length; i++)
+                    ListTile(
+                      title: Text(provider.titles[i], style: const TextStyle(fontSize: 18)),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Checkbox(
+                            value: provider.titlesIsSelected.contains(provider.titles[i]),
+                            onChanged: (value) {
+                              provider.toggleItemSelection(provider.titles[i]);
+                            },
+                          ),
+                          // Show more options button for all items
+                          IconButton(
+                            icon: const Icon(Icons.more_vert),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => ChangeNotifierProvider.value(
+                                  value: provider,
+                                  child: InfoAlertDialog(title: provider.titles[i]),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      onTap: () => provider.toggleItemSelection(provider.titles[i]),
+                    ),
+                ],
               ),
+            ),
           ],
-        )),
-      ]);
-    });
+        );
+      },
+    );
   }
 }
 
@@ -137,13 +139,15 @@ class Selecionados extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      // Get today's items based on weekday selection
-      List<String> todaysItems = provider.getTodaysItems();
+    return Consumer<PlanoDeVidaProvider>(
+      builder: (context, provider, child) {
+        // Get today's items based on weekday selection
+        List<String> todaysItems = provider.getTodaysItems();
 
-      return Column(children: [
-        Expanded(
-            child: ListView.builder(
+        return Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
                 itemCount: todaysItems.length,
                 itemBuilder: (context, index) {
                   String title = todaysItems[index];
@@ -160,9 +164,13 @@ class Selecionados extends StatelessWidget {
                       provider.toggleItemCompletion(title);
                     },
                   );
-                })),
-      ]);
-    });
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -185,10 +193,7 @@ class InfoAlertDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Weekday Selector
-                const ListTile(
-                  title: Text("Dias da semana"),
-                  leading: Icon(Icons.calendar_month),
-                ),
+                const ListTile(title: Text("Dias da semana"), leading: Icon(Icons.calendar_month)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: _CustomWeekdaySelector(
@@ -210,10 +215,7 @@ class InfoAlertDialog extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () async {
-                      TimeOfDay? pickedTime = await showTimePicker(
-                        context: context,
-                        initialTime: const TimeOfDay(hour: 7, minute: 0),
-                      );
+                      TimeOfDay? pickedTime = await showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0));
                       if (pickedTime != null) {
                         if (await Notifier.verifyNotificationPermission() != null && await Notifier.verifyNotificationPermission() != false) {
                           await provider.activateItemNotification(title);
@@ -258,10 +260,7 @@ class InfoAlertDialog extends StatelessWidget {
                             },
                           ),
                         ),
-                    if (provider.notificationTimes[title] == null)
-                      const ListTile(
-                        title: Text("Nenhum lembrete configurado", textAlign: TextAlign.center),
-                      ),
+                    if (provider.notificationTimes[title] == null) const ListTile(title: Text("Nenhum lembrete configurado", textAlign: TextAlign.center)),
                   ],
                 ),
                 ListTile(
@@ -286,13 +285,11 @@ class Progresso extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<PlanoDeVidaProvider>(builder: (context, provider, child) {
-      return Column(
-        children: [
-          Expanded(child: _buildProgressView(context, provider)),
-        ],
-      );
-    });
+    return Consumer<PlanoDeVidaProvider>(
+      builder: (context, provider, child) {
+        return Column(children: [Expanded(child: _buildProgressView(context, provider))]);
+      },
+    );
   }
 
   Widget _buildProgressView(BuildContext context, PlanoDeVidaProvider provider) {
@@ -320,10 +317,7 @@ class Progresso extends StatelessWidget {
                   children: [
                     Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 8),
-                    const Text(
-                      "Estatísticas Gerais",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                    const Text("Estatísticas Gerais", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -344,10 +338,7 @@ class Progresso extends StatelessWidget {
           children: [
             Icon(Icons.insights, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 8),
-            const Text(
-              "Progresso por Item",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
+            const Text("Progresso por Item", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ],
         ),
         const SizedBox(height: 16),
@@ -362,13 +353,8 @@ class Progresso extends StatelessWidget {
       children: [
         Icon(icon, size: 16),
         const SizedBox(width: 8),
-        Expanded(
-          child: Text(label, style: const TextStyle(fontSize: 14)),
-        ),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-        ),
+        Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -390,23 +376,15 @@ class Progresso extends StatelessWidget {
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         childrenPadding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-        collapsedShape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        ),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        ),
+        collapsedShape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10.0))),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
-                  currentStreak > 0 ? Icons.trending_up : Icons.radio_button_unchecked,
-                  color: currentStreak > 0 ? Colors.green : Colors.grey,
-                  size: 16,
-                ),
+                Icon(currentStreak > 0 ? Icons.trending_up : Icons.radio_button_unchecked, color: currentStreak > 0 ? Colors.green : Colors.grey, size: 16),
                 const SizedBox(width: 4),
                 Text("Sequência de $currentStreak dia${currentStreak > 1 ? 's' : ''}", style: const TextStyle(fontSize: 12)),
               ],
@@ -414,42 +392,39 @@ class Progresso extends StatelessWidget {
             const SizedBox(height: 10),
             LinearProgressIndicator(
               value: completionWeek / 100,
-              valueColor: AlwaysStoppedAnimation<Color>(completionWeek >= 80
-                  ? Colors.green
-                  : completionWeek >= 60
-                      ? Colors.orange
-                      : Colors.red),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                completionWeek >= 80
+                    ? Colors.green
+                    : completionWeek >= 60
+                    ? Colors.orange
+                    : Colors.red,
+              ),
             ),
-            Text(
-              "Semana: ${completionWeek.toStringAsFixed(1)}%",
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text("Semana: ${completionWeek.toStringAsFixed(1)}%", style: const TextStyle(fontSize: 12)),
             const SizedBox(height: 10),
             LinearProgressIndicator(
               value: completionMonth / 100,
-              valueColor: AlwaysStoppedAnimation<Color>(completionMonth >= 80
-                  ? Colors.green
-                  : completionMonth >= 60
-                      ? Colors.orange
-                      : Colors.red),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                completionMonth >= 80
+                    ? Colors.green
+                    : completionMonth >= 60
+                    ? Colors.orange
+                    : Colors.red,
+              ),
             ),
-            Text(
-              "Mês: ${completionMonth.toStringAsFixed(1)}%",
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text("Mês: ${completionMonth.toStringAsFixed(1)}%", style: const TextStyle(fontSize: 12)),
             const SizedBox(height: 10),
             LinearProgressIndicator(
               value: completionYear / 100,
-              valueColor: AlwaysStoppedAnimation<Color>(completionYear >= 80
-                  ? Colors.green
-                  : completionYear >= 60
-                      ? Colors.orange
-                      : Colors.red),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                completionYear >= 80
+                    ? Colors.green
+                    : completionYear >= 60
+                    ? Colors.orange
+                    : Colors.red,
+              ),
             ),
-            Text(
-              "Ano: ${completionYear.toStringAsFixed(1)}%",
-              style: const TextStyle(fontSize: 12),
-            ),
+            Text("Ano: ${completionYear.toStringAsFixed(1)}%", style: const TextStyle(fontSize: 12)),
           ],
         ),
         children: [
@@ -458,14 +433,23 @@ class Progresso extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Statistics Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildStatItem(context, "Sequência Atual", "$currentStreak dias", Icons.trending_up),
-                    _buildStatItem(context, "Total Concluído", "$totalCompleted", Icons.check_circle),
-                    _buildStatItem(context, "Mês", "${completionMonth.toStringAsFixed(1)}%", Icons.calendar_month),
-                  ],
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3), width: 1),
+                  ),
+                  // Statistics Row
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildStatItem(context, "Sequência Atual", "$currentStreak dias", Icons.trending_up),
+                      _buildStatItem(context, "Total Concluído", "$totalCompleted", Icons.check_circle),
+                      _buildStatItem(context, "Porcentagem no mês", "${completionMonth.toStringAsFixed(1)}%", Icons.calendar_month),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 // Weekly Progress (Semana do mês)
@@ -473,153 +457,109 @@ class Progresso extends StatelessWidget {
                   children: [
                     Icon(Icons.bar_chart, color: Theme.of(context).colorScheme.primary, size: 16),
                     const SizedBox(width: 8),
-                    const Text(
-                      "Progresso por Semana",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    const Text("Progresso por Semana", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                ...weekData.map((week) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 70,
-                            child: Text(week['week'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-                          ),
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: week['total'] > 0 ? week['completed'] / week['total'] : 0,
-                              valueColor: AlwaysStoppedAnimation<Color>(week['percentage'] >= 80
+                ...weekData.map(
+                  (week) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 70,
+                          child: Text(week['week'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                        ),
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: week['total'] > 0 ? week['completed'] / week['total'] : 0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              week['percentage'] >= 80
                                   ? Colors.green
                                   : week['percentage'] >= 60
-                                      ? Colors.orange
-                                      : Colors.red),
+                                  ? Colors.orange
+                                  : Colors.red,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "  ${week['completed']}/${week['total']}",
-                            style: const TextStyle(fontSize: 12),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    )),
+                        ),
+                        const SizedBox(width: 8),
+                        Text("  ${week['completed']}/${week['total']}", style: const TextStyle(fontSize: 12), textAlign: TextAlign.right),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Monthly Progress
                 Row(
                   children: [
                     Icon(Icons.calendar_month, color: Theme.of(context).colorScheme.primary, size: 16),
                     const SizedBox(width: 8),
-                    const Text(
-                      "Progresso Mensal",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    const Text("Progresso Mensal", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                ...monthData.map((month) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 70,
-                            child: Text(month['month'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-                          ),
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: month['total'] > 0 ? month['completed'] / month['total'] : 0,
-                              valueColor: AlwaysStoppedAnimation<Color>(month['percentage'] >= 80
+                ...monthData.map(
+                  (month) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 70,
+                          child: Text(month['month'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                        ),
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: month['total'] > 0 ? month['completed'] / month['total'] : 0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              month['percentage'] >= 80
                                   ? Colors.green
                                   : month['percentage'] >= 60
-                                      ? Colors.orange
-                                      : Colors.red),
+                                  ? Colors.orange
+                                  : Colors.red,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "  ${month['completed']}/${month['total']}",
-                            style: const TextStyle(fontSize: 12),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    )),
+                        ),
+                        const SizedBox(width: 8),
+                        Text("  ${month['completed']}/${month['total']}", style: const TextStyle(fontSize: 12), textAlign: TextAlign.right),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Yearly Progress
                 Row(
                   children: [
                     Icon(Icons.view_timeline, color: Theme.of(context).colorScheme.primary, size: 16),
                     const SizedBox(width: 8),
-                    const Text(
-                      "Progresso Anual",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    const Text("Progresso Anual", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const SizedBox(height: 12),
-                ...yearData.map((year) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 70,
-                            child: Text(year['year'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
-                          ),
-                          Expanded(
-                            child: LinearProgressIndicator(
-                              value: year['total'] > 0 ? year['completed'] / year['total'] : 0,
-                              valueColor: AlwaysStoppedAnimation<Color>(year['percentage'] >= 80
+                ...yearData.map(
+                  (year) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 70,
+                          child: Text(year['year'], style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                        ),
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: year['total'] > 0 ? year['completed'] / year['total'] : 0,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              year['percentage'] >= 80
                                   ? Colors.green
                                   : year['percentage'] >= 60
-                                      ? Colors.orange
-                                      : Colors.red),
+                                  ? Colors.orange
+                                  : Colors.red,
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "  ${year['completed']}/${year['total']}",
-                            style: const TextStyle(fontSize: 12),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    )),
-
-                // Motivational Message
-                const SizedBox(height: 16),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8.0),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _getMotivationalIcon(completionWeek, currentStreak),
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _getMotivationalMessage(completionWeek, currentStreak),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Text("  ${year['completed']}/${year['total']}", style: const TextStyle(fontSize: 12), textAlign: TextAlign.right),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -632,7 +572,7 @@ class Progresso extends StatelessWidget {
 
   Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
     return SizedBox(
-      width: (MediaQuery.sizeOf(context).width - 74) / 3,
+      width: (MediaQuery.sizeOf(context).width - 100) / 3,
       child: Column(
         children: [
           Icon(icon, color: Colors.blue, size: 20),
@@ -643,42 +583,10 @@ class Progresso extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11),
-            textAlign: TextAlign.center,
-          ),
+          Text(label, style: const TextStyle(fontSize: 11), textAlign: TextAlign.center),
         ],
       ),
     );
-  }
-
-  IconData _getMotivationalIcon(double completion7Days, int streak) {
-    if (streak >= 7) {
-      return Icons.local_fire_department;
-    } else if (completion7Days >= 80) {
-      return Icons.stars;
-    } else if (completion7Days >= 60) {
-      return Icons.trending_up;
-    } else if (completion7Days >= 40) {
-      return Icons.track_changes;
-    } else {
-      return Icons.eco;
-    }
-  }
-
-  String _getMotivationalMessage(double completion7Days, int streak) {
-    if (streak >= 7) {
-      return "Excelente! Você está mantendo uma sequência de $streak dias!";
-    } else if (completion7Days >= 80) {
-      return "Ótimo progresso! Continue assim!";
-    } else if (completion7Days >= 60) {
-      return "Bom ritmo! Você pode melhorar ainda mais!";
-    } else if (completion7Days >= 40) {
-      return "Você está no caminho certo, continue!";
-    } else {
-      return "Todo grande objetivo começa com pequenos passos!";
-    }
   }
 }
 
@@ -689,12 +597,7 @@ class _CustomWeekdaySelector extends StatelessWidget {
   final Color selectedColor;
   final Color unselectedColor;
 
-  const _CustomWeekdaySelector({
-    required this.values,
-    required this.onChanged,
-    required this.selectedColor,
-    required this.unselectedColor,
-  });
+  const _CustomWeekdaySelector({required this.values, required this.onChanged, required this.selectedColor, required this.unselectedColor});
 
   @override
   Widget build(BuildContext context) {
@@ -718,10 +621,7 @@ class _CustomWeekdaySelector extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected ? selectedColor : unselectedColor,
                   borderRadius: BorderRadius.circular(8.0),
-                  border: Border.all(
-                    color: selectedColor,
-                    width: 1.0,
-                  ),
+                  border: Border.all(color: selectedColor, width: 1.0),
                 ),
                 child: Center(
                   child: Column(
@@ -729,19 +629,9 @@ class _CustomWeekdaySelector extends StatelessWidget {
                     children: [
                       Text(
                         weekdayLabels[uiIndex],
-                        style: TextStyle(
-                          color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.bold, fontSize: 12),
                       ),
-                      Text(
-                        weekdayNames[uiIndex],
-                        style: TextStyle(
-                          color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
-                          fontSize: 8,
-                        ),
-                      ),
+                      Text(weekdayNames[uiIndex], style: TextStyle(color: isSelected ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface, fontSize: 8)),
                     ],
                   ),
                 ),
