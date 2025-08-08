@@ -31,14 +31,14 @@ class BibleProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       // Fixed: Changed "biblie" to "bible" for consistency
       _testament = prefs.getString(AppConstants.bibleTestamentKey) ?? AppConstants.defaultTestament;
       _bookId = prefs.getInt(AppConstants.bibleBookIdKey) ?? AppConstants.defaultBookId;
       _book = prefs.getString(AppConstants.bibleBookKey) ?? AppConstants.defaultBook;
       _chapter = prefs.getInt(AppConstants.bibleChapterKey) ?? AppConstants.defaultChapter;
-      
+
       return true;
     }, errorContext: 'Loading Bible preferences');
 
@@ -46,15 +46,15 @@ class BibleProvider extends BaseProvider {
     await safeAsync(() async {
       _oldBooks = await dbHelper.getBooks("Old");
       _newBooks = await dbHelper.getBooks("New");
-      
+
       // Load saved verses or fetch them if not cached
       final prefs = await BaseProvider.getPrefs();
       _versesId = prefs.getStringList(AppConstants.bibleVersesIdKey) ?? await dbHelper.getVersesId(_book, _chapter);
       _verses = prefs.getStringList(AppConstants.bibleVersesKey) ?? await dbHelper.getVerses(_book, _chapter);
-      
+
       return true;
     }, errorContext: 'Loading Bible data');
-    
+
     setLoading(false);
   }
 
@@ -121,7 +121,7 @@ class BibleProvider extends BaseProvider {
 
   Future<void> updateValues({required String testament, required String book, required int chapter}) async {
     setLoading(true);
-    
+
     await safeAsync(() async {
       _testament = testament;
       _book = book;
@@ -129,12 +129,12 @@ class BibleProvider extends BaseProvider {
       _chapter = chapter;
       _versesId = await dbHelper.getVersesId(book, chapter);
       _verses = await dbHelper.getVerses(book, chapter);
-      
+
       // Save the updated values
       await save();
       return true;
     }, errorContext: 'Updating Bible values');
-    
+
     setLoading(false);
   }
 }

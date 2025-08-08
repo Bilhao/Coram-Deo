@@ -18,53 +18,48 @@ class _CaminhoPageState extends State<CaminhoPage> {
       length: 3,
       initialIndex: 0,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Caminho"),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: TabBar(
-                onTap: (value) {
-                  setState(() {
-                    _selectedIndex = value;
-                  });
-                },
-                dividerColor: Colors.transparent,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.format_list_numbered),
-                    text: "Índice",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.format_list_bulleted),
-                    text: "Índice Temático",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.info_outline),
-                    text: "Sobre",
-                  ),
-                ]),
-          ),
-          body: TabBarView(
-            children: [
-              const Indice(),
-              const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.watch_later_outlined, size: 80), Divider(height: 15, color: Colors.transparent), Text("Em desenvimento", style: TextStyle(fontSize: 18))],
-                ),
-              ),
-              Container(),
+        appBar: AppBar(title: const Text("Caminho", maxLines: 2, style: TextStyle(fontSize: 20))),
+        bottomNavigationBar: SafeArea(
+          child: TabBar(
+            onTap: (value) {
+              setState(() {
+                _selectedIndex = value;
+              });
+            },
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(icon: Icon(Icons.format_list_numbered), text: "Índice"),
+              Tab(icon: Icon(Icons.format_list_bulleted), text: "Índice Temático"),
+              Tab(icon: Icon(Icons.info_outline), text: "Sobre"),
             ],
           ),
-          floatingActionButton: _selectedIndex == 0
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
-                  },
-                  label: const Text("Continuar leitura"),
-                  icon: const Icon(Icons.chevron_right),
-                )
-              : null),
+        ),
+        body: TabBarView(
+          children: [
+            const Indice(),
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.watch_later_outlined, size: 80),
+                  Divider(height: 15, color: Colors.transparent),
+                  Text("Em desenvimento", style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+            Container(),
+          ],
+        ),
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton.extended(
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
+                },
+                label: const Text("Continuar leitura"),
+                icon: const Icon(Icons.chevron_right),
+              )
+            : null,
+      ),
     );
   }
 }
@@ -110,39 +105,42 @@ class IndiceTematico extends StatelessWidget {
     List<String> letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L", "M", "N", "O", "P", "R", "S", "T", "U", "V"];
 
     return SingleChildScrollView(
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Container(
-              key: const GlobalObjectKey("menu"),
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 5.0),
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              child: Wrap(
-                runSpacing: 5,
-                children: [
-                  for (String letter in letters) ...{
-                    IconButton(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Container(
+                key: const GlobalObjectKey("menu"),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+                child: Wrap(
+                  runSpacing: 5,
+                  children: [
+                    for (String letter in letters) ...{
+                      IconButton(
                         icon: Text(letter),
                         onPressed: () {
                           Scrollable.ensureVisible(GlobalObjectKey(letter).currentContext!, duration: const Duration(milliseconds: 500));
-                        })
-                  }
-                ],
+                        },
+                      ),
+                    },
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        const Divider(height: 15, color: Colors.transparent),
-        const LetterTile(letter: "A"),
-        const ClickableText(isTitle: true, text: "Abandono em Deus", points: [113, 389, 472, 498, 659, 691, 731, 732, 760, 766, 767, 768, 853, 864, 912]),
-        const ClickableText(isTitle: false, text: "nas dificuldade econômicas", points: [363, 481, 487]),
-        const ClickableText(isTitle: false, text: "por meio da luta confiada", points: [95, 314, 719, 721, 722, 729, 733]),
-        const ClickableText(isTitle: false, text: "através de Nossa Senhora", points: [498]),
-        const ClickableText(isTitle: true, text: "Abnegação", points: [498]),
-      ]),
+          const Divider(height: 15, color: Colors.transparent),
+          const LetterTile(letter: "A"),
+          const ClickableText(isTitle: true, text: "Abandono em Deus", points: [113, 389, 472, 498, 659, 691, 731, 732, 760, 766, 767, 768, 853, 864, 912]),
+          const ClickableText(isTitle: false, text: "nas dificuldade econômicas", points: [363, 481, 487]),
+          const ClickableText(isTitle: false, text: "por meio da luta confiada", points: [95, 314, 719, 721, 722, 729, 733]),
+          const ClickableText(isTitle: false, text: "através de Nossa Senhora", points: [498]),
+          const ClickableText(isTitle: true, text: "Abnegação", points: [498]),
+        ],
+      ),
     );
   }
 }
@@ -164,7 +162,10 @@ class ClickableText extends StatelessWidget {
             provider.changeContentForThemeIndex(points, text);
             Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "caminho"});
           },
-          child: Text(text, style: TextStyle(fontSize: isTitle ? 22 : 18, decoration: points.isNotEmpty ? TextDecoration.underline : TextDecoration.none)),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: isTitle ? 22 : 18, decoration: points.isNotEmpty ? TextDecoration.underline : TextDecoration.none),
+          ),
         ),
       ),
     );
@@ -178,13 +179,16 @@ class LetterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      const Text("A"),
-      IconButton(
-        onPressed: () => Scrollable.ensureVisible(const GlobalObjectKey("menu").currentContext!, duration: const Duration(milliseconds: 500)),
-        icon: const Icon(Icons.move_up),
-      )
-    ]);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text("A"),
+        IconButton(
+          onPressed: () => Scrollable.ensureVisible(const GlobalObjectKey("menu").currentContext!, duration: const Duration(milliseconds: 500)),
+          icon: const Icon(Icons.move_up),
+        ),
+      ],
+    );
   }
 }
 

@@ -102,7 +102,7 @@ class PlanoDeVida {
     await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
       // Column already exists, ignore error
     });
-    
+
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT title, weekdays FROM data');
     Map<String, dynamic> resultMap = {};
     for (Map<String, dynamic> map in maps) {
@@ -151,7 +151,7 @@ class PlanoDeVida {
     });
   }
 
-  toggleisSelected(String title) async {
+  Future<void> toggleisSelected(String title) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT isSelected FROM data WHERE title = ?', [title]);
     if (maps[0]['isSelected'] == 1) {
@@ -161,7 +161,7 @@ class PlanoDeVida {
     }
   }
 
-  activateisNotification(String title) async {
+  Future<void> activateisNotification(String title) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT isNotification FROM data WHERE title = ?', [title]);
     if (maps[0]['isNotification'] == 0) {
@@ -169,7 +169,7 @@ class PlanoDeVida {
     }
   }
 
-  deactivateisNotification(String title) async {
+  Future<void> deactivateisNotification(String title) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT isNotification FROM data WHERE title = ?', [title]);
     if (maps[0]['isNotification'] == 1) {
@@ -177,7 +177,7 @@ class PlanoDeVida {
     }
   }
 
-  insertNotificationTime(String title, String time) async {
+  Future<void> insertNotificationTime(String title, String time) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT notificationTimes FROM data WHERE title = ?', [title]);
     if (maps[0]['notificationTimes'] == null) {
@@ -187,7 +187,7 @@ class PlanoDeVida {
     }
   }
 
-  deleteNotificationTime(String title, String time) async {
+  Future<void> deleteNotificationTime(String title, String time) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT notificationTimes FROM data WHERE title = ?', [title]);
     if (maps[0]['notificationTimes'].split(",").length == 1) {
@@ -199,7 +199,7 @@ class PlanoDeVida {
     }
   }
 
-  insertCompletedDate(String title, String date) async {
+  Future<void> insertCompletedDate(String title, String date) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT completedDates FROM data WHERE title = ?', [title]);
     if (maps[0]['completedDates'] == null) {
@@ -209,7 +209,7 @@ class PlanoDeVida {
     }
   }
 
-  deleteCompletedDate(String title, String date) async {
+  Future<void> deleteCompletedDate(String title, String date) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT completedDates FROM data WHERE title = ?', [title]);
     if (maps[0]['completedDates'].split(",").length == 1) {
@@ -221,22 +221,21 @@ class PlanoDeVida {
     }
   }
 
-  insertNewItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
+  Future<void> insertNewItem(String title, int isCustom, int isSelected, int isCompleted, int isNotification) async {
     final db = await initDb();
     // Ensure weekdays column exists
     await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
       // Column already exists, ignore error
     });
-    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification, weekdays) VALUES(?, ?, ?, ?, ?, ?)", 
-        [title, isCustom, isSelected, isCompleted, isNotification, "1,2,3,4,5,6,7"]);
+    await db.rawInsert("INSERT INTO data(title, isCustom, isSelected, isCompleted, isNotification, weekdays) VALUES(?, ?, ?, ?, ?, ?)", [title, isCustom, isSelected, isCompleted, isNotification, "1,2,3,4,5,6,7"]);
   }
 
-  deleteItem(String title) async {
+  Future<void> deleteItem(String title) async {
     final db = await initDb();
     await db.rawDelete('DELETE FROM data WHERE title = ?', [title]);
   }
 
-  updateWeekdays(String title, String weekdays) async {
+  Future<void> updateWeekdays(String title, String weekdays) async {
     final db = await initDb();
     // Ensure weekdays column exists
     await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
@@ -267,19 +266,19 @@ class PlanoDeVida {
   Future<int> getNotificationIdForTime(String title, String time) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
-    
+
     if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
       return -1;
     }
-    
+
     int itemId = maps[0]['id'];
     List<String> times = maps[0]['notificationTimes'].split(',');
-    
+
     // Check if the time exists in the list
     if (!times.contains(time)) {
       return -1;
     }
-    
+
     return generateNotificationId(itemId, time);
   }
 
@@ -287,23 +286,23 @@ class PlanoDeVida {
   Future<List<int>> getAllNotificationIdsForTitle(String title) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, notificationTimes FROM data WHERE title = ?', [title]);
-    
+
     if (maps.isEmpty || maps[0]['notificationTimes'] == null) {
       return [];
     }
-    
+
     int itemId = maps[0]['id'];
     List<String> times = maps[0]['notificationTimes'].split(',');
     List<int> notificationIds = [];
-    
+
     for (String time in times) {
       notificationIds.add(generateNotificationId(itemId, time));
     }
-    
+
     return notificationIds;
   }
 
-  getTitleAndNotificationId() async {
+  Future<Map<String, int>> getTitleAndNotificationId() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT id, title, notificationTimes FROM data');
     Map<String, int> resultMap = {};
