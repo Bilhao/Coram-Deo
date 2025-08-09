@@ -30,8 +30,8 @@ class CustomNotification {
 class Notifier {
   static final _notification = FlutterLocalNotificationsPlugin();
 
-  static void init() {
-    _notification.initialize(
+  static Future<void> init() async {
+    await _notification.initialize(
       const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_notification'), iOS: DarwinInitializationSettings()),
       onDidReceiveNotificationResponse: _onSelectNotification,
       onDidReceiveBackgroundNotificationResponse: _onSelectNotification,
