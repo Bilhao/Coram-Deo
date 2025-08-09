@@ -39,23 +39,13 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
           });
           return Scaffold(
             appBar: AppBar(
-                title: const Text("Liturgia Diária"),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.remove),
-                    onPressed: () => fs.decreaseFontSize()
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => fs.increaseFontSize(),
-                  )
-                ],
-                bottom: provider.isLoading
-                    ? const PreferredSize(
-                        preferredSize: Size.fromHeight(2.0),
-                        child: LinearProgressIndicator(),
-                      )
-                    : null),
+              title: const Text("Liturgia Diária", maxLines: 2, style: TextStyle(fontSize: 20)),
+              actions: [
+                IconButton(icon: const Icon(Icons.remove), onPressed: () => fs.decreaseFontSize()),
+                IconButton(icon: const Icon(Icons.add), onPressed: () => fs.increaseFontSize()),
+              ],
+              bottom: provider.isLoading ? const PreferredSize(preferredSize: Size.fromHeight(2.0), child: LinearProgressIndicator()) : null,
+            ),
             body: provider.isLoading
                 ? Container()
                 : SafeArea(
@@ -69,7 +59,9 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                             children: [
                               Row(
                                 children: [
-                                  Expanded(child: Text("Liturgia do dia: ${provider.date}", style: TextStyle(fontSize: fs.fontSize + 2),)),
+                                  Expanded(
+                                    child: Text("Liturgia do dia: ${provider.date}", style: TextStyle(fontSize: fs.fontSize + 2)),
+                                  ),
                                   IconButton(
                                     onPressed: () async {
                                       DateTime? pickedDate = await showDatePicker(
@@ -83,7 +75,7 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                                       }
                                     },
                                     icon: const Icon(Icons.calendar_month),
-                                  )
+                                  ),
                                 ],
                               ),
                               const Divider(height: 15, color: Colors.transparent),
@@ -91,51 +83,83 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
                               const Divider(height: 15, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Primeira Leitura (${provider.primeiraLeituraReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Primeira Leitura (${provider.primeiraLeituraReferencia})",
+                                  style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                                ),
                               ),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.primeiraLeituraTitulo, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
+                              Text(
+                                provider.primeiraLeituraTitulo,
+                                style: TextStyle(fontSize: fs.fontSize + 3),
+                                textAlign: TextAlign.left,
+                              ),
                               const Divider(height: 15, color: Colors.transparent),
                               Text(provider.primeiraLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 25, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Salmo (${provider.salmoReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Salmo (${provider.salmoReferencia})",
+                                  style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                                ),
                               ),
                               const Divider(height: 10, color: Colors.transparent),
-                              Text.rich(TextSpan(children: [
+                              Text.rich(
                                 TextSpan(
-                                  text: "℟. ",
-                                  style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold, color: Colors.red),
+                                  children: [
+                                    TextSpan(
+                                      text: "℟. ",
+                                      style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold, color: Colors.red),
+                                    ),
+                                    TextSpan(
+                                      text: provider.salmoRefrao,
+                                      style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
                                 ),
-                                TextSpan(
-                                  text: provider.salmoRefrao,
-                                  style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold),
-                                ),
-                              ])),
+                              ),
                               const Divider(height: 15, color: Colors.transparent),
                               Text(provider.salmoText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 25, color: Colors.transparent),
                               if (provider.segundaLeituraTitulo != "")
                                 Align(
                                   alignment: Alignment.center,
-                                  child: Text("Segunda Leitura (${provider.segundaLeituraReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
+                                  child: Text(
+                                    "Segunda Leitura (${provider.segundaLeituraReferencia})",
+                                    style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               if (provider.segundaLeituraReferencia != "") const Divider(height: 15, color: Colors.transparent),
-                              if (provider.segundaLeituraTitulo != "") Text(provider.segundaLeituraTitulo, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
+                              if (provider.segundaLeituraTitulo != "")
+                                Text(
+                                  provider.segundaLeituraTitulo,
+                                  style: TextStyle(fontSize: fs.fontSize + 3),
+                                  textAlign: TextAlign.left,
+                                ),
                               if (provider.segundaLeituraText != "") const Divider(height: 15, color: Colors.transparent),
                               if (provider.segundaLeituraText != "") Text(provider.segundaLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               if (provider.segundaLeituraText != "") const Divider(height: 25, color: Colors.transparent),
                               Align(
                                 alignment: Alignment.center,
-                                child: Text("Evangelho (${provider.evangelhoReferencia})", style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  "Evangelho (${provider.evangelhoReferencia})",
+                                  style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                                ),
                               ),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.evangelhoTitle, style: TextStyle(fontSize: fs.fontSize + 3), textAlign: TextAlign.left),
+                              Text(
+                                provider.evangelhoTitle,
+                                style: TextStyle(fontSize: fs.fontSize + 3),
+                                textAlign: TextAlign.left,
+                              ),
                               const Divider(height: 15, color: Colors.transparent),
                               Text(provider.evangelhoText, style: TextStyle(fontSize: fs.fontSize + 2)),
                               const Divider(height: 15, color: Colors.transparent),
-                              Text("Fonte: https://liturgia.up.railway.app", style: TextStyle(fontSize: fs.fontSize - 2, fontWeight: FontWeight.w300))
+                              Text(
+                                "Fonte: https://liturgia.up.railway.app",
+                                style: TextStyle(fontSize: fs.fontSize - 2, fontWeight: FontWeight.w300),
+                              ),
                             ],
                           ),
                         ),

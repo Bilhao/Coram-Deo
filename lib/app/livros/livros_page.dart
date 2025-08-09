@@ -11,50 +11,52 @@ class _LivrosPageState extends State<LivrosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Livros'),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-                child: ListView(children: [
-              ListTile(
-                title: const Text("Caminho", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/caminho'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Sulco", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/sulco'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Forja", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/forja'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Amigos de Deus", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/amigos-de-deus'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("É Cristo que Passa", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/e-cristo-que-passa'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/santo-rosario-livro'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-              ListTile(
-                title: const Text("Via Sacra", style: TextStyle(fontSize: 18)),
-                onTap: () => Navigator.pushNamed(context, '/via-sacra-livro'),
-                trailing: const Icon(Icons.chevron_right),
-              ),
-            ]))
-          ],
-        ));
+      appBar: AppBar(title: const Text('Livros', maxLines: 2, style: TextStyle(fontSize: 20))),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text("Caminho", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/caminho'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("Sulco", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/sulco'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("Forja", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/forja'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("Amigos de Deus", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/amigos-de-deus'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("É Cristo que Passa", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/e-cristo-que-passa'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("Santo Rosário", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/santo-rosario-livro'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+                ListTile(
+                  title: const Text("Via Sacra", style: TextStyle(fontSize: 18)),
+                  onTap: () => Navigator.pushNamed(context, '/via-sacra-livro'),
+                  trailing: const Icon(Icons.chevron_right),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

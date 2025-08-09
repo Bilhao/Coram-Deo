@@ -30,7 +30,7 @@ keywords:
 
 environment:
   sdk: ^3.8.1
-  flutter: 3.32.8
+  flutter: 3.32.5
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -63,7 +63,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_carousel_widget: ^3.0.1
   flex_color_picker: ^3.5.1
-  dynamic_color: ^1.7.0
+  dynamic_color: ^1.8.1
   fl_chart: ^1.0.0
 
   # Rede e utilidades

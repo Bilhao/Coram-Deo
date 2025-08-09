@@ -27,10 +27,7 @@ class SantoDoDia {
   }
 
   List<String> getText() {
-    return data?.querySelectorAll('.wg-text p')
-        .map((element) => element.text)
-        .where((text) => text.trim().isNotEmpty)
-        .toList() ?? [];
+    return data?.querySelectorAll('.wg-text p').map((element) => element.text).where((text) => text.trim().isNotEmpty).toList() ?? [];
   }
 
   List<String> getBoldText() {
