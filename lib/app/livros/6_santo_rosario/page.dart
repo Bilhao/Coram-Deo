@@ -18,7 +18,7 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
       length: 2,
       initialIndex: 0,
       child: Scaffold(
-        appBar: AppBar(title: const Text("Santo Rosário (Livro)", maxLines: 2, style: TextStyle(fontSize: 20))),
+        appBar: AppBar(title: const Text("Santo Rosário", maxLines: 2, style: TextStyle(fontSize: 20))),
         bottomNavigationBar: SafeArea(
           child: TabBar(
             onTap: (value) {
