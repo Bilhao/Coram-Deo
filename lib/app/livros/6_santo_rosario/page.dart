@@ -18,43 +18,32 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
       length: 2,
       initialIndex: 0,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Santo Rosário (Livro)"),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: TabBar(
-                onTap: (value) {
-                  setState(() {
-                    _selectedIndex = value;
-                  });
-                },
-                dividerColor: Colors.transparent,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.format_list_numbered),
-                    text: "Índice",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.info_outline),
-                    text: "Sobre",
-                  ),
-                ]),
-          ),
-          body: TabBarView(
-            children: [
-              const Indice(),
-              Container(),
+        appBar: AppBar(title: const Text("Santo Rosário (Livro)", maxLines: 2, style: TextStyle(fontSize: 20))),
+        bottomNavigationBar: SafeArea(
+          child: TabBar(
+            onTap: (value) {
+              setState(() {
+                _selectedIndex = value;
+              });
+            },
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(icon: Icon(Icons.format_list_numbered), text: "Índice"),
+              Tab(icon: Icon(Icons.info_outline), text: "Sobre"),
             ],
           ),
-          floatingActionButton: _selectedIndex == 0
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "santo_rosario_livro"});
-                  },
-                  label: const Text("Continuar leitura"),
-                  icon: const Icon(Icons.chevron_right),
-                )
-              : null),
+        ),
+        body: TabBarView(children: [const Indice(), Container()]),
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton.extended(
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "santo_rosario_livro"});
+                },
+                label: const Text("Continuar leitura"),
+                icon: const Icon(Icons.chevron_right),
+              )
+            : null,
+      ),
     );
   }
 }

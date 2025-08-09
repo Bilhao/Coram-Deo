@@ -44,7 +44,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safeAsync(() async {
       await data.initLD(day: _day, month: _month);
       if (data.data == null) {
@@ -68,7 +68,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
         return true;
       }
     }, errorContext: 'Loading daily liturgy');
-    
+
     setLoading(false);
   }
 

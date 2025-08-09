@@ -4,7 +4,6 @@ import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
 
 class AppProvider extends BaseProvider {
-
   AppProvider() {
     _initialize();
   }
@@ -44,7 +43,6 @@ class AppProvider extends BaseProvider {
   bool get useBiometric => _useBiometric;
   bool get canAuthenticate => _canAuthenticate;
 
-
   Future<bool> checkBiometric() async {
     final result = await safeAsync<bool>(() async {
       LocalAuthentication auth = LocalAuthentication();
@@ -57,7 +55,7 @@ class AppProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       _fontSize = prefs.getDouble(AppConstants.fontSizeKey) ?? AppConstants.defaultFontSize;
 
@@ -67,12 +65,12 @@ class AppProvider extends BaseProvider {
 
       _blockExame = prefs.getBool(AppConstants.blockExameKey) ?? AppConstants.defaultBlockExame;
       _useBiometric = prefs.getBool(AppConstants.biometricKey) ?? AppConstants.defaultUseBiometric;
-      
+
       return true;
     }, errorContext: 'Loading user preferences');
 
     _canAuthenticate = await checkBiometric();
-    
+
     setLoading(false);
   }
 
@@ -149,5 +147,4 @@ class AppProvider extends BaseProvider {
       return true;
     }, errorContext: 'Toggling biometric usage');
   }
-
 }

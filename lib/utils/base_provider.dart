@@ -44,11 +44,9 @@ abstract class BaseProvider extends ChangeNotifier {
       clearError();
       return await operation();
     } catch (e, stackTrace) {
-      final errorMessage = errorContext != null 
-          ? '$errorContext: ${e.toString()}'
-          : e.toString();
+      final errorMessage = errorContext != null ? '$errorContext: ${e.toString()}' : e.toString();
       setError(errorMessage);
-      
+
       // Log error in debug mode
       if (kDebugMode) {
         print('Error in ${errorContext ?? 'operation'}: $e');
@@ -65,5 +63,4 @@ abstract class BaseProvider extends ChangeNotifier {
       return await operation(prefs);
     }, errorContext: errorContext);
   }
-
 }
