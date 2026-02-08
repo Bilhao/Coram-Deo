@@ -70,6 +70,7 @@ dependencies:
   http: ^1.2.2
   html: ^0.15.4
   url_launcher: ^6.3.1
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:
@@ -116,6 +117,7 @@ flutter:
     - assets/images/capas_livros/santo_rosario_livro.jpg
     - assets/images/capas_livros/sulco.jpg
     - assets/images/capas_livros/via-sacra.jpg
+    - assets/data/thematic_indices.json
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
