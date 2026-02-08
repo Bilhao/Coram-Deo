@@ -131,9 +131,10 @@ class Routes {
       case "/book-reading":
         try {
           final args = settings.arguments as Map<String, dynamic>;
-          return MaterialPageRoute(builder: (context) => BookReadingPage(bookName: args['bookName']));
+          return MaterialPageRoute(
+            builder: (context) => BookReadingPage(bookName: args['bookName'], points: args['points'] as List<int>?, title: args['title'] as String?),
+          );
         } catch (e) {
-          // If arguments are invalid, redirect to books page
           return MaterialPageRoute(builder: (context) => const LivrosPage());
         }
 
