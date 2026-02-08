@@ -18,43 +18,32 @@ class _ViaSacraLivroPageState extends State<ViaSacraLivroPage> {
       length: 2,
       initialIndex: 0,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Via Sacra"),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: TabBar(
-                onTap: (value) {
-                  setState(() {
-                    _selectedIndex = value;
-                  });
-                },
-                dividerColor: Colors.transparent,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.format_list_numbered),
-                    text: "Índice",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.info_outline),
-                    text: "Sobre",
-                  ),
-                ]),
-          ),
-          body: TabBarView(
-            children: [
-              const Indice(),
-              const Sobre(),
+        appBar: AppBar(title: const Text("Via Sacra", maxLines: 2, style: TextStyle(fontSize: 20))),
+        bottomNavigationBar: SafeArea(
+          child: TabBar(
+            onTap: (value) {
+              setState(() {
+                _selectedIndex = value;
+              });
+            },
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(icon: Icon(Icons.format_list_numbered), text: "Índice"),
+              Tab(icon: Icon(Icons.info_outline), text: "Sobre"),
             ],
           ),
-          floatingActionButton: _selectedIndex == 0
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/via-sacra-reading');
-                  },
-                  label: const Text("Continuar leitura"),
-                  icon: const Icon(Icons.chevron_right),
-                )
-              : null),
+        ),
+        body: TabBarView(children: [const Indice(), const Sobre()]),
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton.extended(
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/via-sacra-reading');
+                },
+                label: const Text("Continuar leitura"),
+                icon: const Icon(Icons.chevron_right),
+              )
+            : null,
+      ),
     );
   }
 }
@@ -81,7 +70,7 @@ class _IndiceState extends State<Indice> {
               leading: provider.chapterIds[index] == 0 ? null : Text(provider.chapterNames[index].split(': ').first, style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
-                provider.changeChapter(index);
+                await provider.changeChapter(index);
                 Navigator.pushNamed(context, '/via-sacra-reading');
               },
             );
@@ -130,11 +119,7 @@ class _SobreState extends State<Sobre> {
                       ),
                     ),
                     const Divider(height: 15, color: Colors.transparent),
-                    Text(
-                      provider.aboutContent,
-                      style: const TextStyle(fontSize: 16, height: 1.6),
-                      textAlign: TextAlign.justify,
-                    ),
+                    Text(provider.aboutContent, style: const TextStyle(fontSize: 16, height: 1.6), textAlign: TextAlign.justify),
                   ],
                 ),
               ),

@@ -18,53 +18,48 @@ class _SulcoPageState extends State<SulcoPage> {
       length: 3,
       initialIndex: 0,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text("Sulco"),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: TabBar(
-                onTap: (value) {
-                  setState(() {
-                    _selectedIndex = value;
-                  });
-                },
-                dividerColor: Colors.transparent,
-                tabs: const [
-                  Tab(
-                    icon: Icon(Icons.format_list_numbered),
-                    text: "Índice",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.format_list_bulleted),
-                    text: "Índice Temático",
-                  ),
-                  Tab(
-                    icon: Icon(Icons.info_outline),
-                    text: "Sobre",
-                  ),
-                ]),
-          ),
-          body: TabBarView(
-            children: [
-              const Indice(),
-              const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Icon(Icons.watch_later_outlined, size: 80), Divider(height: 15, color: Colors.transparent), Text("Em desenvimento", style: TextStyle(fontSize: 18))],
-                ),
-              ),
-              Container(),
+        appBar: AppBar(title: const Text("Sulco", maxLines: 2, style: TextStyle(fontSize: 20))),
+        bottomNavigationBar: SafeArea(
+          child: TabBar(
+            onTap: (value) {
+              setState(() {
+                _selectedIndex = value;
+              });
+            },
+            dividerColor: Colors.transparent,
+            tabs: const [
+              Tab(icon: Icon(Icons.format_list_numbered), text: "Índice"),
+              Tab(icon: Icon(Icons.format_list_bulleted), text: "Índice Temático"),
+              Tab(icon: Icon(Icons.info_outline), text: "Sobre"),
             ],
           ),
-          floatingActionButton: _selectedIndex == 0
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
-                  },
-                  label: const Text("Continuar leitura"),
-                  icon: const Icon(Icons.chevron_right),
-                )
-              : null),
+        ),
+        body: TabBarView(
+          children: [
+            const Indice(),
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.watch_later_outlined, size: 80),
+                  Divider(height: 15, color: Colors.transparent),
+                  Text("Em desenvimento", style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+            Container(),
+          ],
+        ),
+        floatingActionButton: _selectedIndex == 0
+            ? FloatingActionButton.extended(
+                onPressed: () async {
+                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
+                },
+                label: const Text("Continuar leitura"),
+                icon: const Icon(Icons.chevron_right),
+              )
+            : null,
+      ),
     );
   }
 }
@@ -91,7 +86,7 @@ class _IndiceState extends State<Indice> {
               leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
-                provider.changeChapter(index);
+                await provider.changeChapter(index);
                 Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
               },
             );

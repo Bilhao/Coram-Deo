@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class ExameDeConscienciaProvider extends BaseProvider {
-
   ExameDeConscienciaProvider() {
     _initialize();
   }
@@ -27,7 +26,7 @@ class ExameDeConscienciaProvider extends BaseProvider {
 
   Future<void> addItem(String title, String description) async {
     if (title.trim().isEmpty) return;
-    
+
     await safePrefOperation((prefs) async {
       _itensExame[title] = description;
       await prefs.setString("exame.itensExame", json.encode(_itensExame));

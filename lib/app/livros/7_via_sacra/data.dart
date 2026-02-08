@@ -63,30 +63,21 @@ class ViaSacraData {
   // Get station content (content_id = 0)
   Future<String> getStationContent({required int chapterId}) async {
     final db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-      'SELECT content FROM book WHERE chapter_id = ? AND content_id = 0', 
-      [chapterId]
-    );
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE chapter_id = ? AND content_id = 0', [chapterId]);
     return maps.isNotEmpty ? maps[0]['content'] : '';
   }
 
   // Get meditation content (content_id > 0, ordered by point)
   Future<List<String>> getMeditationContent({required int chapterId}) async {
     final db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-      'SELECT content FROM book WHERE chapter_id = ? AND content_id > 0 ORDER BY point', 
-      [chapterId]
-    );
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content FROM book WHERE chapter_id = ? AND content_id > 0 ORDER BY point', [chapterId]);
     return List.generate(maps.length, (i) => maps[i]['content']);
   }
 
   // Get meditation point names (ordered by point)
   Future<List<String>> getMeditationNames({required int chapterId}) async {
     final db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.rawQuery(
-      'SELECT content_name FROM book WHERE chapter_id = ? AND content_id > 0 ORDER BY point', 
-      [chapterId]
-    );
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content_name FROM book WHERE chapter_id = ? AND content_id > 0 ORDER BY point', [chapterId]);
     return List.generate(maps.length, (i) => maps[i]['content_name']);
   }
 

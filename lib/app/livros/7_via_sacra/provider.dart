@@ -30,14 +30,14 @@ class ViaSacraProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safeAsync(() async {
       ViaSacraData data = ViaSacraData();
       _chapterIds = await data.getChapterIds();
       _chapterNames = await data.getChapterNames();
       _fistChapterId = await data.getFirstChapter();
       _aboutContent = await data.getAboutContent();
-      
+
       return true;
     }, errorContext: 'Loading Via Sacra structure');
 
@@ -45,7 +45,7 @@ class ViaSacraProvider extends BaseProvider {
       ViaSacraData data = ViaSacraData();
       _currentChapterId = prefs.getInt('livros.via_sacra_livro.currentChapterId') ?? await data.getFirstChapter();
       _currentChapterName = prefs.getString('livros.via_sacra_livro.currentChapterName') ?? await data.getFirstChapterName();
-      
+
       return true;
     }, errorContext: 'Loading Via Sacra preferences');
 
@@ -54,16 +54,16 @@ class ViaSacraProvider extends BaseProvider {
       _stationContent = await data.getStationContent(chapterId: _currentChapterId);
       _meditationContent = await data.getMeditationContent(chapterId: _currentChapterId);
       _meditationNames = await data.getMeditationNames(chapterId: _currentChapterId);
-      
+
       return true;
     }, errorContext: 'Loading Via Sacra content');
-    
+
     setLoading(false);
   }
 
   Future<void> changeChapter(int chapterIndex) async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       await prefs.setInt('livros.via_sacra_livro.currentChapterId', chapterIndex + _fistChapterId);
       await prefs.setString('livros.via_sacra_livro.currentChapterName', _chapterNames[chapterIndex]);
@@ -80,7 +80,7 @@ class ViaSacraProvider extends BaseProvider {
       _showingMeditation = false; // Reset to station view when changing chapters
       return true;
     }, errorContext: 'Loading new chapter content');
-    
+
     setLoading(false);
   }
 

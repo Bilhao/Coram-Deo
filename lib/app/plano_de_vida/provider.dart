@@ -402,12 +402,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       }
       int completedDays = weekDates.intersection(completedDates).length;
       String weekLabel = "${w + 1}º semana do mês";
-      weeks.add({
-        'week': weekLabel,
-        'completed': completedDays,
-        'total': totalPossibleDays,
-        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
-      });
+      weeks.add({'week': weekLabel, 'completed': completedDays, 'total': totalPossibleDays, 'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0});
     }
     return weeks;
   }
@@ -439,14 +434,9 @@ class PlanoDeVidaProvider extends BaseProvider {
       String monthLabel = m == 0
           ? "Este mês"
           : m == 1
-              ? "Mês passado"
-              : "Há 2 meses";
-      months.add({
-        'month': monthLabel,
-        'completed': completedDays,
-        'total': totalPossibleDays,
-        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
-      });
+          ? "Mês passado"
+          : "Há 2 meses";
+      months.add({'month': monthLabel, 'completed': completedDays, 'total': totalPossibleDays, 'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0});
     }
     return months;
   }
@@ -476,12 +466,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       }
       int completedDays = yearDates.intersection(completedDates).length;
       String yearLabel = y == 0 ? "Este ano" : "Ano passado";
-      years.add({
-        'year': yearLabel,
-        'completed': completedDays,
-        'total': totalPossibleDays,
-        'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0,
-      });
+      years.add({'year': yearLabel, 'completed': completedDays, 'total': totalPossibleDays, 'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0});
     }
     return years;
   }

@@ -26,7 +26,7 @@ class FalarComDeusProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       final storedDate = prefs.getString('falarComDeusDate');
       if (storedDate == _date) {
@@ -47,7 +47,7 @@ class FalarComDeusProvider extends BaseProvider {
       clearError();
       await _fetchFreshData();
     }
-    
+
     setLoading(false);
   }
 
@@ -64,7 +64,7 @@ class FalarComDeusProvider extends BaseProvider {
         _note = data.getNote();
         _content = data.getContent();
         _reference = data.getReference();
-        
+
         // Cache the data
         await _cacheData();
         return true;
