@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/livros/provider.dart';
+import 'package:coramdeo/app/livros/thematic_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,16 +38,7 @@ class _ForjaPageState extends State<ForjaPage> {
         body: TabBarView(
           children: [
             const Indice(),
-            const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.watch_later_outlined, size: 80),
-                  Divider(height: 15, color: Colors.transparent),
-                  Text("Em desenvimento", style: TextStyle(fontSize: 18)),
-                ],
-              ),
-            ),
+            const ThematicIndexPage(bookName: "forja"),
             const Sobre(),
           ],
         ),
