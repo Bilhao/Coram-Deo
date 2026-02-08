@@ -77,4 +77,44 @@ class Livros {
     }
     return contents;
   }
+
+  Future<List<Map<String, dynamic>>> getFullContentByIds({required List<int> contentIds, int? chapterId}) async {
+    final db = await initDb();
+    List<Map<String, dynamic>> results = [];
+
+    // Check if title column exists
+    var columns = await db.rawQuery("PRAGMA table_info(book)");
+    bool hasTitle = columns.any((col) => col['name'] == 'title');
+
+    for (int id in contentIds) {
+      String query;
+      List<dynamic> args = [id];
+
+      if (chapterId != null) {
+        if (hasTitle) {
+          query = 'SELECT title, content FROM book WHERE content_id = ? AND chapter_id = ?';
+        } else {
+          query = 'SELECT content FROM book WHERE content_id = ? AND chapter_id = ?';
+        }
+        args.add(chapterId);
+      } else {
+        if (hasTitle) {
+          query = 'SELECT title, content FROM book WHERE content_id = ?';
+        } else {
+          query = 'SELECT content FROM book WHERE content_id = ?';
+        }
+      }
+
+      final List<Map<String, dynamic>> maps = await db.rawQuery(query, args);
+
+      if (maps.isNotEmpty) {
+        if (hasTitle) {
+          results.add({'title': maps[0]['title'], 'content': maps[0]['content']});
+        } else {
+          results.add({'title': null, 'content': maps[0]['content']});
+        }
+      }
+    }
+    return results;
+  }
 }

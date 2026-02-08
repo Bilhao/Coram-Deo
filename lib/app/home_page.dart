@@ -80,8 +80,8 @@ class HomePageButtons extends StatelessWidget {
             try {
               final bool didAuthenticate = await auth.authenticate(
                 localizedReason: ' ',
-                authMessages: [const AndroidAuthMessages(signInTitle: 'Verifique sua identidade', cancelButton: 'Cancelar', biometricHint: 'Use sua digital para acessar o Exame de Consciência')],
-                options: AuthenticationOptions(biometricOnly: appProvider.useBiometric),
+                authMessages: [const AndroidAuthMessages(signInTitle: 'Verifique sua identidade', cancelButton: 'Cancelar')],
+                biometricOnly: appProvider.useBiometric,
               );
               if (didAuthenticate) {
                 // ignore: use_build_context_synchronously
