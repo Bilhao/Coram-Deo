@@ -1,9 +1,11 @@
 import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
+import 'package:coramdeo/app/liturgia_diaria/provider.dart';
+import 'package:coramdeo/app/livros/random_provider.dart';
+import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
-import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:local_auth/local_auth.dart';
 // ignore: depend_on_referenced_packages
 import 'package:local_auth_android/local_auth_android.dart';
@@ -138,10 +140,10 @@ class SantoDoDiaCard extends StatelessWidget {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          const Align(
+                          Align(
                             alignment: Alignment.bottomLeft,
                             child: Text(
-                              "Clique para ver mais",
+                              "Ver mais",
                               style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w500),
                               textAlign: TextAlign.left,
                             ),
@@ -201,15 +203,15 @@ class BibliaReadingCard extends StatelessWidget {
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
                           ),
-                          Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFFFFFFFF) : const Color(0xFF000000)),
+                          Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
                           Text(provider.verses.join(" "), maxLines: 5, overflow: TextOverflow.fade, style: const TextStyle(fontSize: 15), textAlign: TextAlign.left),
                           const Spacer(),
-                          const Align(
+                          Align(
                             alignment: Alignment.bottomRight,
                             child: Text(
-                              "Clique para continuar leitura",
+                              "Continuar leitura",
                               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.left,
+                              textAlign: TextAlign.right,
                             ),
                           ),
                         ],
@@ -246,7 +248,129 @@ class HomePageCardCarusel extends StatelessWidget {
         indicatorMargin: 10.0,
         slideIndicator: CircularSlideIndicator(slideIndicatorOptions: SlideIndicatorOptions(currentIndicatorColor: Theme.of(context).colorScheme.primary, indicatorRadius: 3.0, itemSpacing: 12.0)),
       ),
-      items: const [SantoDoDiaCard(), BibliaReadingCard()],
+      items: const [SantoDoDiaCard(), LiturgiaCard(), RandomPointCard(), BibliaReadingCard()],
+    );
+  }
+}
+
+class LiturgiaCard extends StatelessWidget {
+  const LiturgiaCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<LiturgiaDiariaProvider>(context);
+
+    return Card(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: InkWell(
+        radius: 100,
+        borderRadius: BorderRadius.circular(10.0),
+        onTap: () => Navigator.pushNamed(context, '/liturgia'),
+        child: provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      "Liturgia Diária",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                    const SizedBox(height: 5),
+                    if (provider.primeiraLeituraReferencia.isNotEmpty) Text("1ª Leitura: ${provider.primeiraLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 5),
+                    if (provider.salmoReferencia.isNotEmpty) Text("Salmo: ${provider.salmoReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 5),
+                    if (provider.segundaLeituraReferencia.isNotEmpty) Text("2ª Leitura: ${provider.segundaLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (provider.segundaLeituraReferencia.isNotEmpty) const SizedBox(height: 5),
+                    if (provider.evangelhoReferencia.isNotEmpty)
+                      Text(
+                        "Evangelho: ${provider.evangelhoReferencia}",
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                        textAlign: TextAlign.left,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Text("Ver leituras", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+class RandomPointCard extends StatelessWidget {
+  const RandomPointCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<RandomPointProvider>(context);
+
+    return Card(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: InkWell(
+        radius: 100,
+        borderRadius: BorderRadius.circular(10.0),
+        onTap: () {
+          if (provider.content.isNotEmpty) {
+            Navigator.pushNamed(
+              context,
+              '/book-reading',
+              arguments: {
+                'bookName': provider.bookName,
+                'title': provider.bookTitle,
+                'points': [provider.contentId],
+              },
+            );
+          } else {
+            provider.loadRandomPoint();
+          }
+        },
+        child: provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0, bottom: 5.0),
+                child: Column(
+                  children: [
+                    Text(
+                      provider.bookTitle,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          provider.content,
+                          maxLines: 6,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(icon: const Icon(Icons.refresh, size: 20), alignment: Alignment.centerLeft, padding: const EdgeInsets.all(0), onPressed: () => provider.loadRandomPoint(), tooltip: "Novo ponto"),
+                          const Text("Ler mais", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 }

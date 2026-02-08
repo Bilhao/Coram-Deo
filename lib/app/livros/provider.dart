@@ -1,10 +1,23 @@
 import 'package:coramdeo/app/livros/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class BookIndexProvider extends BaseProvider {
   final String bookName;
 
-  BookIndexProvider({required this.bookName}) {
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
+  final List<int>? initialPoints;
+  final String? initialTitle;
+
+  BookIndexProvider({required this.bookName, this.initialPoints, this.initialTitle}) {
     _initialize();
   }
 
@@ -16,6 +29,8 @@ class BookIndexProvider extends BaseProvider {
   List<int> _contentIds = [];
   List<String> _content = [];
   List<String> _titles = [];
+  String _aboutContent = "";
+  Map<String, Map<String, List<int>>> _thematicIndex = {};
 
   List<int> get chapterIds => _chapterIds;
   List<String> get chapterNames => _chapterNames;
@@ -25,8 +40,12 @@ class BookIndexProvider extends BaseProvider {
   List<int> get contentIds => _contentIds;
   List<String> get content => _content;
   List<String> get titles => _titles;
+  String get aboutContent => _aboutContent;
+  Map<String, Map<String, List<int>>> get thematicIndex => _thematicIndex;
+  String get imagePath => "assets/images/capas_livros/$bookName.jpg";
 
   Future<void> _initialize() async {
+    if (_isDisposed) return;
     setLoading(true);
 
     await safeAsync(() async {
@@ -34,9 +53,19 @@ class BookIndexProvider extends BaseProvider {
       _chapterIds = await book.getChapterIds();
       _chapterNames = await book.getChapterNames();
       _fistChapterId = await book.getFirstChapter();
+      _aboutContent = await book.getAboutContent();
+
+      await _loadThematicIndex();
 
       return true;
     }, errorContext: 'Loading book structure');
+
+    if (initialPoints != null) {
+      await changeContentForThemeIndex(initialPoints!, initialTitle ?? "");
+      // Skip the rest of initialization (loading default chapter)
+      setLoading(false);
+      return;
+    }
 
     await safePrefOperation((prefs) async {
       Livros book = Livros(bookName: bookName);
@@ -57,6 +86,32 @@ class BookIndexProvider extends BaseProvider {
     }, errorContext: 'Loading book content');
 
     setLoading(false);
+  }
+
+  Future<void> _loadThematicIndex() async {
+    try {
+      final String response = await rootBundle.loadString('assets/data/thematic_indices.json');
+      final Map<String, dynamic> data = json.decode(response);
+
+      String jsonKey = bookName;
+      if (bookName == 'amigos_de_deus') jsonKey = 'amigos_de_deus';
+      if (bookName == 'e_cristo_que_passa') jsonKey = 'e_cristo_que_passa';
+      if (bookName == 'caminho') jsonKey = 'caminho';
+      if (bookName == 'sulco') jsonKey = 'sulco';
+      if (bookName == 'forja') jsonKey = 'forja';
+
+      if (data.containsKey(jsonKey)) {
+        final Map<String, dynamic> bookData = data[jsonKey];
+        _thematicIndex = bookData.map((key, value) {
+          final subthemes = value as Map<String, dynamic>;
+          return MapEntry(key, subthemes.map((subKey, subValue) => MapEntry(subKey, List<int>.from(subValue))));
+        });
+      } else {
+        _thematicIndex = {};
+      }
+    } catch (e) {
+      _thematicIndex = {};
+    }
   }
 
   Future<void> changeChapter(int chapterId) async {
