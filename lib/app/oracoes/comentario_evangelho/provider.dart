@@ -22,7 +22,7 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
 
   Future<void> _initialize() async {
     setLoading(true);
-    
+
     await safePrefOperation((prefs) async {
       final storedDate = prefs.getString('comentarioDoEvangelhoDate');
       if (storedDate == _date) {
@@ -41,7 +41,7 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
       clearError();
       await _fetchFreshData();
     }
-    
+
     setLoading(false);
   }
 
@@ -56,7 +56,7 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
         _comentario = data.getComentario();
         _evangelhoText = data.getEvangelhoText();
         _comentarioText = data.getComentarioText();
-        
+
         // Cache the data
         await _cacheData();
         return true;

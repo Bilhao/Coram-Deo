@@ -20,16 +20,10 @@ class _BibliaPage2State extends State<BibliaPage2> {
       builder: (context, provider, fs, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(provider.book),
+            title: Text(provider.book, maxLines: 2, style: TextStyle(fontSize: 20)),
             actions: [
-              IconButton(
-                onPressed: fs.decreaseFontSize,
-                icon: const Icon(Icons.remove),
-              ),
-              IconButton(
-                onPressed: fs.increaseFontSize,
-                icon: const Icon(Icons.add),
-              ),
+              IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
+              IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
             ],
           ),
           body: SafeArea(
@@ -79,11 +73,7 @@ class _BibliaPage2State extends State<BibliaPage2> {
                     padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 4.0),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      border: Border(
-                        top: BorderSide(
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-                        ),
-                      ),
+                      border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2))),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,15 +87,9 @@ class _BibliaPage2State extends State<BibliaPage2> {
                                 },
                           icon: const Icon(Icons.arrow_back),
                           color: Theme.of(context).colorScheme.primary,
-                          style: IconButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                          ),
+                          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
                         ),
-                        Text(
-                          "${provider.book} - ${provider.chapter}",
-                          style: const TextStyle(fontSize: 16.0),
-                          textAlign: TextAlign.center,
-                        ),
+                        Text("${provider.book} - ${provider.chapter}", style: const TextStyle(fontSize: 16.0), textAlign: TextAlign.center),
                         IconButton(
                           onPressed: provider.bookId == 66 && provider.chapter == 22
                               ? null
@@ -115,9 +99,7 @@ class _BibliaPage2State extends State<BibliaPage2> {
                                 },
                           icon: const Icon(Icons.arrow_forward),
                           color: Theme.of(context).colorScheme.primary,
-                          style: IconButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                          ),
+                          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
                         ),
                       ],
                     ),
