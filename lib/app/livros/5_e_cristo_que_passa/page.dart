@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/livros/provider.dart';
+import 'package:coramdeo/app/livros/thematic_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,17 +38,8 @@ class _ECristoQuePassaPageState extends State<ECristoQuePassaPage> {
         body: TabBarView(
           children: [
             const Indice(),
-            const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.watch_later_outlined, size: 80),
-                  Divider(height: 15, color: Colors.transparent),
-                  Text("Em desenvimento", style: TextStyle(fontSize: 18)),
-                ],
-              ),
-            ),
-            Container(),
+            const ThematicIndexPage(bookName: "e_cristo_que_passa"),
+            const Sobre(),
           ],
         ),
         floatingActionButton: _selectedIndex == 0
@@ -92,6 +84,34 @@ class _IndiceState extends State<Indice> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class Sobre extends StatelessWidget {
+  const Sobre({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => BookIndexProvider(bookName: "e_cristo_que_passa"),
+      child: Consumer<BookIndexProvider>(
+        builder: (context, provider, child) => provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(image: AssetImage(provider.imagePath), width: 250, fit: BoxFit.cover),
+                    ),
+                    const Divider(height: 15, color: Colors.transparent),
+                    Text(provider.aboutContent, style: const TextStyle(fontSize: 16, height: 1.6), textAlign: TextAlign.justify),
+                  ],
+                ),
+              ),
       ),
     );
   }
