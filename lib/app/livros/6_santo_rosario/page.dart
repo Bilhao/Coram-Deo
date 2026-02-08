@@ -18,7 +18,7 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
       length: 2,
       initialIndex: 0,
       child: Scaffold(
-        appBar: AppBar(title: const Text("Santo Rosário (Livro)", maxLines: 2, style: TextStyle(fontSize: 20))),
+        appBar: AppBar(title: const Text("Santo Rosário", maxLines: 2, style: TextStyle(fontSize: 20))),
         bottomNavigationBar: SafeArea(
           child: TabBar(
             onTap: (value) {
@@ -33,7 +33,21 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
             ],
           ),
         ),
-        body: TabBarView(children: [const Indice(), Container()]),
+        body: TabBarView(
+          children: [
+            const Indice(),
+            const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.watch_later_outlined, size: 80),
+                  Divider(height: 15, color: Colors.transparent),
+                  Text("Em desenvolvimento", style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+          ],
+        ),
         floatingActionButton: _selectedIndex == 0
             ? FloatingActionButton.extended(
                 onPressed: () async {
@@ -70,7 +84,7 @@ class _IndiceState extends State<Indice> {
               leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
-                provider.changeChapter(index);
+                await provider.changeChapter(index);
                 Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "santo_rosario_livro"});
               },
             );
