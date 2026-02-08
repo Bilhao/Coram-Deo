@@ -136,4 +136,20 @@ class Livros {
         return "";
     }
   }
+
+  Future<Map<String, dynamic>> getRandomContent() async {
+    final db = await initDb();
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT * FROM book ORDER BY RANDOM() LIMIT 1');
+    if (maps.isNotEmpty) {
+      var columns = await db.rawQuery("PRAGMA table_info(book)");
+      bool hasTitle = columns.any((col) => col['name'] == 'title');
+
+      Map<String, dynamic> result = Map<String, dynamic>.from(maps.first);
+      if (!hasTitle) {
+        result['title'] = null;
+      }
+      return result;
+    }
+    return {};
+  }
 }
