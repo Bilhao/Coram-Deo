@@ -33,21 +33,7 @@ class _SantoRosarioLivroPageState extends State<SantoRosarioLivroPage> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            const Indice(),
-            const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.watch_later_outlined, size: 80),
-                  Divider(height: 15, color: Colors.transparent),
-                  Text("Em desenvolvimento", style: TextStyle(fontSize: 18)),
-                ],
-              ),
-            ),
-          ],
-        ),
+        body: TabBarView(children: [const Indice(), const Sobre()]),
         floatingActionButton: _selectedIndex == 0
             ? FloatingActionButton.extended(
                 onPressed: () async {
@@ -90,6 +76,34 @@ class _IndiceState extends State<Indice> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class Sobre extends StatelessWidget {
+  const Sobre({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => BookIndexProvider(bookName: "santo_rosario_livro"),
+      child: Consumer<BookIndexProvider>(
+        builder: (context, provider, child) => provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(image: AssetImage(provider.imagePath), width: 250, fit: BoxFit.cover),
+                    ),
+                    const Divider(height: 15, color: Colors.transparent),
+                    Text(provider.aboutContent, style: const TextStyle(fontSize: 16, height: 1.6), textAlign: TextAlign.justify),
+                  ],
+                ),
+              ),
       ),
     );
   }

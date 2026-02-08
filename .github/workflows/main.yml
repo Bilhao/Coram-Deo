@@ -50,6 +50,9 @@ jobs:
     - name: Build APK
       run: flutter build apk --release --split-per-abi
 
+    - name: Build App Bundle
+      run: flutter build appbundle --release
+
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
@@ -89,4 +92,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: build/app/outputs/flutter-apk/app-x86_64-release.apk
         asset_name: Coram-Deo-x86_64-${{ env.VERSION }}.apk
+        asset_content_type: application/vnd.android.package-archive
+    
+    - name: Upload App Bundle to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: build/app/outputs/bundle/release/app-release.aab
+        asset_name: Coram-Deo-${{ env.VERSION }}.aab
         asset_content_type: application/vnd.android.package-archive
