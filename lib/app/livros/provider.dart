@@ -15,6 +15,7 @@ class BookIndexProvider extends BaseProvider {
   String _currentChapterName = "";
   List<int> _contentIds = [];
   List<String> _content = [];
+  List<String> _titles = [];
 
   List<int> get chapterIds => _chapterIds;
   List<String> get chapterNames => _chapterNames;
@@ -23,6 +24,7 @@ class BookIndexProvider extends BaseProvider {
   String get currentChapterName => _currentChapterName;
   List<int> get contentIds => _contentIds;
   List<String> get content => _content;
+  List<String> get titles => _titles;
 
   Future<void> _initialize() async {
     setLoading(true);
@@ -47,7 +49,9 @@ class BookIndexProvider extends BaseProvider {
     await safeAsync(() async {
       Livros book = Livros(bookName: bookName);
       _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-      _content = await book.getContentByIds(contentIds: _contentIds);
+      var contentData = await book.getFullContentByIds(contentIds: _contentIds, chapterId: _currentChapterId);
+      _content = contentData.map((e) => e['content'] as String).toList();
+      _titles = contentData.map((e) => e['title'] as String? ?? "").toList();
 
       return true;
     }, errorContext: 'Loading book content');
@@ -69,7 +73,9 @@ class BookIndexProvider extends BaseProvider {
       _currentChapterId = chapterId + _fistChapterId;
       _currentChapterName = _chapterNames[chapterId];
       _contentIds = await book.getContentIds(chapterId: _currentChapterId);
-      _content = await book.getContentByIds(contentIds: _contentIds);
+      var contentData = await book.getFullContentByIds(contentIds: _contentIds, chapterId: _currentChapterId);
+      _content = contentData.map((e) => e['content'] as String).toList();
+      _titles = contentData.map((e) => e['title'] as String? ?? "").toList();
       return true;
     }, errorContext: 'Loading new chapter content');
 
@@ -83,7 +89,9 @@ class BookIndexProvider extends BaseProvider {
       Livros book = Livros(bookName: bookName);
       _currentChapterName = itemName;
       _contentIds = contentIds;
-      _content = await book.getContentByIds(contentIds: _contentIds);
+      var contentData = await book.getFullContentByIds(contentIds: _contentIds);
+      _content = contentData.map((e) => e['content'] as String).toList();
+      _titles = contentData.map((e) => e['title'] as String? ?? "").toList();
       notifyListeners();
       return true;
     }, errorContext: 'Loading theme content');

@@ -70,7 +70,7 @@ class _IndiceState extends State<Indice> {
               leading: provider.chapterIds[index] == 0 ? null : Text(provider.chapterNames[index].split(': ').first, style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
-                provider.changeChapter(index);
+                await provider.changeChapter(index);
                 Navigator.pushNamed(context, '/via-sacra-reading');
               },
             );
