@@ -1,6 +1,8 @@
 import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
+import 'package:coramdeo/app/liturgia_diaria/provider.dart';
+import 'package:coramdeo/app/livros/random_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +37,8 @@ class CoramDeoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AppProvider()),
         ChangeNotifierProvider(create: (context) => SantoDoDiaProvider()),
         ChangeNotifierProvider(create: (context) => BibleProvider()),
+        ChangeNotifierProvider(create: (context) => LiturgiaDiariaProvider()),
+        ChangeNotifierProvider(create: (context) => RandomPointProvider()),
       ],
       child: Consumer<AppProvider>(
         builder: (context, provider, _) {
