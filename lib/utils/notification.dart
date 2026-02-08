@@ -32,7 +32,7 @@ class Notifier {
 
   static Future<void> init() async {
     await _notification.initialize(
-      const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_notification'), iOS: DarwinInitializationSettings()),
+      settings: const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_notification'), iOS: DarwinInitializationSettings()),
       onDidReceiveNotificationResponse: _onSelectNotification,
       onDidReceiveBackgroundNotificationResponse: _onSelectNotification,
     );
@@ -49,11 +49,11 @@ class Notifier {
       var notificationDetails = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
       await _notification.zonedSchedule(
-        notification.id,
-        notification.title,
-        notification.body,
-        tz.TZDateTime.from(date, tz.local),
-        notificationDetails,
+        id: notification.id,
+        title: notification.title,
+        body: notification.body,
+        scheduledDate: tz.TZDateTime.from(date, tz.local),
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
         payload: notification.payload,
         matchDateTimeComponents: DateTimeComponents.time,
@@ -66,7 +66,7 @@ class Notifier {
 
   static Future<void> stopNotification(int id) async {
     try {
-      await _notification.cancel(id);
+      await _notification.cancel(id: id);
     } catch (e) {
       debugPrint('Error stopping notification: $e');
       rethrow;
