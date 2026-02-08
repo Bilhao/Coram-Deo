@@ -109,6 +109,12 @@ flutter:
     - assets/images/bible.jpeg
     - assets/images/oracoes/estampajosemaria.png
     - assets/images/oracoes/lembraivos.jpg
+    - assets/images/capas_livros/amigos_de_deus.jpg
+    - assets/images/capas_livros/caminho.jpg
+    - assets/images/capas_livros/e_cristo_que_passa.jpg
+    - assets/images/capas_livros/forja.jpg
+    - assets/images/capas_livros/santo_rosario_livro.jpg
+    - assets/images/capas_livros/sulco.jpg
     - assets/images/capas_livros/via-sacra.jpg
 
   #   - images/a_dot_burr.jpeg

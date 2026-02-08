@@ -47,7 +47,7 @@ class _CaminhoPageState extends State<CaminhoPage> {
                 ],
               ),
             ),
-            Container(),
+            const Sobre(),
           ],
         ),
         floatingActionButton: _selectedIndex == 0
@@ -197,6 +197,25 @@ class Sobre extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return ChangeNotifierProvider(
+      create: (context) => BookIndexProvider(bookName: "caminho"),
+      child: Consumer<BookIndexProvider>(
+        builder: (context, provider, child) => provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(image: AssetImage(provider.imagePath), width: 250, fit: BoxFit.cover),
+                    ),
+                    const Divider(height: 15, color: Colors.transparent),
+                    Text(provider.aboutContent, style: const TextStyle(fontSize: 16, height: 1.6), textAlign: TextAlign.justify),
+                  ],
+                ),
+              ),
+      ),
+    );
   }
 }

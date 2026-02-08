@@ -16,6 +16,7 @@ class BookIndexProvider extends BaseProvider {
   List<int> _contentIds = [];
   List<String> _content = [];
   List<String> _titles = [];
+  String _aboutContent = "";
 
   List<int> get chapterIds => _chapterIds;
   List<String> get chapterNames => _chapterNames;
@@ -25,6 +26,8 @@ class BookIndexProvider extends BaseProvider {
   List<int> get contentIds => _contentIds;
   List<String> get content => _content;
   List<String> get titles => _titles;
+  String get aboutContent => _aboutContent;
+  String get imagePath => "assets/images/capas_livros/$bookName.jpg";
 
   Future<void> _initialize() async {
     setLoading(true);
@@ -34,6 +37,7 @@ class BookIndexProvider extends BaseProvider {
       _chapterIds = await book.getChapterIds();
       _chapterNames = await book.getChapterNames();
       _fistChapterId = await book.getFirstChapter();
+      _aboutContent = await book.getAboutContent();
 
       return true;
     }, errorContext: 'Loading book structure');

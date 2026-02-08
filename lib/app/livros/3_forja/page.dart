@@ -47,7 +47,7 @@ class _ForjaPageState extends State<ForjaPage> {
                 ],
               ),
             ),
-            Container(),
+            const Sobre(),
           ],
         ),
         floatingActionButton: _selectedIndex == 0
@@ -92,6 +92,34 @@ class _IndiceState extends State<Indice> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class Sobre extends StatelessWidget {
+  const Sobre({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => BookIndexProvider(bookName: "forja"),
+      child: Consumer<BookIndexProvider>(
+        builder: (context, provider, child) => provider.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(image: AssetImage(provider.imagePath), width: 250, fit: BoxFit.cover),
+                    ),
+                    const Divider(height: 15, color: Colors.transparent),
+                    Text(provider.aboutContent, style: const TextStyle(fontSize: 16, height: 1.6), textAlign: TextAlign.justify),
+                  ],
+                ),
+              ),
       ),
     );
   }

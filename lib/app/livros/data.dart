@@ -117,4 +117,23 @@ class Livros {
     }
     return results;
   }
+
+  Future<String> getAboutContent() async {
+    switch (bookName) {
+      case "caminho":
+        return "Caminho (The Way), uma obra de São Josemaría Escrivá, é um livro de pontos para meditação espiritual. A primeira edição surgiu em 1934 com o título 'Considerações espirituais', e a versão definitiva, 'Caminho', foi publicada em 1939.\n\nA obra se caracteriza por um estilo direto, que estabelece um diálogo sereno com o leitor. Nela, o leitor é confrontado com as exigências divinas em um ambiente de confiança e amizade.";
+      case "sulco":
+        return "Sulco é uma obra de São Josemaría Escrivá, fundador do Opus Dei, que se apresenta como um fruto da sua vida interior e da sua experiência espiritual com muitas almas. O livro é composto por mil pontos de meditação breves e diretos, destinados a fomentar e facilitar a oração pessoal.\n\nA obra não é um tratado teológico sistemático, mas possui uma rica e profunda espiritualidade. O seu objetivo é alcançar a pessoa cristã em sua totalidade — corpo e alma, natureza e graça.";
+      case "forja":
+        return "Forja é uma obra de Josemaría Escrivá, publicada em 1987, que integra uma trilogia de livros de espiritualidade, complementando Caminho e Sulco. O livro é composto por 1055 pontos de meditação.\n\nDescrita como um 'livro de fogo', Forja tem como objetivo conduzir as almas à 'fornalha do Amor divino', estimulando nelas o anseio por santidade e apostolado. A obra traça um percurso interior de crescente identificação com Cristo.";
+      case "amigos_de_deus":
+        return "Amigos de Deus é a primeira obra póstuma de São Josemaría Escrivá, publicada originalmente em 1977. O livro é uma compilação de 18 homilias proferidas por Escrivá entre 1941 e 1968.\n\nO objetivo principal da obra é orientar os leitores a cultivarem uma amizade com um 'Deus próximo', utilizando como referência diversas virtudes humanas e sobrenaturais. As homilias exploram virtudes cristãs como fio condutor para um diálogo filial com Deus.";
+      case "e_cristo_que_passa":
+        return "É Cristo que passa reune 18 homilias proferidas por São Josemaría Escrivá entre 1951 e 1971. Essas homilias estão organizadas de acordo com o ano litúrgico e oferecem uma visão profunda sobre a vida de oração, o amor a Deus e ao próximo, e a busca da santidade.\n\nO fio condutor da obra é a filiação divina, destacando a llamada universal à santidade, a santificação do trabalho ordinário, a contemplação no meio do mundo e a unidade de vida.";
+      case "santo_rosario_livro":
+        return "Santo Rosário contém comentários de São Josemaría Escrivá sobre os mistérios do terço. Segundo São Josemaría, o Rosário é um 'foco de amor', e serve para glorificar o Pai, o Filho e o Espírito Santo.\n\nAo fixarem o olhar em Jesus, os membros da família podem recuperar a capacidade de comunicação, solidariedade, perdão mútuo e renovação de um pacto de amor, auxiliando a superar problemas de comunicação nas famílias contemporâneas.";
+      default:
+        return "";
+    }
+  }
 }
