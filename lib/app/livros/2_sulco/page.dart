@@ -86,7 +86,7 @@ class _IndiceState extends State<Indice> {
               leading: Text("${provider.chapterIds[index]}", style: const TextStyle(fontSize: 18)),
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
-                provider.changeChapter(index);
+                await provider.changeChapter(index);
                 Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "sulco"});
               },
             );
