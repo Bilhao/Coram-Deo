@@ -84,4 +84,14 @@ class Notifier {
       return false;
     }
   }
+
+  static Future<bool> checkNotificationPermission() async {
+    try {
+      final bool? result = await _notification.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.areNotificationsEnabled();
+      return result ?? false;
+    } catch (e) {
+      debugPrint('Error checking notification permission: $e');
+      return false;
+    }
+  }
 }

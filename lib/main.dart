@@ -18,7 +18,7 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Carrega as notificações
-  Notifier.init();
+  await Notifier.init();
 
   // Ajuste das configurações de tela
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -44,6 +44,12 @@ class CoramDeoApp extends StatelessWidget {
         builder: (context, provider, _) {
           return DynamicColorBuilder(
             builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+              if (provider.isLoading) {
+                // Return empty container while loading preferences
+                // FlutterNativeSplash handles the visual splash screen
+                return const Directionality(textDirection: TextDirection.ltr, child: SizedBox.shrink());
+              }
+
               MaterialApp app = MaterialApp(
                 debugShowCheckedModeBanner: false,
                 themeMode: provider.themeMode,
@@ -59,13 +65,17 @@ class CoramDeoApp extends StatelessWidget {
                       : ColorScheme.fromSeed(dynamicSchemeVariant: DynamicSchemeVariant.fidelity, seedColor: Color(provider.colorSeed), brightness: Brightness.dark),
                   useMaterial3: true,
                 ),
-                initialRoute: Routes.initial,
+                initialRoute: provider.showOnboarding ? '/onboarding' : Routes.initial,
                 onGenerateRoute: Routes.onGenerateRoute,
                 navigatorKey: Routes.navigatorKey,
               );
+
               if (lightDynamic != null && darkDynamic != null) {
-                FlutterNativeSplash.remove();
+                // Intentionally left here, though removing splash might verify provider loaded too
               }
+              // Ideally remove splash screen here since we return 'app' now
+              FlutterNativeSplash.remove();
+
               return app;
             },
           );

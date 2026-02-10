@@ -10,6 +10,7 @@ class AppConstants {
   static const String colorSeedKey = 'theme.colorseed';
   static const String blockExameKey = 'exame.block';
   static const String biometricKey = 'exame.biometric';
+  static const String onboardingKey = 'app.onboarding';
 
   // Bible preferences keys
   static const String bibleTestamentKey = 'bible.testament';
@@ -18,6 +19,9 @@ class AppConstants {
   static const String bibleChapterKey = 'bible.chapter';
   static const String bibleVersesIdKey = 'bible.verses_id';
   static const String bibleVersesKey = 'bible.verses';
+  static const String bibleVersionKey = 'bible.version';
+  static const String ttsVoiceKey = 'settings.tts.voice';
+  static const String ttsRateKey = 'settings.tts.rate';
 
   // Prayer preferences
   static const String favoritePrayersKey = 'oracoes.favoritas';
@@ -35,6 +39,7 @@ class AppConstants {
   static const int defaultBookId = 1;
   static const String defaultBook = 'Gênesis';
   static const int defaultChapter = 1;
+  static const String defaultBibleVersion = 'NVI';
 
   // Notification settings
   static const String notificationChannelId = 'lembretes';
