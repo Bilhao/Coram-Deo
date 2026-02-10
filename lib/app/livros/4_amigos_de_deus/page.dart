@@ -79,7 +79,9 @@ class _IndiceState extends State<Indice> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 await provider.changeChapter(index);
-                Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "amigos_de_deus"});
+                if (context.mounted) {
+                  Navigator.pushNamed(context, '/book-reading', arguments: {"bookName": "amigos_de_deus"});
+                }
               },
             );
           },

@@ -66,6 +66,8 @@ class AppProvider extends BaseProvider {
       _blockExame = prefs.getBool(AppConstants.blockExameKey) ?? AppConstants.defaultBlockExame;
       _useBiometric = prefs.getBool(AppConstants.biometricKey) ?? AppConstants.defaultUseBiometric;
 
+      _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
+
       return true;
     }, errorContext: 'Loading user preferences');
 
@@ -77,6 +79,19 @@ class AppProvider extends BaseProvider {
   // Renamed from 'load' to avoid confusion with Flutter's load methods
   Future<void> reload() async {
     await _initialize();
+  }
+
+  // Onboarding
+  bool _showOnboarding = true;
+  bool get showOnboarding => _showOnboarding;
+
+  Future<void> completeOnboarding() async {
+    await safePrefOperation((prefs) async {
+      _showOnboarding = false;
+      await prefs.setBool(AppConstants.onboardingKey, false);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Completing onboarding');
   }
 
   // Methods related to font size

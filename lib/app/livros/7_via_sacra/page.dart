@@ -71,7 +71,9 @@ class _IndiceState extends State<Indice> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () async {
                 await provider.changeChapter(index);
-                Navigator.pushNamed(context, '/via-sacra-reading');
+                if (context.mounted) {
+                  Navigator.pushNamed(context, '/via-sacra-reading');
+                }
               },
             );
           },

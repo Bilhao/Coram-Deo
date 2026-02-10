@@ -1,6 +1,7 @@
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/notification.dart';
+import 'package:flutter/material.dart';
 
 class PlanoDeVidaProvider extends BaseProvider {
   PlanoDeVida pdvDb = PlanoDeVida();
@@ -469,5 +470,38 @@ class PlanoDeVidaProvider extends BaseProvider {
       years.add({'year': yearLabel, 'completed': completedDays, 'total': totalPossibleDays, 'percentage': totalPossibleDays > 0 ? (completedDays / totalPossibleDays) * 100 : 0.0});
     }
     return years;
+  }
+
+  Future<void> rescheduleAllNotifications() async {
+    await safeAsync(() async {
+      // Get all items with notifications enabled
+      List<String> notificationTitles = await pdvDb.getTitleisNotification();
+
+      for (String title in notificationTitles) {
+        // Get times for each title
+        List<Map<String, dynamic>> maps = await pdvDb.initDb().then((db) => db.rawQuery('SELECT notificationTimes FROM data WHERE title = ?', [title]));
+
+        if (maps.isNotEmpty && maps[0]['notificationTimes'] != null) {
+          List<String> times = maps[0]['notificationTimes'].toString().split(',');
+
+          for (String timeStr in times) {
+            // Parse time string (HH:MM or HH:MM:SS)
+            List<String> parts = timeStr.trim().split(':');
+            if (parts.length >= 2) {
+              int hour = int.parse(parts[0]);
+              int minute = int.parse(parts[1]);
+              TimeOfDay time = TimeOfDay(hour: hour, minute: minute);
+
+              // Generate ID and schedule
+              int id = await pdvDb.getNotificationIdForTime(title, timeStr);
+              if (id != -1) {
+                await Notifier.scheduledNotification(CustomNotification(id: id, title: "Coram Deo", body: "Hora de: $title", payload: '/planoDeVida'), time);
+              }
+            }
+          }
+        }
+      }
+      return true;
+    }, errorContext: 'Rescheduling all notifications');
   }
 }
