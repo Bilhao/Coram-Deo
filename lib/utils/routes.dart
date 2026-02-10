@@ -44,12 +44,16 @@ import 'package:coramdeo/app/liturgia_diaria/page.dart';
 import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
 import 'package:coramdeo/app/exame_de_consciencia/page.dart';
+import 'package:coramdeo/app/onboarding/page.dart';
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case "/":
         return MaterialPageRoute(builder: (context) => const HomePage());
+
+      case "/onboarding":
+        return MaterialPageRoute(builder: (context) => const OnboardingPage());
 
       case "/settings":
         return MaterialPageRoute(builder: (context) => const SettingsPage());

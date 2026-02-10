@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/logo.png" alt="coram-deo" width="100" height="100"/>
+<img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/complete_logo.png" alt="coram-deo" width="100" height="100"/>
 </div>
 <h1 align="center">Coram Deo</h1>
 

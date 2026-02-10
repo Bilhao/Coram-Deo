@@ -10,7 +10,24 @@ class BibliaPage1 extends StatelessWidget {
     final provider = Provider.of<BibleProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Bíblia", maxLines: 2, style: TextStyle(fontSize: 20))),
+      appBar: AppBar(
+        title: Text("Bíblia (${provider.bibleVersion})", maxLines: 2, style: const TextStyle(fontSize: 20)),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.translate),
+            tooltip: 'Mudar Versão',
+            onSelected: (String version) {
+              provider.setBibleVersion(version);
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(value: 'NVI', child: Text('🇧🇷 NVI - Nova Versão Internacional')),
+              const PopupMenuItem<String>(value: 'ACF', child: Text('🇧🇷 ACF - Almeida Corrigida Fiel')),
+              const PopupMenuItem<String>(value: 'KJV', child: Text('🇬🇧 KJV - King James Version')),
+              const PopupMenuItem<String>(value: 'RVR', child: Text('🇪🇸 RVR - Reina Valera 1909')),
+            ],
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
