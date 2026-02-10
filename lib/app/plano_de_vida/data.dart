@@ -316,4 +316,11 @@ class PlanoDeVida {
     }
     return resultMap;
   }
+
+  Future<void> ensureWeekdaysColumn() async {
+    final db = await initDb();
+    await db.execute('ALTER TABLE data ADD COLUMN weekdays TEXT DEFAULT "1,2,3,4,5,6,7"').catchError((e) {
+      // Column already exists, ignore error
+    });
+  }
 }

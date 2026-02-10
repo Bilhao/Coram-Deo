@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:coramdeo/app/app_provider.dart';
+import 'package:coramdeo/app/backup/service.dart';
+import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -11,11 +13,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final BackupService backupService = BackupService();
+
   @override
   Widget build(BuildContext context) {
     int newcolorSeed = 0;
-    return Consumer<AppProvider>(
-      builder: (context, appProvider, child) {
+    return Consumer2<AppProvider, BibleProvider>(
+      builder: (context, appProvider, bibleProvider, child) {
         return Scaffold(
           appBar: AppBar(title: const Text('Configurações')),
           body: Column(
@@ -115,6 +119,129 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ],
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                child: Text("Bíblia", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+              ),
+              ListTile(
+                title: const Text('Voz da Narração'),
+                subtitle: Text(bibleProvider.selectedVoice?["name"] ?? "Padrão"),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Selecione a Voz"),
+                        content: SingleChildScrollView(
+                          child: RadioGroup<Map?>(
+                            groupValue: bibleProvider.selectedVoice,
+                            onChanged: (Map? value) {
+                              bibleProvider.setVoice(value ?? {});
+                              Navigator.pop(context);
+                            },
+                            child: Column(
+                              children: [
+                                const RadioListTile<Map?>(title: Text("Padrão"), value: null),
+                                if (bibleProvider.voices.isNotEmpty)
+                                  ...bibleProvider.voices.map((voice) {
+                                    return RadioListTile<Map?>(title: Text(voice["name"] ?? "Desconhecido"), value: voice as Map?);
+                                  }),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                child: Text("Backup e Restauração", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.download),
+                title: const Text('Fazer Backup'),
+                subtitle: const Text('Exportar dados para arquivo'),
+                onTap: () async {
+                  try {
+                    final filePath = await backupService.exportBackup();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Backup concluído!\nSalvo em: $filePath', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Erro ao fazer backup: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.upload),
+                title: const Text('Restaurar Backup'),
+                subtitle: const Text('Importar dados de arquivo'),
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Restaurar Backup?'),
+                      content: const Text('Isso substituirá seus dados atuais pelos do backup. Deseja continuar?'),
+                      actions: [
+                        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
+                        TextButton(
+                          onPressed: () async {
+                            Navigator.pop(ctx);
+                            try {
+                              bool imported = await backupService.importBackup();
+                              if (imported && context.mounted) {
+                                // Reload app state (theme, preferences)
+                                await appProvider.reload();
+
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Dados restaurados!', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erro ao restaurar: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                                    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          child: const Text('Restaurar'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),

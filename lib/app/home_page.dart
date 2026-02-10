@@ -11,6 +11,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:provider/provider.dart';
 
+import 'package:coramdeo/app/search/page.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -23,6 +25,12 @@ class HomePage extends StatelessWidget {
         leadingWidth: 70,
         title: const Text("Coram Deo"),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlobalSearchPage()));
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
@@ -129,7 +137,7 @@ class SantoDoDiaCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, top: 10.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
                       child: Stack(
                         children: [
                           Align(
@@ -186,7 +194,7 @@ class BibliaReadingCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 15.0, bottom: 15.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: Image.asset("assets/images/bible.jpeg", fit: BoxFit.cover),
@@ -195,7 +203,7 @@ class BibliaReadingCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 10.0, top: 20.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(right: 10.0, top: 20.0, bottom: 15.0),
                       child: Column(
                         children: [
                           Text(
@@ -204,7 +212,7 @@ class BibliaReadingCard extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                          Text(provider.verses.join(" "), maxLines: 5, overflow: TextOverflow.fade, style: const TextStyle(fontSize: 15), textAlign: TextAlign.left),
+                          Text(provider.verses.join(" "), maxLines: 6, overflow: TextOverflow.fade, style: const TextStyle(fontSize: 15), textAlign: TextAlign.left),
                           const Spacer(),
                           Align(
                             alignment: Alignment.bottomRight,
@@ -224,31 +232,6 @@ class BibliaReadingCard extends StatelessWidget {
           Navigator.pushNamed(context, '/biblia-page-2');
         },
       ),
-    );
-  }
-}
-
-class HomePageCardCarusel extends StatelessWidget {
-  const HomePageCardCarusel({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FlutterCarousel(
-      options: FlutterCarouselOptions(
-        height: 250,
-        enableInfiniteScroll: true,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 10),
-        autoPlayAnimationDuration: const Duration(milliseconds: 500),
-        autoPlayCurve: Curves.easeInOut,
-        showIndicator: true,
-        viewportFraction: 0.9,
-        enlargeCenterPage: true,
-        enlargeFactor: 0.18,
-        indicatorMargin: 10.0,
-        slideIndicator: CircularSlideIndicator(slideIndicatorOptions: SlideIndicatorOptions(currentIndicatorColor: Theme.of(context).colorScheme.primary, indicatorRadius: 3.0, itemSpacing: 12.0)),
-      ),
-      items: const [SantoDoDiaCard(), LiturgiaCard(), RandomPointCard(), BibliaReadingCard()],
     );
   }
 }
@@ -362,7 +345,13 @@ class RandomPointCard extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(icon: const Icon(Icons.refresh, size: 20), alignment: Alignment.centerLeft, padding: const EdgeInsets.all(0), onPressed: () => provider.loadRandomPoint(), tooltip: "Novo ponto"),
+                          IconButton(
+                            icon: const Icon(Icons.refresh, size: 20),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                            onPressed: () => provider.loadRandomPoint(),
+                          ),
                           const Text("Ler mais", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
                         ],
                       ),
@@ -371,6 +360,31 @@ class RandomPointCard extends StatelessWidget {
                 ),
               ),
       ),
+    );
+  }
+}
+
+class HomePageCardCarusel extends StatelessWidget {
+  const HomePageCardCarusel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlutterCarousel(
+      options: FlutterCarouselOptions(
+        height: 250,
+        enableInfiniteScroll: true,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 15),
+        autoPlayAnimationDuration: const Duration(milliseconds: 500),
+        autoPlayCurve: Curves.easeInOut,
+        showIndicator: true,
+        viewportFraction: 0.9,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.18,
+        indicatorMargin: 10.0,
+        slideIndicator: CircularSlideIndicator(slideIndicatorOptions: SlideIndicatorOptions(currentIndicatorColor: Theme.of(context).colorScheme.primary, indicatorRadius: 3.0, itemSpacing: 12.0)),
+      ),
+      items: const [BibliaReadingCard(), RandomPointCard(), LiturgiaCard(), SantoDoDiaCard()],
     );
   }
 }
