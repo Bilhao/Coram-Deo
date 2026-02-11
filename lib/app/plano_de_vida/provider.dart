@@ -127,6 +127,19 @@ class PlanoDeVidaProvider extends BaseProvider {
     await safeAsync(() async {
       await pdvDb.toggleisSelected(title);
       await update();
+
+      // Check new state to schedule/stop notifications
+      bool isSelected = _titlesIsSelected.contains(title);
+      bool isNotification = _titlesIsNotification.contains(title);
+
+      if (!isSelected) {
+        // Cancel all notifications for this title if it's no longer selected
+        await _stopNotificationsForTitle(title);
+      } else if (isNotification) {
+        // Reschedule notifications if it's now selected and notifications are enabled
+        await _rescheduleNotificationsForTitle(title);
+      }
+
       return true;
     }, errorContext: 'Toggling item selection');
   }
@@ -149,6 +162,11 @@ class PlanoDeVidaProvider extends BaseProvider {
     await safeAsync(() async {
       await pdvDb.activateisNotification(title);
       await update();
+
+      // Schedule if item is selected
+      if (_titlesIsSelected.contains(title)) {
+        await _rescheduleNotificationsForTitle(title);
+      }
       return true;
     }, errorContext: 'Activating item notification');
   }
@@ -157,15 +175,29 @@ class PlanoDeVidaProvider extends BaseProvider {
     await safeAsync(() async {
       await pdvDb.deactivateisNotification(title);
       await update();
+
+      // Stop all notifications for this item
+      await _stopNotificationsForTitle(title);
       return true;
     }, errorContext: 'Deactivating item notification');
   }
 
-  Future<void> insertNotificationTime(String title, String notificationTime) async {
+  Future<void> insertNotificationTime(String title, String notificationTime, {TimeOfDay? timeOfDay}) async {
     await safeAsync(() async {
       if (!(_notificationTimes[title] ?? "").split(",").contains(notificationTime)) {
         await pdvDb.insertNotificationTime(title, notificationTime);
         await update();
+
+        // Schedule if item is selected and notifications are enabled
+        if (_titlesIsSelected.contains(title) && _titlesIsNotification.contains(title)) {
+          int id = await pdvDb.getNotificationIdForTime(title, notificationTime);
+          if (id != -1) {
+            TimeOfDay? time = timeOfDay ?? _parseTimeOfDay(notificationTime);
+            if (time != null) {
+              await Notifier.scheduledNotification(CustomNotification(id: id, title: title, body: "Lembrete para: $title", payload: '/plano-de-vida'), time);
+            }
+          }
+        }
       }
       return true;
     }, errorContext: 'Inserting notification time');
@@ -173,6 +205,12 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   Future<void> deleteNotificationTime(String title, String notificationTime) async {
     await safeAsync(() async {
+      // Get ID before deleting from DB
+      int id = await pdvDb.getNotificationIdForTime(title, notificationTime);
+      if (id != -1) {
+        await Notifier.stopNotification(id);
+      }
+
       await pdvDb.deleteNotificationTime(title, notificationTime);
       await update();
       return true;
@@ -478,30 +516,62 @@ class PlanoDeVidaProvider extends BaseProvider {
       List<String> notificationTitles = await pdvDb.getTitleisNotification();
 
       for (String title in notificationTitles) {
-        // Get times for each title
-        List<Map<String, dynamic>> maps = await pdvDb.initDb().then((db) => db.rawQuery('SELECT notificationTimes FROM data WHERE title = ?', [title]));
-
-        if (maps.isNotEmpty && maps[0]['notificationTimes'] != null) {
-          List<String> times = maps[0]['notificationTimes'].toString().split(',');
-
-          for (String timeStr in times) {
-            // Parse time string (HH:MM or HH:MM:SS)
-            List<String> parts = timeStr.trim().split(':');
-            if (parts.length >= 2) {
-              int hour = int.parse(parts[0]);
-              int minute = int.parse(parts[1]);
-              TimeOfDay time = TimeOfDay(hour: hour, minute: minute);
-
-              // Generate ID and schedule
-              int id = await pdvDb.getNotificationIdForTime(title, timeStr);
-              if (id != -1) {
-                await Notifier.scheduledNotification(CustomNotification(id: id, title: "Coram Deo", body: "Hora de: $title", payload: '/planoDeVida'), time);
-              }
-            }
-          }
+        // Only reschedule if the item is also selected for the life plan
+        if (_titlesIsSelected.contains(title)) {
+          await _rescheduleNotificationsForTitle(title);
         }
       }
       return true;
     }, errorContext: 'Rescheduling all notifications');
+  }
+
+  Future<void> _rescheduleNotificationsForTitle(String title) async {
+    String timesString = _notificationTimes[title] ?? "";
+    if (timesString.isEmpty) return;
+
+    List<String> times = timesString.split(',');
+    for (String timeStr in times) {
+      if (timeStr.trim().isEmpty) continue;
+
+      TimeOfDay? time = _parseTimeOfDay(timeStr);
+      if (time != null) {
+        int id = await pdvDb.getNotificationIdForTime(title, timeStr);
+        if (id != -1) {
+          await Notifier.scheduledNotification(CustomNotification(id: id, title: title, body: "Lembrete para: $title", payload: '/plano-de-vida'), time);
+        }
+      }
+    }
+  }
+
+  Future<void> _stopNotificationsForTitle(String title) async {
+    List<int> notificationIds = await getAllNotificationIdsForTitle(title);
+    for (int id in notificationIds) {
+      await Notifier.stopNotification(id);
+    }
+  }
+
+  TimeOfDay? _parseTimeOfDay(String timeStr) {
+    try {
+      timeStr = timeStr.trim();
+      // Handle "HH:MM AM/PM" or "HH:MM"
+      final amPmRegex = RegExp(r'(\d+):(\d+)\s*(AM|PM|am|pm)?');
+      final match = amPmRegex.firstMatch(timeStr);
+
+      if (match != null) {
+        int hour = int.parse(match.group(1)!);
+        int minute = int.parse(match.group(2)!);
+        String? amPm = match.group(3);
+
+        if (amPm != null) {
+          amPm = amPm.toUpperCase();
+          if (amPm == 'PM' && hour < 12) hour += 12;
+          if (amPm == 'AM' && hour == 12) hour = 0;
+        }
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+    } catch (e) {
+      debugPrint('Error parsing time string: $timeStr - $e');
+    }
+    return null;
   }
 }

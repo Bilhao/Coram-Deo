@@ -285,12 +285,26 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                   await Provider.of<AppProvider>(context, listen: false).reload();
 
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Backup restaurado com sucesso!")));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Dados restaurados com sucesso!', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    );
                   }
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erro ao restaurar: $e")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro ao restaurar: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  );
                 }
               }
             },
