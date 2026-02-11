@@ -31,7 +31,7 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
                   ],
                 ),
               ),
-              body: const TabBarView(children: [TodosOsItens(), Selecionados(), Progresso()]),
+              body: const SafeArea(child: TabBarView(children: [TodosOsItens(), Selecionados(), Progresso()])),
             ),
           );
         },
