@@ -217,16 +217,11 @@ class InfoAlertDialog extends StatelessWidget {
                     onPressed: () async {
                       TimeOfDay? pickedTime = await showTimePicker(context: context, initialTime: const TimeOfDay(hour: 7, minute: 0));
                       if (pickedTime != null) {
-                        if (await Notifier.verifyNotificationPermission() != null && await Notifier.verifyNotificationPermission() != false) {
+                        bool? permission = await Notifier.verifyNotificationPermission();
+                        if (permission == true) {
                           await provider.activateItemNotification(title);
                           // ignore: use_build_context_synchronously
-                          await provider.insertNotificationTime(title, pickedTime.format(context));
-
-                          // Get the notification ID for this specific time
-                          // ignore: use_build_context_synchronously
-                          int notificationId = await provider.getNotificationIdForTime(title, pickedTime.format(context));
-
-                          await Notifier.scheduledNotification(CustomNotification(id: notificationId, title: title, body: "Lembrete para: $title", payload: "/oracoes"), pickedTime);
+                          await provider.insertNotificationTime(title, pickedTime.format(context), timeOfDay: pickedTime);
                           controller.expand();
                         }
                       }
@@ -242,15 +237,7 @@ class InfoAlertDialog extends StatelessWidget {
                           trailing: IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () async {
-                              // Get the specific notification ID for this time before deleting
-                              int notificationId = await provider.getNotificationIdForTime(title, time);
-
-                              // Cancel the specific notification
-                              if (notificationId != -1) {
-                                await Notifier.stopNotification(notificationId);
-                              }
-
-                              // Remove from database
+                              // Removing from database now also cancels the notification in the provider
                               await provider.deleteNotificationTime(title, time);
 
                               // Check if this was the last notification time for this title
