@@ -39,31 +39,33 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                const Divider(height: 15, color: Colors.transparent),
-                const Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
-                const Divider(height: 15, color: Colors.transparent),
-                const HomePageCardCarusel(),
-                const Divider(height: 15, color: Colors.transparent),
-                const Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
-                const Divider(height: 10, color: Colors.transparent),
-                const HomePageButtons(text: "Bíblia", route: '/biblia-page-1'),
-                const HomePageButtons(text: "Livros", route: '/livros'),
-                const HomePageButtons(text: "Orações", route: '/oracoes'),
-                const HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
-                const HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
-                const HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
-                HomePageButtons(text: "Exame de consciência", route: '/exame-de-consciencia', requireAuth: appProvider.blockExame),
-                // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
-              ],
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  const Divider(height: 15, color: Colors.transparent),
+                  const Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+                  const Divider(height: 15, color: Colors.transparent),
+                  const HomePageCardCarusel(),
+                  const Divider(height: 15, color: Colors.transparent),
+                  const Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+                  const Divider(height: 10, color: Colors.transparent),
+                  const HomePageButtons(text: "Bíblia", route: '/biblia-page-1'),
+                  const HomePageButtons(text: "Livros", route: '/livros'),
+                  const HomePageButtons(text: "Orações", route: '/oracoes'),
+                  const HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
+                  const HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
+                  const HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
+                  HomePageButtons(text: "Exame de consciência", route: '/exame-de-consciencia', requireAuth: appProvider.blockExame),
+                  // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
