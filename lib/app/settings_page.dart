@@ -22,254 +22,258 @@ class _SettingsPageState extends State<SettingsPage> {
       builder: (context, appProvider, bibleProvider, child) {
         return Scaffold(
           appBar: AppBar(title: const Text('Configurações')),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                child: Text("Aparência", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
-              ),
-              ListTile(
-                title: Text('Tema', style: TextStyle(fontSize: 16.0)),
-                subtitle: Text('Alternar entre temas', style: TextStyle(fontSize: 14.0)),
-                trailing: SegmentedButton(
-                  selected: {appProvider.currentTheme},
-                  showSelectedIcon: false,
-                  emptySelectionAllowed: false,
-                  multiSelectionEnabled: false,
-                  segments: [
-                    ButtonSegment(value: "light", icon: Icon(appProvider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined)),
-                    const ButtonSegment(value: "system", icon: Icon(Icons.contrast)),
-                    ButtonSegment(value: "dark", icon: Icon(appProvider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined)),
-                  ],
-                  onSelectionChanged: (segment) => appProvider.changeTheme(segment.first.toString()),
-                ),
-              ),
-              SwitchListTile(
-                title: Text('Cores dinâmicas', style: TextStyle(fontSize: 16.0)),
-                subtitle: Text('Utilizar cores baseadas no sistema', style: TextStyle(fontSize: 14)),
-                value: appProvider.dynamicColor,
-                secondary: const Icon(Icons.color_lens),
-                onChanged: (value) {
-                  setState(() {
-                    appProvider.toggleDynamicColor();
-                  });
-                },
-              ),
-              if (!appProvider.dynamicColor)
-                ListTile(
-                  title: Text('Cor principal', style: TextStyle(fontSize: 16.0)),
-                  trailing: ColorIndicator(
-                    width: 35,
-                    height: 35,
-                    borderRadius: 8,
-                    color: Color(appProvider.colorSeed),
-                    onSelectFocus: false,
-                    onSelect: () {
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                    child: Text("Aparência", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                  ),
+                  ListTile(
+                    title: Text('Tema', style: TextStyle(fontSize: 16.0)),
+                    subtitle: Text('Alternar entre temas', style: TextStyle(fontSize: 14.0)),
+                    trailing: SegmentedButton(
+                      selected: {appProvider.currentTheme},
+                      showSelectedIcon: false,
+                      emptySelectionAllowed: false,
+                      multiSelectionEnabled: false,
+                      segments: [
+                        ButtonSegment(value: "light", icon: Icon(appProvider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined)),
+                        const ButtonSegment(value: "system", icon: Icon(Icons.contrast)),
+                        ButtonSegment(value: "dark", icon: Icon(appProvider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined)),
+                      ],
+                      onSelectionChanged: (segment) => appProvider.changeTheme(segment.first.toString()),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: Text('Cores dinâmicas', style: TextStyle(fontSize: 16.0)),
+                    subtitle: Text('Utilizar cores baseadas no sistema', style: TextStyle(fontSize: 14)),
+                    value: appProvider.dynamicColor,
+                    secondary: const Icon(Icons.color_lens),
+                    onChanged: (value) {
+                      setState(() {
+                        appProvider.toggleDynamicColor();
+                      });
+                    },
+                  ),
+                  if (!appProvider.dynamicColor)
+                    ListTile(
+                      title: Text('Cor principal', style: TextStyle(fontSize: 16.0)),
+                      trailing: ColorIndicator(
+                        width: 35,
+                        height: 35,
+                        borderRadius: 8,
+                        color: Color(appProvider.colorSeed),
+                        onSelectFocus: false,
+                        onSelect: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Selecione uma cor'),
+                              content: SingleChildScrollView(
+                                child: ColorPicker(
+                                  color: Color(appProvider.colorSeed),
+                                  subheading: const Text("Tonalidade"),
+                                  wheelSubheading: const Text("Tonalidade"),
+                                  wheelSquarePadding: 10,
+                                  pickersEnabled: const <ColorPickerType, bool>{ColorPickerType.both: false, ColorPickerType.primary: true, ColorPickerType.accent: false, ColorPickerType.wheel: true},
+                                  onColorChanged: (Color value) {
+                                    newcolorSeed = value.value32bit;
+                                  },
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Confirmar'),
+                                  onPressed: () {
+                                    setState(() {
+                                      appProvider.changeColorSeed(newcolorSeed);
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ListTile(
+                    title: Text('Tamanho da fonte', style: TextStyle(fontSize: 16.0)),
+                    subtitle: Text("Padrão 16", style: TextStyle(fontSize: 14.0)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            appProvider.decreaseFontSize();
+                          },
+                        ),
+                        Text(appProvider.fontSize.toString(), style: TextStyle(fontSize: 16)),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            appProvider.increaseFontSize();
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                    child: Text("Bíblia", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                  ),
+                  ListTile(
+                    title: const Text('Voz da Narração'),
+                    subtitle: Text(bibleProvider.selectedVoice?["name"] ?? "Padrão"),
+                    onTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Selecione uma cor'),
-                          content: SingleChildScrollView(
-                            child: ColorPicker(
-                              color: Color(appProvider.colorSeed),
-                              subheading: const Text("Tonalidade"),
-                              wheelSubheading: const Text("Tonalidade"),
-                              wheelSquarePadding: 10,
-                              pickersEnabled: const <ColorPickerType, bool>{ColorPickerType.both: false, ColorPickerType.primary: true, ColorPickerType.accent: false, ColorPickerType.wheel: true},
-                              onColorChanged: (Color value) {
-                                newcolorSeed = value.value32bit;
-                              },
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text("Selecione a Voz"),
+                            content: SingleChildScrollView(
+                              child: RadioGroup<Map?>(
+                                groupValue: bibleProvider.selectedVoice,
+                                onChanged: (Map? value) {
+                                  bibleProvider.setVoice(value ?? {});
+                                  Navigator.pop(context);
+                                },
+                                child: Column(
+                                  children: [
+                                    const RadioListTile<Map?>(title: Text("Padrão"), value: null),
+                                    if (bibleProvider.voices.isNotEmpty)
+                                      ...bibleProvider.voices.map((voice) {
+                                        return RadioListTile<Map?>(title: Text(voice["name"] ?? "Desconhecido"), value: voice as Map?);
+                                      }),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                    child: Text("Backup e Restauração", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.download),
+                    title: const Text('Fazer Backup'),
+                    subtitle: const Text('Exportar dados para arquivo'),
+                    onTap: () async {
+                      try {
+                        final filePath = await backupService.exportBackup();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Backup concluído!\nSalvo em: $filePath', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Erro ao fazer backup: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.upload),
+                    title: const Text('Restaurar Backup'),
+                    subtitle: const Text('Importar dados de arquivo'),
+                    onTap: () async {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Restaurar Backup?'),
+                          content: const Text('Isso substituirá seus dados atuais pelos do backup. Deseja continuar?'),
                           actions: [
+                            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
                             TextButton(
-                              child: const Text('Confirmar'),
-                              onPressed: () {
-                                setState(() {
-                                  appProvider.changeColorSeed(newcolorSeed);
-                                });
-                                Navigator.pop(context);
+                              onPressed: () async {
+                                Navigator.pop(ctx);
+                                try {
+                                  bool imported = await backupService.importBackup();
+                                  if (imported && context.mounted) {
+                                    // Reload app state (theme, preferences)
+                                    await appProvider.reload();
+
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Dados restaurados!', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                          behavior: SnackBarBehavior.floating,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Erro ao restaurar: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                                        behavior: SnackBarBehavior.floating,
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      ),
+                                    );
+                                  }
+                                }
                               },
+                              child: const Text('Restaurar'),
                             ),
                           ],
                         ),
                       );
                     },
                   ),
-                ),
-              ListTile(
-                title: Text('Tamanho da fonte', style: TextStyle(fontSize: 16.0)),
-                subtitle: Text("Padrão 16", style: TextStyle(fontSize: 14.0)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.remove),
-                      onPressed: () {
-                        appProvider.decreaseFontSize();
-                      },
-                    ),
-                    Text(appProvider.fontSize.toString(), style: TextStyle(fontSize: 16)),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        appProvider.increaseFontSize();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                child: Text("Bíblia", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
-              ),
-              ListTile(
-                title: const Text('Voz da Narração'),
-                subtitle: Text(bibleProvider.selectedVoice?["name"] ?? "Padrão"),
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Selecione a Voz"),
-                        content: SingleChildScrollView(
-                          child: RadioGroup<Map?>(
-                            groupValue: bibleProvider.selectedVoice,
-                            onChanged: (Map? value) {
-                              bibleProvider.setVoice(value ?? {});
-                              Navigator.pop(context);
-                            },
-                            child: Column(
-                              children: [
-                                const RadioListTile<Map?>(title: Text("Padrão"), value: null),
-                                if (bibleProvider.voices.isNotEmpty)
-                                  ...bibleProvider.voices.map((voice) {
-                                    return RadioListTile<Map?>(title: Text(voice["name"] ?? "Desconhecido"), value: voice as Map?);
-                                  }),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                    child: Text("Segurança", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                  ),
+                  SwitchListTile(
+                    title: Text('Bloquear Exame de Consciência', style: TextStyle(fontSize: 16.0)),
+                    subtitle: Text('Pedir autenticação ao abrir exame de consciência', style: TextStyle(fontSize: 14)),
+                    value: appProvider.blockExame,
+                    secondary: const Icon(Icons.lock),
+                    onChanged: (value) {
+                      setState(() {
+                        appProvider.toggleBlockExame();
+                      });
                     },
-                  );
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                child: Text("Backup e Restauração", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
-              ),
-              ListTile(
-                leading: const Icon(Icons.download),
-                title: const Text('Fazer Backup'),
-                subtitle: const Text('Exportar dados para arquivo'),
-                onTap: () async {
-                  try {
-                    final filePath = await backupService.exportBackup();
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Backup concluído!\nSalvo em: $filePath', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
-                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Erro ao fazer backup: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
-                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                      );
-                    }
-                  }
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.upload),
-                title: const Text('Restaurar Backup'),
-                subtitle: const Text('Importar dados de arquivo'),
-                onTap: () async {
-                  showDialog(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Restaurar Backup?'),
-                      content: const Text('Isso substituirá seus dados atuais pelos do backup. Deseja continuar?'),
-                      actions: [
-                        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
-                        TextButton(
-                          onPressed: () async {
-                            Navigator.pop(ctx);
-                            try {
-                              bool imported = await backupService.importBackup();
-                              if (imported && context.mounted) {
-                                // Reload app state (theme, preferences)
-                                await appProvider.reload();
-
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('Dados restaurados!', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
-                                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                    ),
-                                  );
-                                }
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Erro ao restaurar: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
-                                    backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          child: const Text('Restaurar'),
-                        ),
-                      ],
+                  ),
+                  if (appProvider.blockExame && appProvider.canAuthenticate)
+                    SwitchListTile(
+                      title: Text('Usar autenticação biométrica', style: TextStyle(fontSize: 16.0)),
+                      value: appProvider.useBiometric,
+                      secondary: const Icon(Icons.fingerprint),
+                      onChanged: (value) {
+                        setState(() {
+                          appProvider.toggleUseBiometric();
+                        });
+                      },
                     ),
-                  );
-                },
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                child: Text("Segurança", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
-              ),
-              SwitchListTile(
-                title: Text('Bloquear Exame de Consciência', style: TextStyle(fontSize: 16.0)),
-                subtitle: Text('Pedir autenticação ao abrir exame de consciência', style: TextStyle(fontSize: 14)),
-                value: appProvider.blockExame,
-                secondary: const Icon(Icons.lock),
-                onChanged: (value) {
-                  setState(() {
-                    appProvider.toggleBlockExame();
-                  });
-                },
-              ),
-              if (appProvider.blockExame && appProvider.canAuthenticate)
-                SwitchListTile(
-                  title: Text('Usar autenticação biométrica', style: TextStyle(fontSize: 16.0)),
-                  value: appProvider.useBiometric,
-                  secondary: const Icon(Icons.fingerprint),
-                  onChanged: (value) {
-                    setState(() {
-                      appProvider.toggleUseBiometric();
-                    });
-                  },
-                ),
-            ],
+            ),
           ),
         );
       },

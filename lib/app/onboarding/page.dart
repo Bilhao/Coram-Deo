@@ -52,122 +52,141 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      body: Stack(
-        children: [
-          // Background Gradient decoration (subtle)
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.primaryContainer.withValues(alpha: 0.3)),
-            ),
-          ),
-          Positioned(
-            bottom: -50,
-            left: -50,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.secondaryContainer.withValues(alpha: 0.3)),
-            ),
-          ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (didPop) return;
 
-          Column(
-            children: [
-              Expanded(
-                child: FlutterCarousel(
-                  options: FlutterCarouselOptions(
-                    height: size.height * 0.8,
-                    viewportFraction: 1.0,
-                    enableInfiniteScroll: false,
-                    autoPlay: false,
-                    showIndicator: false,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _current = index;
-                      });
-                    },
-                    controller: _controller,
-                  ),
-                  items: [
-                    _buildSlide(context, imagePath: 'assets/images/complete_logo.png', title: "Bem-vindo ao Coram Deo", description: "Seu companheiro diário para uma vida de oração, leitura e crescimento espiritual.", isFirst: true),
-                    _buildSlide(context, icon: Icons.auto_stories, title: "Liturgia e Espiritualidade", description: "Acompanhe a Liturgia Diária, Santo do Dia e diversas orações clássicas da Igreja."),
-                    _buildSlide(context, icon: Icons.record_voice_over, title: "Bíblia em Áudio", description: "Leia e ouça a Sagrada Escritura em diversas versões, com controle de velocidade e voz."),
-                    _buildSlide(context, icon: Icons.checklist, title: "Ferramentas Espirituais", description: "Organize seu Plano de Vida e faça seu Exame de Consciência diário com facilidade."),
-                    _buildPermissionSlide(context),
-                    _buildBackupSlide(context),
-                  ],
-                ),
+        if (_current > 0) {
+          _controller.previousPage();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: colorScheme.surface,
+        body: Stack(
+          children: [
+            // Background Gradient decoration (subtle)
+            Positioned(
+              top: -100,
+              right: -100,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.primaryContainer.withValues(alpha: 0.3)),
               ),
+            ),
+            Positioned(
+              bottom: -50,
+              left: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(shape: BoxShape.circle, color: colorScheme.secondaryContainer.withValues(alpha: 0.3)),
+              ),
+            ),
 
-              // Bottom Controls
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Positioned.fill(
+              child: SafeArea(
+                child: Column(
                   children: [
-                    // Indicators
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(6, (entry) {
-                        return GestureDetector(
-                          onTap: () => _controller.animateToPage(entry),
-                          child: Container(
-                            width: 10.0,
-                            height: 10.0,
-                            margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: (_current == entry ? colorScheme.primary : colorScheme.surfaceContainerHighest).withValues(alpha: _current == entry ? 0.9 : 0.4),
-                            ),
-                          ),
-                        );
-                      }).toList(),
+                    Expanded(
+                      child: FlutterCarousel(
+                        options: FlutterCarouselOptions(
+                          viewportFraction: 1.0,
+                          enableInfiniteScroll: false,
+                          autoPlay: false,
+                          showIndicator: false,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              _current = index;
+                            });
+                          },
+                          controller: _controller,
+                        ),
+                        items: [
+                          _buildSlide(context, imagePath: 'assets/images/complete_logo.png', title: "Bem-vindo ao Coram Deo", description: "Seu companheiro diário para uma vida de oração, leitura e crescimento espiritual.", isFirst: true),
+                          _buildSlide(context, icon: Icons.auto_stories, title: "Liturgia e Espiritualidade", description: "Acompanhe a Liturgia Diária, Santo do Dia e diversas orações clássicas da Igreja."),
+                          _buildSlide(context, icon: Icons.record_voice_over, title: "Bíblia em Áudio", description: "Leia e ouça a Sagrada Escritura em diversas versões, com controle de velocidade e voz."),
+                          _buildSlide(context, icon: Icons.checklist, title: "Ferramentas Espirituais", description: "Organize seu Plano de Vida e faça seu Exame de Consciência diário com facilidade."),
+                          _buildPermissionSlide(context),
+                          _buildBackupSlide(context),
+                        ],
+                      ),
                     ),
 
-                    // Next/Done Button
-                    if (_current == 5)
-                      FilledButton(
-                        onPressed: _hasPermission
-                            ? () async {
-                                final appProvider = Provider.of<AppProvider>(context, listen: false);
-                                await appProvider.completeOnboarding();
-                                if (context.mounted) {
-                                  Navigator.of(context).pushReplacementNamed('/');
-                                }
-                              }
-                            : null,
-                        style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
-                        child: const Text("Começar", style: TextStyle(fontWeight: FontWeight.bold)),
-                      )
-                    else if (_current == 4)
-                      FilledButton.tonal(
-                        onPressed: _hasPermission
-                            ? () async {
-                                _controller.nextPage();
-                              }
-                            : null,
-                        style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
-                        child: const Icon(Icons.arrow_forward),
-                      )
-                    else
-                      FilledButton.tonal(
-                        onPressed: () => _controller.nextPage(),
-                        style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
-                        child: const Icon(Icons.arrow_forward),
+                    // Bottom Controls
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Row(
+                        children: [
+                          // Back Button
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: _current > 0
+                                  ? FilledButton.tonal(
+                                      onPressed: () => _controller.previousPage(),
+                                      style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
+                                      child: const Icon(Icons.arrow_back),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                          ),
+
+                          // Indicators (Center)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(6, (entry) {
+                              return GestureDetector(
+                                onTap: () => _controller.animateToPage(entry),
+                                child: Container(
+                                  width: 10.0,
+                                  height: 10.0,
+                                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: (_current == entry ? colorScheme.primary : colorScheme.surfaceContainerHighest).withValues(alpha: _current == entry ? 0.9 : 0.4),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+
+                          // Next/Done Button
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: _current == 5
+                                  ? FilledButton(
+                                      onPressed: _hasPermission
+                                          ? () async {
+                                              final appProvider = Provider.of<AppProvider>(context, listen: false);
+                                              await appProvider.completeOnboarding();
+                                              if (context.mounted) {
+                                                Navigator.of(context).pushReplacementNamed('/');
+                                              }
+                                            }
+                                          : null,
+                                      style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
+                                      child: const Text("Começar", style: TextStyle(fontWeight: FontWeight.bold)),
+                                    )
+                                  : FilledButton.tonal(
+                                      onPressed: (_current == 4 && !_hasPermission) ? null : () => _controller.nextPage(),
+                                      style: ButtonStyle(shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)))),
+                                      child: const Icon(Icons.arrow_forward),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -266,12 +285,26 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                   await Provider.of<AppProvider>(context, listen: false).reload();
 
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Backup restaurado com sucesso!")));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Dados restaurados com sucesso!', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    );
                   }
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Erro ao restaurar: $e")));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro ao restaurar: $e', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+                      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  );
                 }
               }
             },

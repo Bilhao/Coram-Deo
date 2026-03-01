@@ -51,27 +51,29 @@ class _OracoesPageState extends State<OracoesPage> {
       create: (context) => OracoesProvider(),
       child: Scaffold(
         appBar: AppBar(title: Text('Orações', style: TextStyle(fontSize: 20))),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Consumer<OracoesProvider>(
-                builder: (context, provider, child) {
-                  return ExpansionTile(
-                    title: Text("Favoritas", style: TextStyle(fontSize: 18.0)),
-                    initiallyExpanded: true,
-                    shape: const Border(),
-                    children: [for (String route in provider.favoritas) itembuild(routeToName[route]!, route)],
-                  );
-                },
-              ),
-              ExpansionTile(
-                title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
-                initiallyExpanded: false,
-                shape: const Border(),
-                children: [for (String route in routeToName.keys) itembuild(routeToName[route]!, route)],
-              ),
-              const Divider(height: 40, color: Colors.transparent),
-            ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Consumer<OracoesProvider>(
+                  builder: (context, provider, child) {
+                    return ExpansionTile(
+                      title: Text("Favoritas", style: TextStyle(fontSize: 18.0)),
+                      initiallyExpanded: true,
+                      shape: const Border(),
+                      children: [for (String route in provider.favoritas) itembuild(routeToName[route]!, route)],
+                    );
+                  },
+                ),
+                ExpansionTile(
+                  title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
+                  initiallyExpanded: false,
+                  shape: const Border(),
+                  children: [for (String route in routeToName.keys) itembuild(routeToName[route]!, route)],
+                ),
+                const Divider(height: 40, color: Colors.transparent),
+              ],
+            ),
           ),
         ),
       ),
