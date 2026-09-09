@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:coramdeo/app/santo_do_dia/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class SantoDoDiaProvider extends BaseProvider {
   SantoDoDiaProvider() {
@@ -11,6 +14,7 @@ class SantoDoDiaProvider extends BaseProvider {
   int _day = DateTime.now().day;
   int _month = DateTime.now().month;
   String _portrait = "";
+  String _localImagePath = "";
   String _name = "";
   List<String> _text = [];
   List<String> _boldText = [];
@@ -19,6 +23,7 @@ class SantoDoDiaProvider extends BaseProvider {
   int get day => _day;
   int get month => _month;
   String get portrait => _portrait;
+  String get localImagePath => _localImagePath;
   String get name => _name;
   List<String> get text => _text;
   List<String> get boldText => _boldText;
@@ -34,10 +39,28 @@ class SantoDoDiaProvider extends BaseProvider {
       if (storedDay == _day && storedMonth == _month) {
         // Load cached data
         _portrait = prefs.getString('santoDoDiaPortrait') ?? '';
+        _localImagePath = prefs.getString('santoDoDiaLocalImagePath') ?? '';
         _name = prefs.getString('santoDoDiaName') ?? '';
         _text = prefs.getStringList('santoDoDiaText') ?? [];
         _boldText = prefs.getStringList('santoDoDiaBoldText') ?? [];
         _italicText = prefs.getStringList('santoDoDiaItalicText') ?? [];
+
+        // Check if image file exists on disk
+        if (_localImagePath.isNotEmpty && !File(_localImagePath).existsSync()) {
+          _localImagePath = '';
+        }
+
+        // If local image is missing but URL exists, cache in background
+        if (_localImagePath.isEmpty && _portrait.isNotEmpty) {
+          _cacheImageLocally(_portrait).then((path) {
+            if (path.isNotEmpty) {
+              _localImagePath = path;
+              prefs.setString('santoDoDiaLocalImagePath', _localImagePath);
+              notifyListeners();
+            }
+          });
+        }
+
         return true;
       } else {
         // Load fresh data
@@ -67,18 +90,51 @@ class SantoDoDiaProvider extends BaseProvider {
         _boldText = data.getBoldText();
         _italicText = data.getItalicText();
 
-        // Cache the data
+        // Cache the data and image
         await _cacheData();
         return true;
       }
     }, errorContext: 'Fetching saint of the day data');
   }
 
+  Future<String> _cacheImageLocally(String portraitUrl) async {
+    if (portraitUrl.isEmpty) return '';
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final saintsDir = Directory('${dir.path}/santos');
+      if (!await saintsDir.exists()) {
+        await saintsDir.create(recursive: true);
+      }
+      final file = File('${saintsDir.path}/santo_${_day}_$_month.jpg');
+      if (await file.exists() && (await file.length()) > 0) {
+        return file.path;
+      }
+      final response = await http.get(
+        Uri.parse(portraitUrl),
+        headers: {
+          'User-Agent': 'CoramDeo/1.0.1 (Android)',
+        },
+      );
+      if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
+        await file.writeAsBytes(response.bodyBytes);
+        return file.path;
+      }
+    } catch (_) {
+      // Ignore download failures, fallback to network URL
+    }
+    return '';
+  }
+
   Future<void> _cacheData() async {
+    if (_portrait.isNotEmpty) {
+      _localImagePath = await _cacheImageLocally(_portrait);
+    }
+
     await safePrefOperation((prefs) async {
       await prefs.setInt('santoDoDiaDay', _day);
       await prefs.setInt('santoDoDiaMonth', _month);
       await prefs.setString('santoDoDiaPortrait', _portrait);
+      await prefs.setString('santoDoDiaLocalImagePath', _localImagePath);
       await prefs.setString('santoDoDiaName', _name);
       await prefs.setStringList('santoDoDiaText', _text);
       await prefs.setStringList('santoDoDiaBoldText', _boldText);
@@ -91,6 +147,7 @@ class SantoDoDiaProvider extends BaseProvider {
     setLoading(true);
     _day = day;
     _month = month;
+    _localImagePath = "";
 
     // Force fresh data fetch for the new date
     await _fetchFreshData();

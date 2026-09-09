@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
@@ -125,15 +126,63 @@ class HomePageButtons extends StatelessWidget {
 class SantoDoDiaCard extends StatelessWidget {
   const SantoDoDiaCard({super.key});
 
+  Widget _buildPortrait(BuildContext context, SantoDoDiaProvider provider) {
+    final placeholder = Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.person_rounded,
+        size: 48,
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+      ),
+    );
+
+    if (provider.localImagePath.isNotEmpty && File(provider.localImagePath).existsSync()) {
+      return Image.file(
+        File(provider.localImagePath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return child;
+          return AnimatedOpacity(
+            opacity: frame == null ? 0 : 1,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        },
+      );
+    }
+
+    if (provider.portrait.isNotEmpty) {
+      return Image.network(
+        provider.portrait,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return child;
+          return AnimatedOpacity(
+            opacity: frame == null ? 0 : 1,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        },
+      );
+    }
+
+    return placeholder;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<SantoDoDiaProvider>(context, listen: false);
+    final provider = Provider.of<SantoDoDiaProvider>(context);
     return Card(
       color: Theme.of(context).colorScheme.secondaryContainer,
       child: InkWell(
         radius: 100,
         borderRadius: BorderRadius.circular(10.0),
-        child: provider.isLoading
+        child: provider.isLoading && provider.name.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : Row(
                 children: [
@@ -146,11 +195,11 @@ class SantoDoDiaCard extends StatelessWidget {
                             alignment: Alignment.center,
                             child: Text(
                               provider.name,
-                              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          Align(
+                          const Align(
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               "Ver mais",
@@ -167,29 +216,7 @@ class SantoDoDiaCard extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: provider.portrait.isNotEmpty
-                            ? Image.network(
-                                provider.portrait,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                  alignment: Alignment.center,
-                                  child: Icon(
-                                    Icons.person_rounded,
-                                    size: 48,
-                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                                  ),
-                                ),
-                              )
-                            : Container(
-                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                alignment: Alignment.center,
-                                child: Icon(
-                                  Icons.person_rounded,
-                                  size: 48,
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
-                                ),
-                              ),
+                        child: _buildPortrait(context, provider),
                       ),
                     ),
                   ),
@@ -273,7 +300,7 @@ class LiturgiaCard extends StatelessWidget {
         radius: 100,
         borderRadius: BorderRadius.circular(10.0),
         onTap: () => Navigator.pushNamed(context, '/liturgia'),
-        child: provider.isLoading
+        child: provider.isLoading && provider.liturgia.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(15.0),
