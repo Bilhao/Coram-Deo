@@ -202,54 +202,7 @@ class ContribuicaoPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
-
-              // Card Espiritual de Agradecimento
-              Card(
-                elevation: 0,
-                color: colorScheme.secondaryContainer.withValues(alpha: 0.4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.church_rounded,
-                        color: colorScheme.secondary,
-                        size: 28,
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Intenção e Gratidão',
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSecondaryContainer,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Oferecemos nossas orações e súplicas a Deus por todos os benfeitores e apoiadores que colaboram com este projeto.',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSecondaryContainer,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
 
               // Repositório / Código Aberto
               ListTile(
