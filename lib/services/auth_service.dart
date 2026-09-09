@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -121,6 +122,45 @@ class AuthService {
     } catch (e) {
       debugPrint('Erro ao desconectar: $e');
     }
+  }
+
+  /// Exclui permanentemente a conta do usuário e seus dados de backup na nuvem
+  Future<void> deleteAccount() async {
+    final user = currentUser;
+    if (user == null) {
+      throw Exception('Nenhum usuário conectado para excluir a conta.');
+    }
+
+    // 1. Exclui documentos de backup no Firestore
+    try {
+      final docRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('backup')
+          .doc('data');
+      await docRef.delete();
+    } catch (e) {
+      debugPrint('Erro ao excluir dados do Firestore: $e');
+    }
+
+    // 2. Exclui conta do Firebase Auth
+    try {
+      await user.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        throw Exception(
+          'Por motivos de segurança, saia e faça login novamente antes de excluir sua conta.',
+        );
+      }
+      rethrow;
+    }
+
+    // 3. Desconecta da conta Google se aplicável
+    try {
+      if (await _googleSignIn.isSignedIn()) {
+        await _googleSignIn.signOut();
+      }
+    } catch (_) {}
   }
 }
 
