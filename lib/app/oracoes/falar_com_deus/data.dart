@@ -7,11 +7,18 @@ class FalarComDeus {
 
   Future<void> initFCD() async {
     try {
-      var response = await http.get(Uri.parse('https://www.hablarcondios.org/pt/meditacaodiaria.aspx'));
+      var response = await http.get(
+        Uri.parse('https://www.hablarcondios.org/pt/meditacaodiaria.aspx'),
+        headers: {
+          'User-Agent': 'CoramDeo/1.0.1 (Android)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+        },
+      );
       if (response.statusCode == 200) {
         data = parse(response.body);
       } else {
-        throw Exception();
+        throw Exception('Status code: ${response.statusCode}');
       }
     } catch (_) {
       data = null;
