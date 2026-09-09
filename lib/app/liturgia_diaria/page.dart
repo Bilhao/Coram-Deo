@@ -22,12 +22,13 @@ class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text("Conection Error"),
-                  content: const Text("There was an error connecting to the server. Please try again later."),
+                  title: const Text("Erro de Conexão"),
+                  content: const Text("Não foi possível conectar ao servidor para carregar a Liturgia Diária. Verifique sua conexão com a internet."),
                   actions: <Widget>[
                     TextButton(
                       child: const Text('OK'),
                       onPressed: () {
+                        provider.clearError();
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
                       },
