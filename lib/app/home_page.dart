@@ -167,7 +167,29 @@ class SantoDoDiaCard extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image(image: NetworkImage(provider.portrait), fit: BoxFit.cover),
+                        child: provider.portrait.isNotEmpty
+                            ? Image.network(
+                                provider.portrait,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => Container(
+                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    Icons.person_rounded,
+                                    size: 48,
+                                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.person_rounded,
+                                  size: 48,
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.6),
+                                ),
+                              ),
                       ),
                     ),
                   ),
