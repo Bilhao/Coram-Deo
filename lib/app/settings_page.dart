@@ -71,11 +71,14 @@ class _SettingsPageState extends State<SettingsPage> {
         );
       }
     } catch (e) {
+      final errorMsg = e.toString().contains('permission-denied')
+          ? 'Permissão negada no Firestore. Verifique as regras de segurança no Firebase Console.'
+          : 'Erro ao fazer backup: $e';
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Erro ao fazer backup: $e',
+              errorMsg,
               style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
             ),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
@@ -427,7 +430,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Text("Apoio e Contribuição", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.volunteer_activism_rounded, color: Colors.pinkAccent),
+                    leading: const Icon(Icons.volunteer_activism_rounded),
                     title: const Text('Apoiar o Coram Deo', style: TextStyle(fontSize: 16.0)),
                     subtitle: const Text('Ajude a manter o projeto gratuito via PIX', style: TextStyle(fontSize: 14.0)),
                     trailing: const Icon(Icons.chevron_right_rounded),
