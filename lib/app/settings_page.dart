@@ -7,6 +7,7 @@ import 'package:coramdeo/widgets/auth_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -159,6 +160,65 @@ class _SettingsPageState extends State<SettingsPage> {
               }
             },
             child: const Text('Restaurar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteAccount() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Excluir Conta e Dados?'),
+        content: const Text(
+          'Esta ação excluirá permanentemente sua conta e todos os dados de backup salvos na nuvem. Os dados locais não serão apagados.\n\nDeseja continuar?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              setState(() {
+                _isSyncing = true;
+              });
+
+              try {
+                await _authService.deleteAccount();
+                if (mounted) {
+                  setState(() {
+                    _lastBackupInfo = null;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Conta e dados na nuvem excluídos com sucesso.'),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Erro ao excluir conta: $e'),
+                      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              } finally {
+                if (mounted) {
+                  setState(() {
+                    _isSyncing = false;
+                  });
+                }
+              }
+            },
+            child: const Text('Excluir Definitivamente'),
           ),
         ],
       ),
@@ -412,6 +472,24 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 8),
+                              Center(
+                                child: TextButton.icon(
+                                  onPressed: _isSyncing ? null : _confirmDeleteAccount,
+                                  icon: Icon(
+                                    Icons.delete_forever_rounded,
+                                    color: Theme.of(context).colorScheme.error,
+                                    size: 18,
+                                  ),
+                                  label: Text(
+                                    'Excluir conta e dados da nuvem',
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.error,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ),
                               if (_isSyncing)
                                 const Padding(
                                   padding: EdgeInsets.only(top: 12.0),
@@ -466,7 +544,24 @@ class _SettingsPageState extends State<SettingsPage> {
                         });
                       },
                     ),
-                  const SizedBox(height: 20),
+                  // Seção Sobre e Privacidade
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+                    child: Text("Sobre e Privacidade", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.privacy_tip_outlined),
+                    title: const Text('Política de Privacidade', style: TextStyle(fontSize: 16.0)),
+                    subtitle: const Text('Saiba como seus dados são protegidos', style: TextStyle(fontSize: 14.0)),
+                    trailing: const Icon(Icons.open_in_new_rounded, size: 20),
+                    onTap: () async {
+                      final uri = Uri.parse('https://github.com/Bilhao/Coram-Deo/blob/main/PRIVACY.md');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 25),
                 ],
               ),
             ),
