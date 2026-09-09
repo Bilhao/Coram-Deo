@@ -13,14 +13,13 @@ class ContribuicaoPage extends StatelessWidget {
     Clipboard.setData(const ClipboardData(text: chavePix));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
-          children: [
-            Icon(Icons.check_circle_outline, color: Colors.white),
-            SizedBox(width: 10),
-            Text('Chave PIX copiada com sucesso!'),
-          ],
+        content: Text(
+          'Chave PIX copiada com sucesso!',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
