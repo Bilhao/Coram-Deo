@@ -7,11 +7,18 @@ class SantoDoDia {
 
   Future<void> initSDD({required int day, required int month}) async {
     try {
-      var response = await http.get(Uri.parse('https://www.a12.com/reze-no-santuario/santo-do-dia?day=$day&month=$month'));
+      var response = await http.get(
+        Uri.parse('https://www.a12.com/reze-no-santuario/santo-do-dia?day=$day&month=$month'),
+        headers: {
+          'User-Agent': 'CoramDeo/1.0.1 (Android)',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
+        },
+      );
       if (response.statusCode == 200) {
         data = parse(response.body);
       } else {
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
       data = null;
@@ -19,7 +26,10 @@ class SantoDoDia {
   }
 
   String getPortrait() {
-    return "https://www.a12.com${data?.querySelector('.feature__portrait')?.attributes['src']}";
+    final src = data?.querySelector('.feature__portrait')?.attributes['src'];
+    if (src == null || src.isEmpty) return '';
+    if (src.startsWith('http')) return src;
+    return "https://www.a12.com$src";
   }
 
   String getName() {
