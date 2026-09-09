@@ -45,6 +45,39 @@ class LiturgiaDiariaProvider extends BaseProvider {
   Future<void> _initialize() async {
     setLoading(true);
 
+    final todayKey = "$_day-$_month-${DateTime.now().year}";
+
+    await safePrefOperation((prefs) async {
+      final storedDate = prefs.getString('liturgiaDiariaDate');
+      if (storedDate == todayKey) {
+        _date = prefs.getString('liturgiaDiaria_date') ?? '';
+        _liturgia = prefs.getString('liturgiaDiaria_liturgia') ?? '';
+        _primeiraLeituraReferencia = prefs.getString('liturgiaDiaria_primeiraLeituraReferencia') ?? '';
+        _primeiraLeituraTitulo = prefs.getString('liturgiaDiaria_primeiraLeituraTitulo') ?? '';
+        _primeiraLeituraTexto = prefs.getString('liturgiaDiaria_primeiraLeituraTexto') ?? '';
+        _salmoReferencia = prefs.getString('liturgiaDiaria_salmoReferencia') ?? '';
+        _salmoRefrao = prefs.getString('liturgiaDiaria_salmoRefrao') ?? '';
+        _salmoTexto = prefs.getString('liturgiaDiaria_salmoTexto') ?? '';
+        _segundaLeituraReferencia = prefs.getString('liturgiaDiaria_segundaLeituraReferencia') ?? '';
+        _segundaLeituraTitulo = prefs.getString('liturgiaDiaria_segundaLeituraTitulo') ?? '';
+        _segundaLeituraTexto = prefs.getString('liturgiaDiaria_segundaLeituraTexto') ?? '';
+        _evangelhoReferencia = prefs.getString('liturgiaDiaria_evangelhoReferencia') ?? '';
+        _evangelhoTitulo = prefs.getString('liturgiaDiaria_evangelhoTitulo') ?? '';
+        _evangelhoTexto = prefs.getString('liturgiaDiaria_evangelhoTexto') ?? '';
+        return true;
+      }
+      return false;
+    }, errorContext: 'Loading cached daily liturgy');
+
+    if (error != null || _liturgia.isEmpty) {
+      clearError();
+      await _fetchFreshData();
+    }
+
+    setLoading(false);
+  }
+
+  Future<void> _fetchFreshData() async {
     await safeAsync(() async {
       await data.initLD(day: _day, month: _month);
       if (data.data == null) {
@@ -65,17 +98,41 @@ class LiturgiaDiariaProvider extends BaseProvider {
         _evangelhoReferencia = data.getEvangelhoReferencia();
         _evangelhoTitulo = data.getEvangelhoTitulo();
         _evangelhoTexto = data.getEvangelhoTexto();
+
+        await _cacheData();
         return true;
       }
-    }, errorContext: 'Loading daily liturgy');
+    }, errorContext: 'Fetching daily liturgy');
+  }
 
-    setLoading(false);
+  Future<void> _cacheData() async {
+    await safePrefOperation((prefs) async {
+      final todayKey = "$_day-$_month-${DateTime.now().year}";
+      await prefs.setString('liturgiaDiariaDate', todayKey);
+      await prefs.setString('liturgiaDiaria_date', _date);
+      await prefs.setString('liturgiaDiaria_liturgia', _liturgia);
+      await prefs.setString('liturgiaDiaria_primeiraLeituraReferencia', _primeiraLeituraReferencia);
+      await prefs.setString('liturgiaDiaria_primeiraLeituraTitulo', _primeiraLeituraTitulo);
+      await prefs.setString('liturgiaDiaria_primeiraLeituraTexto', _primeiraLeituraTexto);
+      await prefs.setString('liturgiaDiaria_salmoReferencia', _salmoReferencia);
+      await prefs.setString('liturgiaDiaria_salmoRefrao', _salmoRefrao);
+      await prefs.setString('liturgiaDiaria_salmoTexto', _salmoTexto);
+      await prefs.setString('liturgiaDiaria_segundaLeituraReferencia', _segundaLeituraReferencia);
+      await prefs.setString('liturgiaDiaria_segundaLeituraTitulo', _segundaLeituraTitulo);
+      await prefs.setString('liturgiaDiaria_segundaLeituraTexto', _segundaLeituraTexto);
+      await prefs.setString('liturgiaDiaria_evangelhoReferencia', _evangelhoReferencia);
+      await prefs.setString('liturgiaDiaria_evangelhoTitulo', _evangelhoTitulo);
+      await prefs.setString('liturgiaDiaria_evangelhoTexto', _evangelhoTexto);
+      return true;
+    }, errorContext: 'Caching daily liturgy');
   }
 
   Future<void> changeDate(int day, int month) async {
+    setLoading(true);
     _day = day;
     _month = month;
-    await _initialize();
+    await _fetchFreshData();
+    setLoading(false);
     notifyListeners();
   }
 }

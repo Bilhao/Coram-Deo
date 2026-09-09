@@ -10,14 +10,20 @@ class LiturgiaDiaria {
     String formatedMonth = month.toString().padLeft(2, "0");
     String formatedYear = DateTime.now().year.toString();
     try {
-      var response = await http.get(Uri.parse('https://liturgia.up.railway.app/$formatedDay-$formatedMonth-$formatedYear'));
+      var response = await http.get(
+        Uri.parse('https://liturgia.up.railway.app/$formatedDay-$formatedMonth-$formatedYear'),
+        headers: {
+          'User-Agent': 'CoramDeo/1.0.1 (Android)',
+          'Accept': 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         data = jsonDecode(response.body);
         if (data.containsKey('error')) {
           data = null;
         }
       } else {
-        throw Exception('Failed to load data');
+        throw Exception('Failed to load data: ${response.statusCode}');
       }
     } catch (e) {
       data = null;
