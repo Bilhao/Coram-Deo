@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // Core app pages
 import 'package:coramdeo/app/home_page.dart';
 import 'package:coramdeo/app/settings_page.dart';
+import 'package:coramdeo/app/contribuicao/page.dart';
 
 // Bible pages
 import 'package:coramdeo/app/biblia/page_1.dart';
@@ -57,6 +58,9 @@ class Routes {
 
       case "/settings":
         return MaterialPageRoute(builder: (context) => const SettingsPage());
+
+      case "/contribuicao":
+        return MaterialPageRoute(builder: (context) => const ContribuicaoPage());
 
       case "/biblia-page-1":
         return MaterialPageRoute(builder: (context) => const BibliaPage1());

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'utils/notification.dart';
 import 'utils/routes.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
@@ -17,7 +18,14 @@ void main() async {
   // Carrega o splashscreen
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // Carrega as notificações
+  // Inicializa o Firebase com tratamento de erro resiliente
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint("Firebase init info: $e");
+  }
+
+  // Carrega as notificações
   await Notifier.init();
 
   // Ajuste das configurações de tela
