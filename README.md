@@ -1,7 +1,12 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/complete_logo.png" alt="coram-deo" width="100" height="100"/>
+  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/complete_logo.png" alt="coram-deo" width="100" height="100"/>
+  <h1>Coram Deo</h1>
+  <p>Aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã.</p>
+
+  <a href="https://play.google.com/store/apps/details?id=com.bilhao.coramdeo">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png" alt="Disponível no Google Play" height="60" />
+  </a>
 </div>
-<h1 align="center">Coram Deo</h1>
 
 Coram Deo é um aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã. Ele reúne diversas orações tradicionais, textos espirituais, leituras bíblicas, livros de espiritualidade, exame de consciência, plano de vida e muito mais, tudo em um só lugar, com interface moderna, personalizável e offline.
 
@@ -10,7 +15,6 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
 ## Funcionalidades
 
 - **Orações Tradicionais**
-
   - Angelus / Regina Cæli
   - Oferecimento de Obras
   - Lembrai-vos
@@ -27,11 +31,10 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
   - Estampa de São Josemaria Escrivá
 
 - **Meditação e Espiritualidade**
-
   - Meditação diária do "Falar com Deus"
   - Comentário do Evangelho do dia (Opus Dei)
   - Santo do Dia (com fonte e referência)
-  - Livros espirituais clássicos do Opus Dei:
+  - Livros espirituais clássicos de São Josemaria Escrivá:
     - Caminho
     - Sulco
     - Forja
@@ -40,32 +43,42 @@ Coram Deo é um aplicativo católico completo para oração, meditação, leitur
     - Via Sacra
     - Santo Rosário (livro)
 
-- **Bíblia**
+- **Bíblia Sagrada**
+  - Leitura bíblica completa com suporte a múltiplas versões:
+    - NVI (Nova Versão Internacional)
+    - ACF (Almeida Corrigida Fiel)
+    - KJV (King James Version)
+    - RVR (Reina-Valera)
+  - Navegação intuitiva por livros, capítulos e versículos
+  - Busca de texto e seleção rápida
+  - 100% offline
 
-  - Leitura da Bíblia NVI (Nova Versão Internacional)
-  - Navegação por livros, capítulos e versículos
-  - Busca e seleção rápida
+- **Sincronização e Backup em Nuvem**
+  - Autenticação segura com Google Sign-In ou E-mail e Senha via Firebase
+  - Backup na nuvem e restauração dos hábitos do Plano de Vida e preferências
+  - Sincronização automática e contínua entre dispositivos
+
+- **Apoio e Contribuição**
+  - Canal para apoiar a manutenção e o desenvolvimento contínuo do projeto
+  - Chave PIX integrada disponível exclusivamente na tela de Configurações
 
 - **Plano de Vida**
-
   - Acompanhamento de práticas espirituais diárias
-  - Marcação de hábitos e progresso
+  - Marcação de hábitos e progresso espiritual
 
-- **Personalização**
-
-  - Ajuste do tamanho da fonte
+- **Personalização e Segurança**
+  - Ajuste do tamanho da fonte e tipografia de leitura
   - Tema claro/escuro e cores dinâmicas (Material You)
   - Favoritos de orações
   - Suporte a português e latim em várias orações
+  - Bloqueio do exame de consciência com biometria ou PIN
 
-- **Segurança**
-  - Bloqueio do exame de consciência com biometria (opcional)
-
-- **Otimizações Recentes (v0.1.9)**
-  - Arquitetura otimizada com padrão BaseProvider para melhor performance
-  - Correção de bugs críticos e melhor tratamento de erros
-  - Gerenciamento centralizado de constantes e configurações
-  - Melhoria significativa na velocidade de carregamento
+- **Novidades da Versão (v1.0.1)**
+  - Sincronização em nuvem e autenticação (Google e E-mail/Senha com Firebase)
+  - Remoção de dependências de áudio/TTS da Bíblia para um app mais leve e estável
+  - Nova tela de contribuição via PIX nas configurações
+  - Opção de login e sincronização no onboarding inicial
+  - Atualização para Android Gradle Plugin 8.11+ e melhorias de compatibilidade
 
 ---
 
@@ -109,41 +122,55 @@ lib/
     home_page.dart
     settings_page.dart
     biblia/
+    contribuicao/
     exame_de_consciencia/
     liturgia_diaria/
     livros/
+    onboarding/
     oracoes/
     plano_de_vida/
-    ...
+    santo_do_dia/
+    search/
+  services/
+    auth_service.dart
+    cloud_sync_service.dart
+  widgets/
+    auth_dialog.dart
   utils/
     base_provider.dart
     constants.dart
     notification.dart
     routes.dart
 assets/
+  biblia_acf.db
+  biblia_kjv.db
   biblia_nvi.db
+  biblia_rvr.db
   plano_de_vida.db
   books/
     amigos_de_deus.db
     caminho.db
     e_cristo_que_passa.db
     forja.db
-    santo_rosario.db
+    santo_rosario_livro.db
     sulco.db
-    via_sacra.db
+    via_sacra_livro.db
   images/
+    complete_logo.png
     logo.png
     logo_dark.png
     ...
 ```
 
-- **lib/app/oracoes/**: Todas as telas de orações e espiritualidade.
-- **lib/app/livros/**: Telas e lógica dos livros espirituais.
-- **lib/app/biblia/**: Lógica e interface da Bíblia.
-- **lib/utils/**: Utilitários compartilhados (BaseProvider, constantes, rotas).
-- **assets/books/**: Bancos de dados SQLite dos livros.
-- **assets/biblia_nvi.db**: Banco de dados da Bíblia NVI.
-- **assets/images/**: Logos e imagens do app.
+- **lib/app/oracoes/**: Orações e espiritualidade cristã.
+- **lib/app/livros/**: Telas e leituras dos livros de São Josemaria Escrivá.
+- **lib/app/biblia/**: Lógica e interface de leitura da Bíblia (offline e multi-versões).
+- **lib/app/contribuicao/**: Tela para contribuição e suporte via PIX.
+- **lib/services/**: Serviços de autenticação e sincronização em nuvem com Firebase.
+- **lib/utils/**: Provedores base, constantes globais, notificações e rotas.
+- **assets/books/**: Bancos de dados SQLite dos livros espirituais.
+- **assets/biblia_*.db**: Bancos de dados SQLite das traduções bíblicas (ACF, KJV, NVI, RVR).
+- **assets/images/**: Identidade visual e imagens do aplicativo.
 
 ---
 
