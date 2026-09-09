@@ -63,11 +63,15 @@ class _SettingsPageState extends State<SettingsPage> {
           SnackBar(
             content: Text(
               'Backup na nuvem realizado com sucesso!',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSecondaryContainer,
+              ),
             ),
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -80,11 +84,15 @@ class _SettingsPageState extends State<SettingsPage> {
           SnackBar(
             content: Text(
               errorMsg,
-              style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
             ),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -128,11 +136,19 @@ class _SettingsPageState extends State<SettingsPage> {
                       SnackBar(
                         content: Text(
                           'Dados restaurados com sucesso!',
-                          style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSecondaryContainer,
+                          ),
                         ),
-                        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.secondaryContainer,
                         behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     );
                   }
@@ -143,11 +159,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     SnackBar(
                       content: Text(
                         'Erro ao restaurar dados: $e',
-                        style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
                       ),
-                      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.errorContainer,
                       behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   );
                 }
@@ -180,7 +202,9 @@ class _SettingsPageState extends State<SettingsPage> {
             child: const Text('Cancelar'),
           ),
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
             onPressed: () async {
               Navigator.pop(ctx);
               setState(() {
@@ -194,9 +218,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     _lastBackupInfo = null;
                   });
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Conta e dados na nuvem excluídos com sucesso.'),
+                    SnackBar(
+                      content: Text(
+                        'Conta e dados na nuvem excluídos com sucesso.',
+                        style: TextStyle(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.secondaryContainer,
                       behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   );
                 }
@@ -204,9 +241,19 @@ class _SettingsPageState extends State<SettingsPage> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Erro ao excluir conta: $e'),
-                      backgroundColor: Theme.of(context).colorScheme.errorContainer,
+                      content: Text(
+                        'Erro ao excluir conta: $e',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                      ),
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.errorContainer,
                       behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   );
                 }
@@ -239,28 +286,65 @@ class _SettingsPageState extends State<SettingsPage> {
                 children: <Widget>[
                   // Seção Aparência
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                    child: Text("Aparência", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Aparência",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
                   ListTile(
                     title: const Text('Tema', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text('Alternar entre temas', style: TextStyle(fontSize: 14.0)),
+                    subtitle: const Text(
+                      'Alternar entre temas',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
                     trailing: SegmentedButton(
                       selected: {appProvider.currentTheme},
                       showSelectedIcon: false,
                       emptySelectionAllowed: false,
                       multiSelectionEnabled: false,
                       segments: [
-                        ButtonSegment(value: "light", icon: Icon(appProvider.currentTheme == "light" ? Icons.light_mode : Icons.light_mode_outlined)),
-                        const ButtonSegment(value: "system", icon: Icon(Icons.contrast)),
-                        ButtonSegment(value: "dark", icon: Icon(appProvider.currentTheme == "dark" ? Icons.dark_mode : Icons.dark_mode_outlined)),
+                        ButtonSegment(
+                          value: "light",
+                          icon: Icon(
+                            appProvider.currentTheme == "light"
+                                ? Icons.light_mode
+                                : Icons.light_mode_outlined,
+                          ),
+                        ),
+                        const ButtonSegment(
+                          value: "system",
+                          icon: Icon(Icons.contrast),
+                        ),
+                        ButtonSegment(
+                          value: "dark",
+                          icon: Icon(
+                            appProvider.currentTheme == "dark"
+                                ? Icons.dark_mode
+                                : Icons.dark_mode_outlined,
+                          ),
+                        ),
                       ],
-                      onSelectionChanged: (segment) => appProvider.changeTheme(segment.first.toString()),
+                      onSelectionChanged: (segment) =>
+                          appProvider.changeTheme(segment.first.toString()),
                     ),
                   ),
                   SwitchListTile(
-                    title: const Text('Cores dinâmicas', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text('Utilizar cores baseadas no sistema', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'Cores dinâmicas',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Utilizar cores baseadas no sistema',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: appProvider.dynamicColor,
                     secondary: const Icon(Icons.color_lens),
                     onChanged: (value) {
@@ -271,7 +355,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   if (!appProvider.dynamicColor)
                     ListTile(
-                      title: const Text('Cor principal', style: TextStyle(fontSize: 16.0)),
+                      title: const Text(
+                        'Cor principal',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                       trailing: ColorIndicator(
                         width: 35,
                         height: 35,
@@ -289,7 +376,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   subheading: const Text("Tonalidade"),
                                   wheelSubheading: const Text("Tonalidade"),
                                   wheelSquarePadding: 10,
-                                  pickersEnabled: const <ColorPickerType, bool>{ColorPickerType.both: false, ColorPickerType.primary: true, ColorPickerType.accent: false, ColorPickerType.wheel: true},
+                                  pickersEnabled: const <ColorPickerType, bool>{
+                                    ColorPickerType.both: false,
+                                    ColorPickerType.primary: true,
+                                    ColorPickerType.accent: false,
+                                    ColorPickerType.wheel: true,
+                                  },
                                   onColorChanged: (Color value) {
                                     newcolorSeed = value.value32bit;
                                   },
@@ -312,8 +404,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                   ListTile(
-                    title: const Text('Tamanho da fonte', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text("Padrão 16", style: TextStyle(fontSize: 14.0)),
+                    title: const Text(
+                      'Tamanho da fonte',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      "Padrão 16",
+                      style: TextStyle(fontSize: 14.0),
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -323,7 +421,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             appProvider.decreaseFontSize();
                           },
                         ),
-                        Text(appProvider.fontSize.toString(), style: const TextStyle(fontSize: 16)),
+                        Text(
+                          appProvider.fontSize.toString(),
+                          style: const TextStyle(fontSize: 16),
+                        ),
                         IconButton(
                           icon: const Icon(Icons.add),
                           onPressed: () {
@@ -336,8 +437,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   // Seção Sincronização em Nuvem (Substituindo Backup Manual)
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                    child: Text("Sincronização em Nuvem", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Sincronização em Nuvem",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
                   StreamBuilder<User?>(
                     stream: _authService.authStateChanges,
@@ -347,10 +458,17 @@ class _SettingsPageState extends State<SettingsPage> {
                       if (user == null) {
                         return Card(
                           elevation: 0,
-                          margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 4.0),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 15.0,
+                            vertical: 4.0,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                            side: BorderSide(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
@@ -359,18 +477,32 @@ class _SettingsPageState extends State<SettingsPage> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.cloud_outlined, color: Theme.of(context).colorScheme.primary, size: 26),
+                                    Icon(
+                                      Icons.cloud_outlined,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      size: 26,
+                                    ),
                                     const SizedBox(width: 10),
                                     const Text(
                                       'Conta e Backup em Nuvem',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   'Conecte com o Google ou crie uma conta para sincronizar seu Plano de Vida e configurações entre dispositivos com segurança.',
-                                  style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                                 const SizedBox(height: 14),
                                 FilledButton.tonalIcon(
@@ -392,10 +524,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
                       return Card(
                         elevation: 0,
-                        margin: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 4.0),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 15.0,
+                          vertical: 4.0,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
-                          side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -405,26 +542,36 @@ class _SettingsPageState extends State<SettingsPage> {
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                                    backgroundColor: Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
                                     child: Icon(
                                       Icons.person_rounded,
-                                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           user.displayName ?? 'Conta Conectada',
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                          ),
                                         ),
                                         Text(
                                           user.email ?? '',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -440,15 +587,30 @@ class _SettingsPageState extends State<SettingsPage> {
                                       });
                                     },
                                   ),
+                                  IconButton(
+                                    tooltip: 'Excluir conta e dados',
+                                    icon: Icon(
+                                      Icons.delete_outline_rounded,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                    onPressed: _isSyncing
+                                        ? null
+                                        : _confirmDeleteAccount,
+                                  ),
                                 ],
                               ),
                               const Divider(height: 24),
-                              if (_lastBackupInfo != null && _lastBackupInfo!['timestamp'] != null) ...[
+                              if (_lastBackupInfo != null &&
+                                  _lastBackupInfo!['timestamp'] != null) ...[
                                 Text(
                                   'Último backup salvo: ${_formatTimestamp(_lastBackupInfo!['timestamp'])}',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -457,38 +619,28 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: [
                                   Expanded(
                                     child: FilledButton.icon(
-                                      onPressed: _isSyncing ? null : _handleCloudBackup,
-                                      icon: const Icon(Icons.cloud_upload_rounded),
+                                      onPressed: _isSyncing
+                                          ? null
+                                          : _handleCloudBackup,
+                                      icon: const Icon(
+                                        Icons.cloud_upload_rounded,
+                                      ),
                                       label: const Text('Fazer Backup'),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: OutlinedButton.icon(
-                                      onPressed: _isSyncing ? null : () => _confirmRestore(appProvider),
-                                      icon: const Icon(Icons.cloud_download_rounded),
+                                      onPressed: _isSyncing
+                                          ? null
+                                          : () => _confirmRestore(appProvider),
+                                      icon: const Icon(
+                                        Icons.cloud_download_rounded,
+                                      ),
                                       label: const Text('Restaurar'),
                                     ),
                                   ),
                                 ],
-                              ),
-                              const SizedBox(height: 8),
-                              Center(
-                                child: TextButton.icon(
-                                  onPressed: _isSyncing ? null : _confirmDeleteAccount,
-                                  icon: Icon(
-                                    Icons.delete_forever_rounded,
-                                    color: Theme.of(context).colorScheme.error,
-                                    size: 18,
-                                  ),
-                                  label: Text(
-                                    'Excluir conta e dados da nuvem',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.error,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
                               ),
                               if (_isSyncing)
                                 const Padding(
@@ -504,13 +656,29 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   // Seção Apoio e Contribuição (Acessível APENAS por aqui)
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                    child: Text("Apoio e Contribuição", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Apoio e Contribuição",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.volunteer_activism_rounded),
-                    title: const Text('Apoiar o Coram Deo', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text('Ajude a manter o projeto gratuito via PIX', style: TextStyle(fontSize: 14.0)),
+                    title: const Text(
+                      'Apoiar o Coram Deo',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Ajude a manter o projeto gratuito via PIX',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () {
                       Navigator.pushNamed(context, '/contribuicao');
@@ -519,12 +687,28 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   // Seção Segurança
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                    child: Text("Segurança", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Segurança",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
                   SwitchListTile(
-                    title: const Text('Bloquear Exame de Consciência', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text('Pedir autenticação ao abrir exame de consciência', style: TextStyle(fontSize: 14)),
+                    title: const Text(
+                      'Bloquear Exame de Consciência',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Pedir autenticação ao abrir exame de consciência',
+                      style: TextStyle(fontSize: 14),
+                    ),
                     value: appProvider.blockExame,
                     secondary: const Icon(Icons.lock),
                     onChanged: (value) {
@@ -535,7 +719,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   if (appProvider.blockExame && appProvider.canAuthenticate)
                     SwitchListTile(
-                      title: const Text('Usar autenticação biométrica', style: TextStyle(fontSize: 16.0)),
+                      title: const Text(
+                        'Usar autenticação biométrica',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
                       value: appProvider.useBiometric,
                       secondary: const Icon(Icons.fingerprint),
                       onChanged: (value) {
@@ -546,18 +733,39 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   // Seção Sobre e Privacidade
                   Padding(
-                    padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
-                    child: Text("Sobre e Privacidade", style: TextStyle(fontSize: 15.0, color: Theme.of(context).colorScheme.primary)),
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Sobre e Privacidade",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.privacy_tip_outlined),
-                    title: const Text('Política de Privacidade', style: TextStyle(fontSize: 16.0)),
-                    subtitle: const Text('Saiba como seus dados são protegidos', style: TextStyle(fontSize: 14.0)),
+                    title: const Text(
+                      'Política de Privacidade',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Saiba como seus dados são protegidos',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
                     trailing: const Icon(Icons.open_in_new_rounded, size: 20),
                     onTap: () async {
-                      final uri = Uri.parse('https://github.com/Bilhao/Coram-Deo/blob/main/PRIVACY.md');
+                      final uri = Uri.parse(
+                        'https://github.com/Bilhao/Coram-Deo/blob/main/PRIVACY.md',
+                      );
                       if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                   ),

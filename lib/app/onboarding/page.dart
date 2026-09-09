@@ -14,7 +14,8 @@ class OnboardingPage extends StatefulWidget {
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObserver {
+class _OnboardingPageState extends State<OnboardingPage>
+    with WidgetsBindingObserver {
   final FlutterCarouselController _controller = FlutterCarouselController();
   final AuthService _authService = AuthService();
   final CloudSyncService _cloudSyncService = CloudSyncService();
@@ -81,10 +82,17 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Dados da nuvem restaurados com sucesso!'),
+              content: Text(
+                'Dados da nuvem restaurados com sucesso!',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
               backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           );
         }
@@ -93,10 +101,17 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao restaurar: $e'),
+            content: Text(
+              'Erro ao restaurar: $e',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onErrorContainer,
+              ),
+            ),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -176,26 +191,30 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                             context,
                             imagePath: 'assets/images/complete_logo.png',
                             title: "Bem-vindo ao Coram Deo",
-                            description: "Seu companheiro diário para uma vida de oração, leitura e crescimento espiritual.",
+                            description:
+                                "Seu companheiro diário para uma vida de oração, leitura e crescimento espiritual.",
                             isFirst: true,
                           ),
                           _buildSlide(
                             context,
                             icon: Icons.auto_stories,
                             title: "Liturgia e Espiritualidade",
-                            description: "Acompanhe a Liturgia Diária, Santo do Dia e diversas orações clássicas da Igreja.",
+                            description:
+                                "Acompanhe a Liturgia Diária, Santo do Dia e diversas orações clássicas da Igreja.",
                           ),
                           _buildSlide(
                             context,
                             icon: Icons.menu_book,
                             title: "Sagrada Escritura",
-                            description: "Leia a Sagrada Escritura em diversas versões (NVI, ACF, KJV e RVR) com leitura fluida e personalizada.",
+                            description:
+                                "Leia a Sagrada Escritura em diversas versões (NVI, ACF, KJV e RVR) com leitura fluida e personalizada.",
                           ),
                           _buildSlide(
                             context,
                             icon: Icons.checklist,
                             title: "Ferramentas Espirituais",
-                            description: "Organize seu Plano de Vida e faça seu Exame de Consciência diário com facilidade.",
+                            description:
+                                "Organize seu Plano de Vida e faça seu Exame de Consciência diário com facilidade.",
                           ),
                           _buildPermissionSlide(context),
                           _buildCloudSyncSlide(context),
@@ -214,11 +233,18 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                               alignment: Alignment.centerLeft,
                               child: _current > 0
                                   ? FilledButton.tonal(
-                                      onPressed: () => _controller.previousPage(),
+                                      onPressed: () =>
+                                          _controller.previousPage(),
                                       style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                        ),
+                                        shape:
+                                            WidgetStateProperty.all<
+                                              RoundedRectangleBorder
+                                            >(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                            ),
                                       ),
                                       child: const Icon(Icons.arrow_back),
                                     )
@@ -235,11 +261,22 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                                 child: Container(
                                   width: 10.0,
                                   height: 10.0,
-                                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 8.0,
+                                    horizontal: 4.0,
+                                  ),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: (_current == entry ? colorScheme.primary : colorScheme.surfaceContainerHighest)
-                                        .withValues(alpha: _current == entry ? 0.9 : 0.4),
+                                    color:
+                                        (_current == entry
+                                                ? colorScheme.primary
+                                                : colorScheme
+                                                      .surfaceContainerHighest)
+                                            .withValues(
+                                              alpha: _current == entry
+                                                  ? 0.9
+                                                  : 0.4,
+                                            ),
                                   ),
                                 ),
                               );
@@ -253,25 +290,51 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                               child: _current == 5
                                   ? FilledButton(
                                       onPressed: () async {
-                                        final appProvider = Provider.of<AppProvider>(context, listen: false);
+                                        final appProvider =
+                                            Provider.of<AppProvider>(
+                                              context,
+                                              listen: false,
+                                            );
                                         await appProvider.completeOnboarding();
                                         if (context.mounted) {
-                                          Navigator.of(context).pushReplacementNamed('/');
+                                          Navigator.of(
+                                            context,
+                                          ).pushReplacementNamed('/');
                                         }
                                       },
                                       style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                                        shape:
+                                            WidgetStateProperty.all<
+                                              RoundedRectangleBorder
+                                            >(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                            ),
+                                      ),
+                                      child: const Text(
+                                        "Começar",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      child: const Text("Começar", style: TextStyle(fontWeight: FontWeight.bold)),
                                     )
                                   : FilledButton.tonal(
-                                      onPressed: (_current == 4 && !_hasPermission) ? null : () => _controller.nextPage(),
+                                      onPressed:
+                                          (_current == 4 && !_hasPermission)
+                                          ? null
+                                          : () => _controller.nextPage(),
                                       style: ButtonStyle(
-                                        shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-                                        ),
+                                        shape:
+                                            WidgetStateProperty.all<
+                                              RoundedRectangleBorder
+                                            >(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                            ),
                                       ),
                                       child: const Icon(Icons.arrow_forward),
                                     ),
@@ -311,17 +374,17 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
           Text(
             title,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             description,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -336,25 +399,29 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            _hasPermission ? Icons.notifications_active : Icons.notifications_none,
+            _hasPermission
+                ? Icons.notifications_active
+                : Icons.notifications_none,
             size: 120,
-            color: _hasPermission ? Colors.green : Theme.of(context).colorScheme.primary,
+            color: _hasPermission
+                ? Colors.green
+                : Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(height: 48),
           Text(
             _hasPermission ? "Notificações Ativadas!" : "Fique Conectado",
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
             "Para aproveitar ao máximo o Plano de Vida e os lembretes de oração, precisamos da sua permissão para enviar notificações.",
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -372,7 +439,9 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
               },
               style: ButtonStyle(
                 shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
               child: const Text("Permitir Notificações"),
@@ -393,7 +462,9 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            currentUser != null ? Icons.cloud_done_rounded : Icons.cloud_sync_rounded,
+            currentUser != null
+                ? Icons.cloud_done_rounded
+                : Icons.cloud_sync_rounded,
             size: 100,
             color: currentUser != null ? Colors.green : colorScheme.primary,
           ),
@@ -429,8 +500,13 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
               icon: const Icon(Icons.login_rounded),
               label: const Text("Entrar ou Criar Conta"),
               style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -464,14 +540,22 @@ class _OnboardingPageState extends State<OnboardingPage> with WidgetsBindingObse
                       )
                     : const Text("Restaurar Dados da Nuvem"),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ] else if (_backupChecked) ...[
               Text(
                 "Nenhum backup anterior encontrado. Seus novos dados serão sincronizados.",
-                style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 13,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],
