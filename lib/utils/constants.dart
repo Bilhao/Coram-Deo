@@ -20,8 +20,6 @@ class AppConstants {
   static const String bibleVersesIdKey = 'bible.verses_id';
   static const String bibleVersesKey = 'bible.verses';
   static const String bibleVersionKey = 'bible.version';
-  static const String ttsVoiceKey = 'settings.tts.voice';
-  static const String ttsRateKey = 'settings.tts.rate';
 
   // Prayer preferences
   static const String favoritePrayersKey = 'oracoes.favoritas';

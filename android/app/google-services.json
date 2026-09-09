@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "464134179748",
+    "firebase_url": "https://coramdeo-app-default-rtdb.firebaseio.com",
+    "project_id": "coramdeo-app",
+    "storage_bucket": "coramdeo-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464134179748:android:89521af00d416be9190f31",
+        "android_client_info": {
+          "package_name": "com.bilhao.coramdeo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkUjY4wukMOPRgyNjpzMrXtifwiWVjODs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
