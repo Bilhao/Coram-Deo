@@ -28,7 +28,8 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   AuthMode _mode = AuthMode.login;
   bool _isLoading = false;
@@ -123,9 +124,18 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
         await _authService.sendPasswordReset(email);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('E-mail de recuperação enviado com sucesso!'),
+            SnackBar(
+              content: Text(
+                'E-mail de recuperação enviado com sucesso!',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
               behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           );
           setState(() {
@@ -191,7 +201,9 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                   Icon(
                     _mode == AuthMode.forgotPassword
                         ? Icons.lock_reset
-                        : (_mode == AuthMode.register ? Icons.person_add : Icons.account_circle),
+                        : (_mode == AuthMode.register
+                              ? Icons.person_add
+                              : Icons.account_circle),
                     color: colorScheme.primary,
                     size: 28,
                   ),
@@ -199,8 +211,12 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                   Text(
                     _mode == AuthMode.login
                         ? 'Entrar na Conta'
-                        : (_mode == AuthMode.register ? 'Criar Nova Conta' : 'Recuperar Senha'),
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                        : (_mode == AuthMode.register
+                              ? 'Criar Nova Conta'
+                              : 'Recuperar Senha'),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -225,12 +241,19 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.error_outline, color: colorScheme.error, size: 20),
+                      Icon(
+                        Icons.error_outline,
+                        color: colorScheme.error,
+                        size: 20,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           _errorMessage!,
-                          style: TextStyle(color: colorScheme.onErrorContainer, fontSize: 13),
+                          style: TextStyle(
+                            color: colorScheme.onErrorContainer,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -250,7 +273,9 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                   ),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -263,7 +288,10 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
                         'ou com e-mail',
-                        style: TextStyle(fontSize: 13, color: colorScheme.outline),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: colorScheme.outline,
+                        ),
                       ),
                     ),
                     Expanded(child: Divider(color: colorScheme.outlineVariant)),
@@ -279,7 +307,9 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                 decoration: InputDecoration(
                   labelText: 'E-mail',
                   prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 validator: (val) {
                   if (val == null || val.trim().isEmpty) {
@@ -302,14 +332,20 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                     labelText: 'Senha',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
                       },
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (val) {
                     if (val == null || val.isEmpty) {
@@ -332,7 +368,9 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                   decoration: InputDecoration(
                     labelText: 'Confirmar Senha',
                     prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   validator: (val) {
                     if (val != _passwordController.text) {
@@ -367,19 +405,29 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                 onPressed: _isLoading ? null : _handleSubmitEmail,
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 child: _isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : Text(
                         _mode == AuthMode.login
                             ? 'Entrar'
-                            : (_mode == AuthMode.register ? 'Criar Conta' : 'Enviar E-mail de Recuperação'),
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            : (_mode == AuthMode.register
+                                  ? 'Criar Conta'
+                                  : 'Enviar E-mail de Recuperação'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
               const SizedBox(height: 16),
@@ -389,7 +437,10 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Não tem uma conta?', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                    Text(
+                      'Não tem uma conta?',
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
                     TextButton(
                       onPressed: _isLoading
                           ? null
@@ -403,11 +454,15 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
                     ),
                   ],
                 ),
-              ] else if (_mode == AuthMode.register || _mode == AuthMode.forgotPassword) ...[
+              ] else if (_mode == AuthMode.register ||
+                  _mode == AuthMode.forgotPassword) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Já possui uma conta?', style: TextStyle(color: colorScheme.onSurfaceVariant)),
+                    Text(
+                      'Já possui uma conta?',
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
                     TextButton(
                       onPressed: _isLoading
                           ? null
@@ -429,4 +484,3 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
     );
   }
 }
-
