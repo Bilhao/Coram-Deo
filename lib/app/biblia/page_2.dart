@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/biblia/widgets/bible_version_bottom_sheet.dart';
 import 'package:coramdeo/app/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/data.dart';
@@ -41,6 +42,13 @@ class _BibliaPage2State extends State<BibliaPage2> {
           appBar: AppBar(
             title: Text(provider.book, maxLines: 2, style: TextStyle(fontSize: 20)),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.translate),
+                tooltip: 'Mudar Versão',
+                onPressed: () {
+                  BibleVersionBottomSheet.show(context);
+                },
+              ),
               IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
               IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
             ],
