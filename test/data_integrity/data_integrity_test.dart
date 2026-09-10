@@ -3,7 +3,7 @@ import 'package:coramdeo/app/liturgia_diaria/data.dart';
 
 void main() {
   group('Liturgia Diaria data integrity', () {
-    test('Preserves verse numbers and references in readings', () {
+    test('Sanitizes attached verse numbers from raw API into clean liturgical proclamation text', () {
       final ld = LiturgiaDiaria();
       ld.data = {
         'data': '11/09/2026',
@@ -11,25 +11,27 @@ void main() {
         'primeiraLeitura': {
           'titulo': 'Primeira Leitura (1Cor 9, 16-19. 22b-27)',
           'referencia': '1Cor 9, 16-19',
-          'texto': '16 Se anuncio o evangelho, não tenho de que me gloriar...',
+          'texto': '16pregar o Evangelho não é motivo de glória. 17Se eu exercesse...',
         },
         'salmo': {
           'referencia': 'Sl 83 (84)',
           'refrao': 'Quão amável, ó Senhor, é vossa casa!',
-          'texto': '2 Minha alma desmaia de saudades...',
+          'texto': '– Minha alma desmaia de saudades...',
         },
         'segundaLeitura': 'Não há segunda leitura hoje!',
         'evangelho': {
           'titulo': 'Evangelho (Lc 6, 39-42)',
           'referencia': 'Lc 6, 39-42',
-          'texto': '39 Jesus contou uma parábola: Pode um cego guiar outro cego?',
+          'texto': 'Naquele tempo, 39Jesus contou uma parábola: “Pode um cego guiar outro cego? 40Um discípulo não é maior...',
         },
       };
 
-      expect(ld.getPrimeiraLeituraTexto(), contains('16 Se anuncio'));
+      // Readings should be clean continuous liturgical prose without attached digits
+      expect(ld.getPrimeiraLeituraTexto(), equals('pregar o Evangelho não é motivo de glória. Se eu exercesse...'));
       expect(ld.getPrimeiraLeituraReferencia(), equals('1Cor 9, 16-19'));
-      expect(ld.getSalmoTexto(), contains('2 Minha alma'));
-      expect(ld.getEvangelhoTexto(), contains('39 Jesus'));
+      expect(ld.getSalmoTexto(), equals('– Minha alma desmaia de saudades...'));
+      expect(ld.getEvangelhoTexto(), equals('Naquele tempo, Jesus contou uma parábola: “Pode um cego guiar outro cego? Um discípulo não é maior...'));
+      expect(ld.getEvangelhoReferencia(), equals('Lc 6, 39-42'));
     });
   });
 
@@ -76,3 +78,4 @@ void main() {
     });
   });
 }
+
