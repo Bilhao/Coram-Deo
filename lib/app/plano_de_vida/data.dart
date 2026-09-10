@@ -58,11 +58,11 @@ class PlanoDeVida {
     final db = await initDb();
     String today = "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT completedDates FROM data WHERE title = ?', [title]);
-    if ((maps[0]['completedDates'] ?? "").contains(today)) {
-      return true;
-    } else {
-      return false;
-    }
+    if (maps.isEmpty) return false;
+    final rawDates = maps[0]['completedDates'] as String?;
+    if (rawDates == null || rawDates.isEmpty) return false;
+    final dateList = rawDates.split(',').map((e) => e.trim());
+    return dateList.contains(today);
   }
 
   Future<bool> getIsNotification(String title) async {
@@ -137,10 +137,18 @@ class PlanoDeVida {
 
   Future<List<String>> getTitleisCompleted(String date) async {
     final db = await initDb();
-    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT title FROM data WHERE completedDates LIKE ?', ["%$date%"]);
-    return List.generate(maps.length, (i) {
-      return maps[i]['title'];
-    });
+    final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT title, completedDates FROM data');
+    List<String> completedTitles = [];
+    for (final map in maps) {
+      final rawDates = map['completedDates'] as String?;
+      if (rawDates != null && rawDates.isNotEmpty) {
+        final dateList = rawDates.split(',').map((e) => e.trim());
+        if (dateList.contains(date)) {
+          completedTitles.add(map['title'] as String);
+        }
+      }
+    }
+    return completedTitles;
   }
 
   Future<List<String>> getTitleisNotification() async {
@@ -202,21 +210,30 @@ class PlanoDeVida {
   Future<void> insertCompletedDate(String title, String date) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT completedDates FROM data WHERE title = ?', [title]);
-    if (maps[0]['completedDates'] == null) {
+    if (maps.isEmpty) return;
+    final rawDates = maps[0]['completedDates'] as String?;
+    if (rawDates == null || rawDates.isEmpty) {
       await db.rawUpdate('UPDATE data SET completedDates = ? WHERE title = ?', [date, title]);
     } else {
-      await db.rawUpdate('UPDATE data SET completedDates = ? WHERE title = ?', [maps[0]['completedDates'] + ",$date", title]);
+      List<String> dateList = rawDates.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      if (!dateList.contains(date)) {
+        dateList.add(date);
+        await db.rawUpdate('UPDATE data SET completedDates = ? WHERE title = ?', [dateList.join(","), title]);
+      }
     }
   }
 
   Future<void> deleteCompletedDate(String title, String date) async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT completedDates FROM data WHERE title = ?', [title]);
-    if (maps[0]['completedDates'].split(",").length == 1) {
+    if (maps.isEmpty) return;
+    final rawDates = maps[0]['completedDates'] as String?;
+    if (rawDates == null || rawDates.isEmpty) return;
+    List<String> dateList = rawDates.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    dateList.remove(date);
+    if (dateList.isEmpty) {
       await db.rawUpdate('UPDATE data SET completedDates = ? WHERE title = ?', [null, title]);
     } else {
-      List<String> dateList = maps[0]['completedDates'].split(',');
-      dateList.remove(date);
       await db.rawUpdate('UPDATE data SET completedDates = ? WHERE title = ?', [dateList.join(","), title]);
     }
   }
