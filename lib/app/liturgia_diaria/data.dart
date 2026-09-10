@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 
 class LiturgiaDiaria {
   dynamic data;
+  RegExp regExp = RegExp(r'\d+');
 
   Future<void> initLD({required int day, required int month}) async {
     String formatedDay = day.toString().padLeft(2, "0");
@@ -46,7 +47,7 @@ class LiturgiaDiaria {
   }
 
   String getPrimeiraLeituraTexto() {
-    return data['primeiraLeitura']['texto'] ?? '';
+    return data['primeiraLeitura']['texto']?.replaceAll(regExp, '') ?? '';
   }
 
   String getSalmoReferencia() {
@@ -79,7 +80,7 @@ class LiturgiaDiaria {
     if (data['segundaLeitura'] == "Não há segunda leitura hoje!") {
       return '';
     }
-    return data['segundaLeitura']['texto'] ?? '';
+    return data['segundaLeitura']['texto']?.replaceAll(regExp, '') ?? '';
   }
 
   String getEvangelhoTitulo() {
@@ -91,6 +92,6 @@ class LiturgiaDiaria {
   }
 
   String getEvangelhoTexto() {
-    return data['evangelho']['texto'] ?? '';
+    return data['evangelho']['texto']?.replaceAll(regExp, '') ?? '';
   }
 }
