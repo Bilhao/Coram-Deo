@@ -40,29 +40,44 @@ class BibleProvider extends BaseProvider {
   final Map<String, bool> _isDownloading = {};
   final Map<String, bool> _installedVersions = {};
 
-  double getDownloadProgress(String versionId) => _downloadProgress[versionId] ?? 0.0;
+  double getDownloadProgress(String versionId) =>
+      _downloadProgress[versionId] ?? 0.0;
   bool isDownloading(String versionId) => _isDownloading[versionId] ?? false;
   bool isVersionInstalled(String versionId) {
-    if (versionId == 'ave_maria' || versionId == 'Bíblia Ave Maria' || versionId == 'Ave Maria') return true;
+    if (versionId == 'ave_maria' ||
+        versionId == 'Bíblia Ave Maria' ||
+        versionId == 'Ave Maria') {
+      return true;
+    }
     return _installedVersions[versionId] ?? false;
   }
 
   BibleVersion get currentVersion => dbHelper.currentVersion;
-  List<BibleVersion> get availableBibleVersions => BibleVersion.availableVersions;
+  List<BibleVersion> get availableBibleVersions =>
+      BibleVersion.availableVersions;
 
   Future<void> checkInstalledVersions() async {
     for (final version in BibleVersion.availableVersions) {
       if (version.isBundled) {
         _installedVersions[version.id] = true;
       } else {
-        _installedVersions[version.id] = await _downloadService.isDatabaseInstalled(version.dbFileName);
+        _installedVersions[version.id] = await _downloadService
+            .isDatabaseInstalled(version.dbFileName);
       }
     }
     notifyListeners();
   }
 
   Future<bool> downloadVersion(BibleVersion version) async {
-    if (version.downloadUrl == null || version.isBundled) return true;
+    if (version.downloadUrl == null || version.isBundled) {
+      return true;
+    }
+    if (_isDownloading[version.id] == true) {
+      return true;
+    }
+    if (isVersionInstalled(version.id)) {
+      return true;
+    }
 
     _isDownloading[version.id] = true;
     _downloadProgress[version.id] = 0.0;
@@ -106,14 +121,27 @@ class BibleProvider extends BaseProvider {
     await checkInstalledVersions();
 
     await safePrefOperation((prefs) async {
-      _testament = prefs.getString(AppConstants.bibleTestamentKey) ?? AppConstants.defaultTestament;
-      _bookId = prefs.getInt(AppConstants.bibleBookIdKey) ?? AppConstants.defaultBookId;
-      _book = prefs.getString(AppConstants.bibleBookKey) ?? AppConstants.defaultBook;
-      _chapter = prefs.getInt(AppConstants.bibleChapterKey) ?? AppConstants.defaultChapter;
-      _bibleVersion = prefs.getString(AppConstants.bibleVersionKey) ?? AppConstants.defaultBibleVersion;
+      _testament =
+          prefs.getString(AppConstants.bibleTestamentKey) ??
+          AppConstants.defaultTestament;
+      _bookId =
+          prefs.getInt(AppConstants.bibleBookIdKey) ??
+          AppConstants.defaultBookId;
+      _book =
+          prefs.getString(AppConstants.bibleBookKey) ??
+          AppConstants.defaultBook;
+      _chapter =
+          prefs.getInt(AppConstants.bibleChapterKey) ??
+          AppConstants.defaultChapter;
+      _bibleVersion =
+          prefs.getString(AppConstants.bibleVersionKey) ??
+          AppConstants.defaultBibleVersion;
 
       // Migração suave de versões protestantes antigas salvas em preferências
-      if (_bibleVersion == 'NVI' || _bibleVersion == 'ACF' || _bibleVersion == 'KJV' || _bibleVersion == 'RVR') {
+      if (_bibleVersion == 'NVI' ||
+          _bibleVersion == 'ACF' ||
+          _bibleVersion == 'KJV' ||
+          _bibleVersion == 'RVR') {
         _bibleVersion = AppConstants.defaultBibleVersion;
       }
 
@@ -144,8 +172,12 @@ class BibleProvider extends BaseProvider {
 
       // Load saved verses or fetch them if not cached
       final prefs = await BaseProvider.getPrefs();
-      _versesId = prefs.getStringList(AppConstants.bibleVersesIdKey) ?? await dbHelper.getVersesId(_book, _chapter);
-      _verses = prefs.getStringList(AppConstants.bibleVersesKey) ?? await dbHelper.getVerses(_book, _chapter);
+      _versesId =
+          prefs.getStringList(AppConstants.bibleVersesIdKey) ??
+          await dbHelper.getVersesId(_book, _chapter);
+      _verses =
+          prefs.getStringList(AppConstants.bibleVersesKey) ??
+          await dbHelper.getVerses(_book, _chapter);
 
       return true;
     }, errorContext: 'Loading Bible data');
@@ -203,7 +235,9 @@ class BibleProvider extends BaseProvider {
     }, errorContext: 'Saving Bible state');
   }
 
-  Future<List<String>?> getBooksFromTestament({required String testament}) async {
+  Future<List<String>?> getBooksFromTestament({
+    required String testament,
+  }) async {
     return safeAsync(() async {
       if (testament == "Old") {
         return await dbHelper.getBooks("Old");
@@ -228,10 +262,18 @@ class BibleProvider extends BaseProvider {
       int lastChapter = await dbHelper.getLastChapterOfBook(_book);
 
       if (_chapter < lastChapter) {
-        await updateValues(testament: _testament, book: _book, chapter: _chapter + 1);
+        await updateValues(
+          testament: _testament,
+          book: _book,
+          chapter: _chapter + 1,
+        );
       } else if (_bookId < 73) {
         String newBook = await dbHelper.getBookById(_bookId + 1);
-        await updateValues(testament: _bookId + 1 > 46 ? "New" : "Old", book: newBook, chapter: 1);
+        await updateValues(
+          testament: _bookId + 1 > 46 ? "New" : "Old",
+          book: newBook,
+          chapter: 1,
+        );
       }
       return true;
     }, errorContext: 'Going to next chapter');
@@ -240,17 +282,29 @@ class BibleProvider extends BaseProvider {
   Future<void> goToPreviousChapter() async {
     await safeAsync(() async {
       if (_chapter > 1) {
-        await updateValues(testament: _testament, book: _book, chapter: _chapter - 1);
+        await updateValues(
+          testament: _testament,
+          book: _book,
+          chapter: _chapter - 1,
+        );
       } else if (_bookId > 1) {
         String newBook = await dbHelper.getBookById(_bookId - 1);
         int lastChapter = await dbHelper.getLastChapterOfBook(newBook);
-        await updateValues(testament: _bookId - 1 > 46 ? "New" : "Old", book: newBook, chapter: lastChapter);
+        await updateValues(
+          testament: _bookId - 1 > 46 ? "New" : "Old",
+          book: newBook,
+          chapter: lastChapter,
+        );
       }
       return true;
     }, errorContext: 'Going to previous chapter');
   }
 
-  Future<void> updateValues({required String testament, required String book, required int chapter}) async {
+  Future<void> updateValues({
+    required String testament,
+    required String book,
+    required int chapter,
+  }) async {
     setLoading(true);
 
     await safeAsync(() async {
