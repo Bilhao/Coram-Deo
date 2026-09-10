@@ -207,7 +207,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                             icon: Icons.menu_book,
                             title: "Sagrada Escritura",
                             description:
-                                "Leia a Sagrada Escritura em diversas versões (NVI, ACF, KJV e RVR) com leitura fluida e personalizada.",
+                                "Leia a Sagrada Escritura na íntegra com os 73 livros do Cânon Católico e uma experiência fluida e personalizada.",
                           ),
                           _buildSlide(
                             context,

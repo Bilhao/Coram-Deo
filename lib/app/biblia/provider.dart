@@ -33,7 +33,7 @@ class BibleProvider extends BaseProvider {
 
   String get bibleVersion => _bibleVersion;
 
-  List<String> get availableVersions => ['NVI', 'ACF', 'KJV', 'RVR'];
+  List<String> get availableVersions => ['Ave Maria'];
 
   Future<void> _initialize() async {
     setLoading(true);
@@ -45,6 +45,11 @@ class BibleProvider extends BaseProvider {
       _chapter = prefs.getInt(AppConstants.bibleChapterKey) ?? AppConstants.defaultChapter;
       _bibleVersion = prefs.getString(AppConstants.bibleVersionKey) ?? AppConstants.defaultBibleVersion;
 
+      // Migração suave de versões protestantes antigas salvas em preferências
+      if (_bibleVersion == 'NVI' || _bibleVersion == 'ACF' || _bibleVersion == 'KJV' || _bibleVersion == 'RVR') {
+        _bibleVersion = AppConstants.defaultBibleVersion;
+      }
+
       dbHelper.setVersion(_bibleVersion);
 
       return true;
@@ -52,6 +57,17 @@ class BibleProvider extends BaseProvider {
     await safeAsync(() async {
       _oldBooks = await dbHelper.getBooks("Old");
       _newBooks = await dbHelper.getBooks("New");
+
+      // Garantir coerência do livro inicial
+      try {
+        final currentValidBook = await dbHelper.getBookById(_bookId);
+        if (_book != currentValidBook) {
+          _book = currentValidBook;
+        }
+      } catch (_) {
+        _bookId = 1;
+        _book = 'Gênesis';
+      }
 
       // Load saved verses or fetch them if not cached
       final prefs = await BaseProvider.getPrefs();
@@ -137,9 +153,9 @@ class BibleProvider extends BaseProvider {
 
       if (_chapter < lastChapter) {
         await updateValues(testament: _testament, book: _book, chapter: _chapter + 1);
-      } else {
+      } else if (_bookId < 73) {
         String newBook = await dbHelper.getBookById(_bookId + 1);
-        await updateValues(testament: _bookId + 1 > 39 ? "New" : "Old", book: newBook, chapter: 1);
+        await updateValues(testament: _bookId + 1 > 46 ? "New" : "Old", book: newBook, chapter: 1);
       }
       return true;
     }, errorContext: 'Going to next chapter');
@@ -149,10 +165,10 @@ class BibleProvider extends BaseProvider {
     await safeAsync(() async {
       if (_chapter > 1) {
         await updateValues(testament: _testament, book: _book, chapter: _chapter - 1);
-      } else {
+      } else if (_bookId > 1) {
         String newBook = await dbHelper.getBookById(_bookId - 1);
         int lastChapter = await dbHelper.getLastChapterOfBook(newBook);
-        await updateValues(testament: _bookId - 1 > 39 ? "New" : "Old", book: newBook, chapter: lastChapter);
+        await updateValues(testament: _bookId - 1 > 46 ? "New" : "Old", book: newBook, chapter: lastChapter);
       }
       return true;
     }, errorContext: 'Going to previous chapter');
