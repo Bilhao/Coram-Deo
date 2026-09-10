@@ -45,7 +45,8 @@ class BibleVersion {
       languageCode: 'pt',
       description: 'Tradução tradicional a partir da Vulgata (1956)',
       dbFileName: 'biblia_matos_soares.db',
-      downloadUrl: 'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_matos_soares.db.gz',
+      downloadUrl:
+          'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_matos_soares.db.gz',
       isBundled: false,
       sizeDescription: '2.2 MB',
     ),
@@ -56,7 +57,8 @@ class BibleVersion {
       languageCode: 'la',
       description: 'Texto oficial da Igreja Católica em latim',
       dbFileName: 'biblia_vulgata.db',
-      downloadUrl: 'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_vulgata.db.gz',
+      downloadUrl:
+          'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_vulgata.db.gz',
       isBundled: false,
       sizeDescription: '2.1 MB',
     ),
@@ -67,7 +69,8 @@ class BibleVersion {
       languageCode: 'en',
       description: 'Tradução católica clássica em língua inglesa',
       dbFileName: 'biblia_douay_rheims.db',
-      downloadUrl: 'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_douay_rheims.db.gz',
+      downloadUrl:
+          'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_douay_rheims.db.gz',
       isBundled: false,
       sizeDescription: '2.1 MB',
     ),
@@ -78,7 +81,8 @@ class BibleVersion {
       languageCode: 'es',
       description: 'Tradução católica clássica em língua espanhola',
       dbFileName: 'biblia_torres_amat.db',
-      downloadUrl: 'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_torres_amat.db.gz',
+      downloadUrl:
+          'https://github.com/Bilhao/Coram-Deo/releases/download/bible-assets-v1/biblia_torres_amat.db.gz',
       isBundled: false,
       sizeDescription: '2.2 MB',
     ),
@@ -145,13 +149,23 @@ class Biblia {
           await Directory(dirname(path)).create(recursive: true);
         } catch (_) {}
 
-        ByteData data = await rootBundle.load(join("assets", _currentVersion.dbFileName));
-        List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+        ByteData data = await rootBundle.load(
+          join("assets", _currentVersion.dbFileName),
+        );
+        List<int> bytes = data.buffer.asUint8List(
+          data.offsetInBytes,
+          data.lengthInBytes,
+        );
 
         await File(path).writeAsBytes(bytes, flush: true);
 
         // Limpeza de bases protestantes antigas de 66 livros para liberar armazenamento no dispositivo
-        final legacyDatabases = ['biblia_nvi.db', 'biblia_acf.db', 'biblia_kjv.db', 'biblia_rvr.db'];
+        final legacyDatabases = [
+          'biblia_nvi.db',
+          'biblia_acf.db',
+          'biblia_kjv.db',
+          'biblia_rvr.db',
+        ];
         for (final legacy in legacyDatabases) {
           try {
             final legacyFile = File(join(dbPath, legacy));

@@ -46,23 +46,11 @@ class BibleVersionBottomSheet extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Versões da Sagrada Escritura",
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Cânon Católico com 73 livros. A versão Ave Maria já está integrada offline. Baixe outras versões para estudo e oração.",
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    "Versões da Sagrada Escritura",
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -72,29 +60,42 @@ class BibleVersionBottomSheet extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: provider.availableBibleVersions.length,
-                    separatorBuilder: (context, index) => const Divider(height: 1, indent: 20, endIndent: 20),
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1, indent: 20, endIndent: 20),
                     itemBuilder: (context, index) {
                       final version = provider.availableBibleVersions[index];
                       final isSelected = currentVersion.id == version.id;
-                      final isInstalled = provider.isVersionInstalled(version.id);
+                      final isInstalled = provider.isVersionInstalled(
+                        version.id,
+                      );
                       final isDownloading = provider.isDownloading(version.id);
                       final progress = provider.getDownloadProgress(version.id);
 
                       return ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20.0,
+                          vertical: 4.0,
+                        ),
                         title: Row(
                           children: [
                             Text(
                               version.name,
                               style: TextStyle(
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w600,
+                                color: isSelected
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface,
                               ),
                             ),
                             if (version.isBundled) ...[
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: colorScheme.secondaryContainer,
                                   borderRadius: BorderRadius.circular(6),
@@ -133,8 +134,13 @@ class BibleVersionBottomSheet extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    progress > 0 ? "${(progress * 100).toInt()}%" : "Baixando...",
-                                    style: TextStyle(fontSize: 11, color: colorScheme.primary),
+                                    progress > 0
+                                        ? "${(progress * 100).toInt()}%"
+                                        : "Baixando...",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: colorScheme.primary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -207,14 +213,20 @@ class BibleVersionBottomSheet extends StatelessWidget {
           ),
           if (!version.isBundled)
             IconButton(
-              icon: Icon(Icons.delete_outline, size: 20, color: colorScheme.error),
+              icon: Icon(
+                Icons.delete_outline,
+                size: 20,
+                color: colorScheme.error,
+              ),
               tooltip: "Excluir versão baixada",
               onPressed: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
                   builder: (ctx) => AlertDialog(
                     title: const Text("Excluir versão"),
-                    content: Text("Deseja remover ${version.name} para liberar espaço no aparelho?"),
+                    content: Text(
+                      "Deseja remover ${version.name} para liberar espaço no aparelho?",
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
@@ -222,7 +234,10 @@ class BibleVersionBottomSheet extends StatelessWidget {
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: Text("Excluir", style: TextStyle(color: colorScheme.error)),
+                        child: Text(
+                          "Excluir",
+                          style: TextStyle(color: colorScheme.error),
+                        ),
                       ),
                     ],
                   ),
@@ -237,16 +252,30 @@ class BibleVersionBottomSheet extends StatelessWidget {
     }
 
     return FilledButton.tonalIcon(
-      onPressed: () async {
-        final ok = await provider.downloadVersion(version);
-        if (!ok && context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Falha ao baixar versão da Bíblia. Verifique sua conexão."),
-            ),
-          );
-        }
-      },
+      onPressed: isDownloading
+          ? null
+          : () async {
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              final ok = await provider.downloadVersion(version);
+              if (!ok && context.mounted) {
+                scaffoldMessenger.hideCurrentSnackBar();
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Falha ao baixar versão da Bíblia. Verifique sua conexão.",
+                      style: TextStyle(
+                        color: colorScheme.onErrorContainer,
+                      ),
+                    ),
+                    backgroundColor: colorScheme.errorContainer,
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                );
+              }
+            },
       icon: const Icon(Icons.download_rounded, size: 16),
       label: Text(
         "Baixar (${version.sizeDescription})",
