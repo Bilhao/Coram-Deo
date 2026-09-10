@@ -1,197 +1,175 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/complete_logo.png" alt="coram-deo" width="100" height="100"/>
+  <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/complete_logo.png" alt="Coram Deo Logo" width="110" height="110"/>
   <h1>Coram Deo</h1>
-  <p>Aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã.</p>
+  <p><strong>Plano de vida cristão, leituras litúrgicas, orações e meditações diárias.</strong></p>
 
-  <a href="https://play.google.com/store/apps/details?id=com.bilhao.coramdeo&hl=pt_BR&gl=BR">
-    <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/google-play-badge.png" alt="Disponível no Google Play" height="60" />
-  </a>
+  <p>
+    <a href="https://play.google.com/store/apps/details?id=com.bilhao.coramdeo&hl=pt_BR&gl=BR">
+      <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/google-play-badge.png" alt="Disponível no Google Play" height="56" />
+    </a>
+  </p>
+
+  <p>
+    <a href="https://github.com/Bilhao/Coram-Deo/releases/latest">
+      <img src="https://img.shields.io/github/v/release/Bilhao/Coram-Deo?label=Vers%C3%A3o&color=2e7d32" alt="Versão Atual" />
+    </a>
+    <img src="https://img.shields.io/badge/Plataforma-Android-blue" alt="Plataforma Android" />
+    <img src="https://img.shields.io/badge/Framework-Flutter-02569B" alt="Flutter" />
+    <img src="https://img.shields.io/badge/Design-Material%203-7B1FA2" alt="Material 3" />
+    <a href="PRIVACY.md">
+      <img src="https://img.shields.io/badge/Privacidade-Conforme-informational" alt="Política de Privacidade" />
+    </a>
+  </p>
+
+  <p>
+    Também disponível para download direto de instaladores (.apk e .aab) via 
+    <a href="https://github.com/Bilhao/Coram-Deo/releases/latest">GitHub Releases</a>.
+  </p>
 </div>
 
-Coram Deo é um aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã. Ele reúne diversas orações tradicionais, textos espirituais, leituras bíblicas, livros de espiritualidade, exame de consciência, plano de vida e muito mais, tudo em um só lugar, com interface moderna, personalizável e offline.
+---
+
+## Visão Geral
+
+O termo latino **Coram Deo** traduz-se literalmente como *"na presença de Deus"* ou *"diante da face de Deus"*. O conceito expressa a disposição interior de viver a totalidade da existência sob o olhar divino, com retidão de intenção e busca constante de santidade nas atividades cotidianas.
+
+O **Coram Deo** foi concebido como uma ferramenta completa e austera para auxiliar os fiéis católicos a estabelecerem e preservarem uma rotina consistente de práticas espirituais. Projetado sob a premissa de funcionamento prioritariamente local (*offline-first*), o aplicativo reúne liturgia diária, textos bíblicos, clássicos de espiritualidade, orações tradicionais e acompanhamento de hábitos em uma interface limpa e aderente às diretrizes do Material Design 3.
 
 ---
 
-## Funcionalidades
+## Principais Recursos
 
-- **Orações Tradicionais**
-  - Angelus / Regina Cæli
-  - Oferecimento de Obras
-  - Lembrai-vos
-  - Preces do Opus Dei
-  - Credo Niceno-Constantinopolitano
-  - Credo Atanasiano
-  - Santo Rosário (com mistérios diários e ladainha)
-  - Te Deum
-  - Adoro Te Devote
-  - Gratias tibi ago
-  - Salmo 2
-  - Visita ao Santíssimo
-  - Exame de Consciência (com orações preparatórias)
-  - Estampa de São Josemaria Escrivá
+### Plano de Vida Espiritual
+- Estruturação e acompanhamento de práticas de piedade ao longo do dia (Santa Missa, oração mental, Santo Rosário, leitura espiritual, visita ao Santíssimo, entre outras).
+- Marcação diária de cumprimento de atos e registro histórico de constância espiritual.
+- Notificações programadas e discretas para recordar os momentos de oração.
 
-- **Meditação e Espiritualidade**
-  - Meditação diária do "Falar com Deus"
-  - Comentário do Evangelho do dia (Opus Dei)
-  - Santo do Dia (com fonte e referência)
-  - Livros espirituais clássicos de São Josemaria Escrivá:
-    - Caminho
-    - Sulco
-    - Forja
-    - Amigos de Deus
-    - É Cristo que Passa
-    - Via Sacra
-    - Santo Rosário (livro)
+### Liturgia Diária e Santo do Dia
+- Acesso integral aos textos litúrgicos da Santa Missa do dia (Primeira Leitura, Salmo Responsorial, Segunda Leitura e Santo Evangelho).
+- Biografia do Santo do Dia acompanhada de retrato histórico.
+- Sistema de armazenamento persistente em disco: os dados e imagens são salvos localmente no primeiro carregamento, permitindo visualização instantânea e operação integral sem dependência de conexão com a internet.
 
-- **Bíblia Sagrada**
-  - Leitura bíblica completa com suporte a múltiplas versões:
-    - NVI (Nova Versão Internacional)
-    - ACF (Almeida Corrigida Fiel)
-    - KJV (King James Version)
-    - RVR (Reina-Valera)
-  - Navegação intuitiva por livros, capítulos e versículos
-  - Busca de texto e seleção rápida
-  - 100% offline
+### Meditações Diárias
+- **Falar com Deus:** Meditações diárias baseadas na clássica obra de Francisco Fernández-Carvajal, organizadas conforme o calendário litúrgico.
+- **Comentário do Evangelho:** Reflexões exegéticas e práticas sobre o Evangelho do dia, produzidas pelo Escritório de Comunicação da Prelazia do Opus Dei.
+- Ambos os módulos contam com cache local automático e suporte a leitura offline.
 
-- **Sincronização e Backup em Nuvem**
-  - Autenticação segura com Google Sign-In ou E-mail e Senha via Firebase
-  - Backup na nuvem e restauração dos hábitos do Plano de Vida e preferências
-  - Sincronização automática e contínua entre dispositivos
+### Bíblia Sagrada
+- Leitor bíblico integral offline com navegação rápida por livros, capítulos e versículos.
+- Quatro traduções tradicionais disponíveis:
+  - Nova Versão Internacional (NVI)
+  - Almeida Corrigida Fiel (ACF)
+  - King James Version (KJV)
+  - Reina-Valera (RVR)
+- Mecanismo de busca textual interno e dimensionamento dinâmico de tipografia.
 
-- **Apoio e Contribuição**
-  - Canal para apoiar a manutenção e o desenvolvimento contínuo do projeto
-  - Chave PIX integrada disponível exclusivamente na tela de Configurações
+### Biblioteca de Clássicos de Espiritualidade
+- Obras fundamentais de São Josemaria Escrivá pré-carregadas em bancos locais para leitura e oração pessoal:
+  - *Caminho*
+  - *Sulco*
+  - *Forja*
+  - *Amigos de Deus*
+  - *É Cristo que Passa*
+  - *Via Sacra*
+  - *Santo Rosário*
+- Leitura estruturada por capítulos e busca por pontos específicos.
 
-- **Plano de Vida**
-  - Acompanhamento de práticas espirituais diárias
-  - Marcação de hábitos e progresso espiritual
+### Orações Tradicionais da Igreja
+- Vasto repertório devocional católico organizado por categorias:
+  - Santo Rosário completo com contemplação dos mistérios diários e Ladainha Lauretana.
+  - Orações horárias: Angelus e Regina Caeli.
+  - Orações da manhã e da noite: Oferecimento de Obras, Lembrai-vos, Te Deum, Salmo 2.
+  - Devoção Eucarística: Adoro Te Devote, Visita ao Santíssimo Sacramento, orações pós-comunhão.
+  - Símbolos de fé: Credo Niceno-Constantinopolitano e Símbolo Atanasiano (*Quicumque*).
+  - Textos disponíveis em língua portuguesa e em língua latina.
 
-- **Personalização e Segurança**
-  - Ajuste do tamanho da fonte e tipografia de leitura
-  - Tema claro/escuro e cores dinâmicas (Material You)
-  - Favoritos de orações
-  - Suporte a português e latim em várias orações
-  - Bloqueio do exame de consciência com biometria ou PIN
+### Exame de Consciência e Preparação Penitencial
+- Roteiros estruturados para exame de consciência detalhado à luz dos Mandamentos e deveres de estado.
+- Orações preparatórias e orações de contrição.
+- Mecanismo de proteção de privacidade: bloqueio da tela de exame de consciência por autenticação biométrica ou código PIN do dispositivo.
 
-- **Novidades da Versão (v1.0.1)**
-  - Sincronização em nuvem e autenticação (Google e E-mail/Senha com Firebase)
-  - Remoção de dependências de áudio/TTS da Bíblia para um app mais leve e estável
-  - Nova tela de contribuição via PIX nas configurações
-  - Opção de login e sincronização no onboarding inicial
-  - Atualização para Android Gradle Plugin 8.11+ e melhorias de compatibilidade
+### Sincronização Segura e Backup em Nuvem
+- Autenticação opcional por meio de credenciais Google (Google Sign-In) ou E-mail e Senha.
+- Backup criptografado das preferências e do progresso do Plano de Vida via Cloud Firestore.
+- Restauração de dados simplificada ao migrar de aparelho celular.
 
 ---
 
-## Instalação
+## Privacidade e Segurança
+
+O aplicativo adota uma postura rigorosa em relação à integridade e confidencialidade dos dados dos fiéis:
+- **Operação Local:** Textos bíblicos, orações, notas do exame de consciência e livros são processados e armazenados estritamente na memória do próprio aparelho.
+- **Autenticação Opcional:** O aplicativo pode ser utilizado plenamente sem a criação de qualquer conta ou cadastro.
+- **Conformidade:** Para informações detalhadas sobre a coleta mínima de dados analíticos e tratamento de dados de autenticação, consulte a [Política de Privacidade](PRIVACY.md).
+
+---
+
+## Especificações Técnicas
+
+- **Plataforma Alvo:** Android (versão 5.0 Lollipop ou superior).
+- **Arquiteturas Suportadas:** `arm64-v8a`, `armeabi-v7a`, `x86_64`.
+- **Framework:** Flutter 3.x com Dart 3.x.
+- **Gerenciamento de Estado:** Provider com herança arquitetural em camada base (`BaseProvider`).
+- **Persistência de Dados:** SQLite (`sqflite`), `shared_preferences` e armazenamento em disco via `path_provider`.
+- **Serviços em Nuvem:** Google Firebase Authentication e Google Cloud Firestore.
+- **Design System:** Material Design 3 com suporte a temas Claro e Escuro, tipografia escalável e cores dinâmicas (*Material You*).
+
+---
+
+## Instruções para Compilação Local
+
+Caso deseje compilar o projeto a partir do código-fonte para desenvolvimento ou auditoria:
 
 ### Pré-requisitos
+- Flutter SDK instalado e configurado no PATH do sistema.
+- Dart SDK versão 3.0 ou superior.
+- Android SDK com ferramentas de compilação instaladas.
 
-- [Flutter](https://flutter.dev/) 3.x
-- [Dart](https://dart.dev/) 2.x
-- Android Studio ou VS Code
-
-### Passos
-
+### Procedimento
 1. Clone o repositório:
-
-   ```sh
+   ```bash
    git clone https://github.com/Bilhao/Coram-Deo.git
    cd Coram-Deo
    ```
 
-2. Instale as dependências:
-
-   ```sh
+2. Obtenha os pacotes e dependências:
+   ```bash
    flutter pub get
    ```
 
-3. Rode o app:
-   ```sh
+3. Execute a análise estática para validação:
+   ```bash
+   flutter analyze
+   ```
+
+4. Execute o aplicativo em dispositivo físico ou emulador:
+   ```bash
    flutter run
    ```
 
 ---
 
-## Estrutura do Projeto
+## Apoio ao Projeto
 
-```
-lib/
-  main.dart
-  app/
-    app_provider.dart
-    home_page.dart
-    settings_page.dart
-    biblia/
-    contribuicao/
-    exame_de_consciencia/
-    liturgia_diaria/
-    livros/
-    onboarding/
-    oracoes/
-    plano_de_vida/
-    santo_do_dia/
-    search/
-  services/
-    auth_service.dart
-    cloud_sync_service.dart
-  widgets/
-    auth_dialog.dart
-  utils/
-    base_provider.dart
-    constants.dart
-    notification.dart
-    routes.dart
-assets/
-  biblia_acf.db
-  biblia_kjv.db
-  biblia_nvi.db
-  biblia_rvr.db
-  plano_de_vida.db
-  books/
-    amigos_de_deus.db
-    caminho.db
-    e_cristo_que_passa.db
-    forja.db
-    santo_rosario_livro.db
-    sulco.db
-    via_sacra_livro.db
-  images/
-    complete_logo.png
-    logo.png
-    logo_dark.png
-    ...
-```
+O desenvolvimento, manutenção e hospedagem dos serviços do Coram Deo são conduzidos de forma voluntária e independente.
 
-- **lib/app/oracoes/**: Orações e espiritualidade cristã.
-- **lib/app/livros/**: Telas e leituras dos livros de São Josemaria Escrivá.
-- **lib/app/biblia/**: Lógica e interface de leitura da Bíblia (offline e multi-versões).
-- **lib/app/contribuicao/**: Tela para contribuição e suporte via PIX.
-- **lib/services/**: Serviços de autenticação e sincronização em nuvem com Firebase.
-- **lib/utils/**: Provedores base, constantes globais, notificações e rotas.
-- **assets/books/**: Bancos de dados SQLite dos livros espirituais.
-- **assets/biblia_*.db**: Bancos de dados SQLite das traduções bíblicas (ACF, KJV, NVI, RVR).
-- **assets/images/**: Identidade visual e imagens do aplicativo.
+Para apoiar a continuidade e expansão do projeto, o aplicativo disponibiliza uma seção de apoio nas configurações do sistema com chave PIX integrada para contribuições voluntárias.
 
 ---
 
-## Créditos e Fontes
+## Fontes Litúrgicas e Agradecimentos
 
-- Meditações diárias: [Hablar con Dios](https://www.hablarcondios.org/pt/meditacaodiaria.aspx)
-- Comentários do Evangelho: [Opus Dei](https://opusdei.org/pt-br/gospel/)
-- Santo do Dia: [A12 - Santuário Nacional](https://www.a12.com/reze-no-santuario/santo-do-dia)
-- Livros de São Josemaria: [escrivaworks.org](https://escrivaworks.org/), [opusdei.org](https://opusdei.org/pt-br/saint-josemaria/)
-- Imagens: [assets/images/](assets/images/)
-
----
-
-## Licença
-
-Este projeto possui uma **licença pessoal** e não deve ser utilizado, distribuído ou modificado sem autorização prévia do autor. Para mais informações entre em contato diretamente.
+O projeto expressa reconhecimento às fontes cujos textos e referências enriquecem o aplicativo:
+- **Hablar con Dios:** Textos das meditações diárias de autoria de Francisco Fernández-Carvajal ([hablarcondios.org](https://www.hablarcondios.org/pt/meditacaodiaria.aspx)).
+- **Escritório de Comunicação do Opus Dei:** Textos dos comentários diários ao Santo Evangelho ([opusdei.org](https://opusdei.org/pt-br/gospel/)).
+- **Santuário Nacional de Aparecida / Portal A12:** Referências do Santo do Dia ([a12.com](https://www.a12.com/reze-no-santuario/santo-do-dia)).
+- **Fundação Studium e EscrivaWorks:** Textos dos livros e escritos de São Josemaria Escrivá ([escrivaworks.org](https://escrivaworks.org/)).
 
 ---
 
-## Contato
+## Contato e Suporte
 
-Dúvidas, sugestões ou colaborações:  
-[Rafael Bilhão](mailto:rafaelr.bilhao@gmail.com)  
-[github.com/Bilhao/Coram-Deo](https://github.com/Bilhao/Coram-Deo)
+Para reporte de inconsistências em textos litúrgicos, sugestões de novos recursos ou suporte técnico:
+- **Desenvolvedor:** Rafael Bilhão
+- **E-mail:** [rafaelr.bilhao@gmail.com](mailto:rafaelr.bilhao@gmail.com)
+- **Repositório Oficial:** [github.com/Bilhao/Coram-Deo](https://github.com/Bilhao/Coram-Deo)
