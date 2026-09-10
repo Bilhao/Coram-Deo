@@ -5,7 +5,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class BibleDownloadService {
-  static final BibleDownloadService _instance = BibleDownloadService._internal();
+  static final BibleDownloadService _instance =
+      BibleDownloadService._internal();
   factory BibleDownloadService() => _instance;
   BibleDownloadService._internal();
 
@@ -22,6 +23,8 @@ class BibleDownloadService {
 
     try {
       final request = http.Request('GET', Uri.parse(downloadUrl));
+      request.headers['User-Agent'] = 'CoramDeo/1.0.1 (Android)';
+      request.headers['Accept'] = '*/*';
       final response = await _client.send(request);
 
       if (response.statusCode != 200) {
