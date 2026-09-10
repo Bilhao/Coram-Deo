@@ -3,8 +3,8 @@
   <h1>Coram Deo</h1>
   <p>Aplicativo católico completo para oração, meditação, leitura espiritual e acompanhamento da vida cristã.</p>
 
-  <a href="https://play.google.com/store/apps/details?id=com.bilhao.coramdeo">
-    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/pt-br_badge_web_generic.png" alt="Disponível no Google Play" height="60" />
+  <a href="https://play.google.com/store/apps/details?id=com.bilhao.coramdeo&hl=pt_BR&gl=BR">
+    <img src="https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/google-play-badge.png" alt="Disponível no Google Play" height="60" />
   </a>
 </div>
 
