@@ -53,3 +53,8 @@ android/key.properties
 # AI Agent instructions (local only)
 AGENTS.md
 GEMINI.md
+
+# On-demand downloadable databases (hosted on GitHub Releases)
+assets/downloads/
+*.db.gz
+
