@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/biblia/data.dart';
+import 'package:coramdeo/services/bible_download_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
 
@@ -33,10 +34,76 @@ class BibleProvider extends BaseProvider {
 
   String get bibleVersion => _bibleVersion;
 
-  List<String> get availableVersions => ['Ave Maria'];
+  final BibleDownloadService _downloadService = BibleDownloadService();
+
+  final Map<String, double> _downloadProgress = {};
+  final Map<String, bool> _isDownloading = {};
+  final Map<String, bool> _installedVersions = {};
+
+  double getDownloadProgress(String versionId) => _downloadProgress[versionId] ?? 0.0;
+  bool isDownloading(String versionId) => _isDownloading[versionId] ?? false;
+  bool isVersionInstalled(String versionId) {
+    if (versionId == 'ave_maria' || versionId == 'Bíblia Ave Maria' || versionId == 'Ave Maria') return true;
+    return _installedVersions[versionId] ?? false;
+  }
+
+  BibleVersion get currentVersion => dbHelper.currentVersion;
+  List<BibleVersion> get availableBibleVersions => BibleVersion.availableVersions;
+
+  Future<void> checkInstalledVersions() async {
+    for (final version in BibleVersion.availableVersions) {
+      if (version.isBundled) {
+        _installedVersions[version.id] = true;
+      } else {
+        _installedVersions[version.id] = await _downloadService.isDatabaseInstalled(version.dbFileName);
+      }
+    }
+    notifyListeners();
+  }
+
+  Future<bool> downloadVersion(BibleVersion version) async {
+    if (version.downloadUrl == null || version.isBundled) return true;
+
+    _isDownloading[version.id] = true;
+    _downloadProgress[version.id] = 0.0;
+    notifyListeners();
+
+    final success = await _downloadService.downloadAndExtract(
+      downloadUrl: version.downloadUrl!,
+      targetDbName: version.dbFileName,
+      onProgress: (progress) {
+        _downloadProgress[version.id] = progress;
+        notifyListeners();
+      },
+    );
+
+    _isDownloading[version.id] = false;
+    if (success) {
+      _installedVersions[version.id] = true;
+      await setBibleVersion(version.id);
+    }
+    notifyListeners();
+    return success;
+  }
+
+  Future<bool> deleteVersion(BibleVersion version) async {
+    if (version.isBundled) return false;
+
+    final success = await _downloadService.deleteDatabase(version.dbFileName);
+    if (success) {
+      _installedVersions[version.id] = false;
+      if (dbHelper.currentVersion.id == version.id) {
+        await setBibleVersion(BibleVersion.defaultVersion.id);
+      }
+      notifyListeners();
+    }
+    return success;
+  }
 
   Future<void> _initialize() async {
     setLoading(true);
+
+    await checkInstalledVersions();
 
     await safePrefOperation((prefs) async {
       _testament = prefs.getString(AppConstants.bibleTestamentKey) ?? AppConstants.defaultTestament;
@@ -48,6 +115,12 @@ class BibleProvider extends BaseProvider {
       // Migração suave de versões protestantes antigas salvas em preferências
       if (_bibleVersion == 'NVI' || _bibleVersion == 'ACF' || _bibleVersion == 'KJV' || _bibleVersion == 'RVR') {
         _bibleVersion = AppConstants.defaultBibleVersion;
+      }
+
+      // Se a versão salva não estiver instalada, reverte para a versão padrão
+      final savedVersion = BibleVersion.getById(_bibleVersion);
+      if (!savedVersion.isBundled && !isVersionInstalled(savedVersion.id)) {
+        _bibleVersion = BibleVersion.defaultVersion.id;
       }
 
       dbHelper.setVersion(_bibleVersion);
@@ -81,12 +154,15 @@ class BibleProvider extends BaseProvider {
   }
 
   Future<void> setBibleVersion(String version) async {
-    if (_bibleVersion == version) return;
+    final targetVersion = BibleVersion.getById(version);
+    if (!targetVersion.isBundled && !isVersionInstalled(targetVersion.id)) {
+      return;
+    }
 
     setLoading(true);
     await safeAsync(() async {
-      _bibleVersion = version;
-      dbHelper.setVersion(version);
+      _bibleVersion = targetVersion.id;
+      dbHelper.setVersion(targetVersion.id);
 
       // Reload book lists for the new language
       _oldBooks = await dbHelper.getBooks("Old");
@@ -109,7 +185,7 @@ class BibleProvider extends BaseProvider {
 
       await save();
       return true;
-    }, errorContext: 'Changing Bible version to $version');
+    }, errorContext: 'Changing Bible version to ${targetVersion.name}');
     setLoading(false);
   }
 

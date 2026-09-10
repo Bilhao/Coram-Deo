@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/biblia/widgets/bible_version_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:provider/provider.dart';
@@ -11,17 +12,14 @@ class BibliaPage1 extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bíblia (${provider.bibleVersion})", maxLines: 2, style: const TextStyle(fontSize: 20)),
+        title: Text("Bíblia (${provider.currentVersion.name})", maxLines: 2, style: const TextStyle(fontSize: 18)),
         actions: [
-          PopupMenuButton<String>(
+          IconButton(
             icon: const Icon(Icons.translate),
             tooltip: 'Mudar Versão',
-            onSelected: (String version) {
-              provider.setBibleVersion(version);
+            onPressed: () {
+              BibleVersionBottomSheet.show(context);
             },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(value: 'Ave Maria', child: Text('Bíblia Ave Maria (Católica)')),
-            ],
           ),
         ],
       ),
