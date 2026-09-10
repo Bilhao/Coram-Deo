@@ -49,3 +49,7 @@ app.*.map.json
 android/key.properties
 *.jks
 *.keystore
+
+# AI Agent instructions (local only)
+AGENTS.md
+GEMINI.md
