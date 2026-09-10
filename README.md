@@ -54,14 +54,11 @@ O **Coram Deo** foi concebido como uma ferramenta completa e austera para auxili
 - **Comentário do Evangelho:** Reflexões exegéticas e práticas sobre o Evangelho do dia, produzidas pelo Escritório de Comunicação da Prelazia do Opus Dei.
 - Ambos os módulos contam com cache local automático e suporte a leitura offline.
 
-### Bíblia Sagrada
-- Leitor bíblico integral offline com navegação rápida por livros, capítulos e versículos.
-- Quatro traduções tradicionais disponíveis:
-  - Nova Versão Internacional (NVI)
-  - Almeida Corrigida Fiel (ACF)
-  - King James Version (KJV)
-  - Reina-Valera (RVR)
-- Mecanismo de busca textual interno e dimensionamento dinâmico de tipografia.
+### Bíblia Sagrada Católica
+- Leitor bíblico integral offline com o Cânon Católico completo de 73 livros (46 no Antigo Testamento e 27 no Novo Testamento).
+- Inclusão integral de todos os livros deuterocanônicos (*Tobias, Judite, 1 e 2 Macabeus, Sabedoria, Eclesiástico e Baruc*) e acréscimos canônicos aos livros de *Daniel* e *Ester*.
+- Tradução tradicional da Bíblia Ave Maria, amplamente consagrada no Brasil.
+- Mecanismo de busca textual interna, navegação rápida por livros e capítulos, e dimensionamento dinâmico de tipografia.
 
 ### Biblioteca de Clássicos de Espiritualidade
 - Obras fundamentais de São Josemaria Escrivá pré-carregadas em bancos locais para leitura e oração pessoal:
