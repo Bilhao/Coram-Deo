@@ -20,10 +20,7 @@ class BibliaPage1 extends StatelessWidget {
               provider.setBibleVersion(version);
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(value: 'NVI', child: Text('🇧🇷 NVI - Nova Versão Internacional')),
-              const PopupMenuItem<String>(value: 'ACF', child: Text('🇧🇷 ACF - Almeida Corrigida Fiel')),
-              const PopupMenuItem<String>(value: 'KJV', child: Text('🇬🇧 KJV - King James Version')),
-              const PopupMenuItem<String>(value: 'RVR', child: Text('🇪🇸 RVR - Reina Valera 1909')),
+              const PopupMenuItem<String>(value: 'Ave Maria', child: Text('Bíblia Ave Maria (Católica)')),
             ],
           ),
         ],

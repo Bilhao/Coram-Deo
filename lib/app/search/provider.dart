@@ -58,7 +58,10 @@ class SearchProvider extends BaseProvider {
       _bibleDb.setVersion(version);
       final db = await _bibleDb.initDb();
       // Adjust column names based on verified schema
-      final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT book, chapter, verse_id, verse, book_id FROM bible WHERE verse LIKE ? OR book LIKE ? LIMIT 20', ['%$query%', '%$query%']);
+      final List<Map<String, dynamic>> maps = await db.rawQuery(
+        'SELECT book, chapter, verse_id, verse, book_id, testament FROM bible WHERE verse LIKE ? OR book LIKE ? LIMIT 20',
+        ['%$query%', '%$query%'],
+      );
 
       for (var map in maps) {
         _results.add(
@@ -70,8 +73,7 @@ class SearchProvider extends BaseProvider {
               'book': map['book'],
               'chapter': map['chapter'],
               'verse_id': map['verse_id'],
-              'testament': (map['book_id'] ?? 1) <= 39 ? 'Old' : 'New',
-              // book_id logic might be approximate if not explicitly in result
+              'testament': map['testament'] ?? ((map['book_id'] ?? 1) <= 46 ? 'Old' : 'New'),
             },
           ),
         );
