@@ -30,7 +30,6 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                       onPressed: () {
                         provider.clearError();
                         Navigator.of(context).pop();
-                        Navigator.of(context).pop();
                       },
                     ),
                   ],
@@ -48,8 +47,38 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
               bottom: provider.isLoading ? const PreferredSize(preferredSize: Size.fromHeight(2.0), child: LinearProgressIndicator()) : null,
             ),
             body: provider.isLoading
-                ? Container()
-                : SafeArea(
+                ? const Center(child: CircularProgressIndicator())
+                : provider.name.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.cloud_off_rounded,
+                                size: 56,
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                "Não foi possível carregar as informações do Santo do Dia.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: fs.fontSize + 1),
+                              ),
+                              const SizedBox(height: 16),
+                              FilledButton.tonalIcon(
+                                onPressed: () {
+                                  provider.changeDate(provider.day, provider.month);
+                                },
+                                icon: const Icon(Icons.refresh_rounded),
+                                label: const Text("Tentar novamente"),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : SafeArea(
                     child: SelectionArea(
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.only(top: 10, bottom: 20, left: 15, right: 15),
