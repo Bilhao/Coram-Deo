@@ -40,7 +40,11 @@ class _BibliaPage2State extends State<BibliaPage2> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(provider.book, maxLines: 2, style: TextStyle(fontSize: 20)),
+            title: Text(
+              provider.book,
+              maxLines: 2,
+              style: TextStyle(fontSize: 20),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.translate),
@@ -49,8 +53,14 @@ class _BibliaPage2State extends State<BibliaPage2> {
                   BibleVersionBottomSheet.show(context);
                 },
               ),
-              IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
-              IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
+              IconButton(
+                onPressed: fs.decreaseFontSize,
+                icon: const Icon(Icons.remove),
+              ),
+              IconButton(
+                onPressed: fs.increaseFontSize,
+                icon: const Icon(Icons.add),
+              ),
             ],
           ),
           body: SafeArea(
@@ -73,7 +83,10 @@ class _BibliaPage2State extends State<BibliaPage2> {
                                 style: TextStyle(fontSize: fs.fontSize + 4),
                               ),
                             ),
-                            const Divider(height: 15, color: Colors.transparent),
+                            const Divider(
+                              height: 15,
+                              color: Colors.transparent,
+                            ),
                             for (int i = 0; i < provider.versesId.length; i++)
                               Container(
                                 padding: const EdgeInsets.only(bottom: 10.0),
@@ -82,7 +95,10 @@ class _BibliaPage2State extends State<BibliaPage2> {
                                     children: [
                                       TextSpan(
                                         text: "${provider.versesId[i]}.  ",
-                                        style: TextStyle(fontSize: fs.fontSize - 4, fontWeight: FontWeight.w200),
+                                        style: TextStyle(
+                                          fontSize: fs.fontSize - 4,
+                                          fontWeight: FontWeight.w200,
+                                        ),
                                       ),
                                       TextSpan(
                                         text: provider.verses[i],
@@ -98,34 +114,58 @@ class _BibliaPage2State extends State<BibliaPage2> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 4.0),
+                    padding: const EdgeInsets.only(
+                      right: 8.0,
+                      left: 8.0,
+                      top: 4.0,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
-                      border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2))),
+                      border: Border(
+                        top: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.2),
+                        ),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                          onPressed: provider.bookId == 1 && provider.chapter == 1
+                          onPressed:
+                              provider.bookId == 1 && provider.chapter == 1
                               ? null
                               : () {
                                   provider.goToPreviousChapter();
                                 },
                           icon: const Icon(Icons.arrow_back),
                           color: Theme.of(context).colorScheme.primary,
-                          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
                         ),
-                        Text("${provider.book} - ${provider.chapter}", style: const TextStyle(fontSize: 16.0), textAlign: TextAlign.center),
+                        Text(
+                          "${provider.book} - ${provider.chapter}",
+                          style: const TextStyle(fontSize: 16.0),
+                          textAlign: TextAlign.center,
+                        ),
                         IconButton(
-                          onPressed: provider.bookId == 73 && provider.chapter == 22
+                          onPressed:
+                              provider.bookId == 73 && provider.chapter == 22
                               ? null
                               : () {
                                   provider.goToNextChapter();
                                 },
                           icon: const Icon(Icons.arrow_forward),
                           color: Theme.of(context).colorScheme.primary,
-                          style: IconButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
                         ),
                       ],
                     ),
