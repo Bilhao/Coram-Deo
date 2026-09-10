@@ -45,6 +45,13 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
     setLoading(false);
   }
 
+  Future<void> retry() async {
+    clearError();
+    setLoading(true);
+    await _fetchFreshData();
+    setLoading(false);
+  }
+
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
       await data.initCE();
