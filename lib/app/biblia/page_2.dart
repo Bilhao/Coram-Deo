@@ -110,7 +110,7 @@ class _BibliaPage2State extends State<BibliaPage2> {
                         ),
                         Text("${provider.book} - ${provider.chapter}", style: const TextStyle(fontSize: 16.0), textAlign: TextAlign.center),
                         IconButton(
-                          onPressed: provider.bookId == 66 && provider.chapter == 22
+                          onPressed: provider.bookId == 73 && provider.chapter == 22
                               ? null
                               : () {
                                   provider.goToNextChapter();

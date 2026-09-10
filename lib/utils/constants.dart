@@ -37,7 +37,7 @@ class AppConstants {
   static const int defaultBookId = 1;
   static const String defaultBook = 'Gênesis';
   static const int defaultChapter = 1;
-  static const String defaultBibleVersion = 'NVI';
+  static const String defaultBibleVersion = 'Ave Maria';
 
   // Notification settings
   static const String notificationChannelId = 'lembretes';
