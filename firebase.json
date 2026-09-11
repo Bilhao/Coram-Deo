@@ -1,5 +1,23 @@
 {
   "firestore": {
     "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/redefinir-senha",
+        "destination": "/reset-password.html"
+      },
+      {
+        "source": "/reset-password",
+        "destination": "/reset-password.html"
+      }
+    ]
   }
 }
