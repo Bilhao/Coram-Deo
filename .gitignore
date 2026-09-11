@@ -58,3 +58,6 @@ GEMINI.md
 assets/downloads/
 *.db.gz
 
+# Firebase cache
+.firebase/
+
