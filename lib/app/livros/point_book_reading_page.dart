@@ -23,17 +23,17 @@ class _BookReadingPageState extends State<BookReadingPage> {
         builder: (context, provider, fs, child) => Scaffold(
           appBar: AppBar(
             title: Text(
-              widget.bookName == "caminho"
-                  ? "Caminho"
-                  : widget.bookName == "sulco"
-                  ? "Sulco"
-                  : widget.bookName == "forja"
-                  ? "Forja"
-                  : widget.bookName == "amigos_de_deus"
-                  ? "Amigos de Deus"
-                  : widget.bookName == "e_cristo_que_passa"
-                  ? "É Cristo que passa"
-                  : widget.bookName,
+              widget.title ??
+                  switch (widget.bookName) {
+                    "caminho" => "Caminho",
+                    "sulco" => "Sulco",
+                    "forja" => "Forja",
+                    "amigos_de_deus" => "Amigos de Deus",
+                    "e_cristo_que_passa" => "É Cristo que passa",
+                    "santo_rosario_livro" => "Santo Rosário",
+                    "via_sacra_livro" => "Via Sacra",
+                    _ => widget.bookName,
+                  },
               maxLines: 2,
               style: const TextStyle(fontSize: 20),
             ),
