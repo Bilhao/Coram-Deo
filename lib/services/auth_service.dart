@@ -108,6 +108,9 @@ class AuthService {
         'Firebase ainda não configurado. Por favor, adicione o arquivo google-services.json.',
       );
     }
+    try {
+      await auth.setLanguageCode('pt-BR');
+    } catch (_) {}
     await auth.sendPasswordResetEmail(email: email.trim());
   }
 
