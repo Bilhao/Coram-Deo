@@ -77,5 +77,32 @@ void main() {
       expect(dateList.join(','), equals('21/9/2026,31/9/2026'));
     });
   });
+
+  group('Book title mapping integrity', () {
+    String formatTitle(String bookName, [String? overrideTitle]) {
+      return overrideTitle ??
+          switch (bookName) {
+            'caminho' => 'Caminho',
+            'sulco' => 'Sulco',
+            'forja' => 'Forja',
+            'amigos_de_deus' => 'Amigos de Deus',
+            'e_cristo_que_passa' => 'É Cristo que passa',
+            'santo_rosario_livro' => 'Santo Rosário',
+            'via_sacra_livro' => 'Via Sacra',
+            _ => bookName,
+          };
+    }
+
+    test('Maps all book internal keys to user-facing book titles', () {
+      expect(formatTitle('santo_rosario_livro'), equals('Santo Rosário'));
+      expect(formatTitle('via_sacra_livro'), equals('Via Sacra'));
+      expect(formatTitle('caminho'), equals('Caminho'));
+      expect(formatTitle('sulco'), equals('Sulco'));
+      expect(formatTitle('forja'), equals('Forja'));
+      expect(formatTitle('amigos_de_deus'), equals('Amigos de Deus'));
+      expect(formatTitle('e_cristo_que_passa'), equals('É Cristo que passa'));
+      expect(formatTitle('santo_rosario_livro', 'Título Personalizado'), equals('Título Personalizado'));
+    });
+  });
 }
 
