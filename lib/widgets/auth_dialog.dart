@@ -18,6 +18,42 @@ class AuthBottomSheet extends StatefulWidget {
     );
   }
 
+  static String getAuthErrorMessage(dynamic error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'invalid-credential':
+        case 'invalid_login_credentials':
+          return 'E-mail ou senha incorretos.';
+        case 'user-not-found':
+          return 'Nenhuma conta encontrada com este e-mail.';
+        case 'wrong-password':
+          return 'Senha incorreta.';
+        case 'email-already-in-use':
+          return 'Este e-mail já está cadastrado.';
+        case 'invalid-email':
+          return 'Formato de e-mail inválido.';
+        case 'weak-password':
+          return 'A senha deve ter pelo menos 6 caracteres.';
+        case 'user-disabled':
+          return 'Esta conta foi desativada.';
+        case 'too-many-requests':
+          return 'Muitas tentativas consecutivas. Por favor, aguarde alguns instantes e tente novamente.';
+        case 'operation-not-allowed':
+          return 'Operação não permitida pelo servidor.';
+        case 'network-request-failed':
+          return 'Falha de conexão à internet. Verifique sua rede.';
+        case 'channel-error':
+          return 'Por favor, preencha todos os campos obrigatórios.';
+        case 'popup-closed-by-user':
+        case 'canceled':
+          return 'Operação cancelada.';
+        default:
+          return 'Ocorreu um erro ao processar a solicitação. Verifique os dados e tente novamente.';
+      }
+    }
+    return error.toString().replaceFirst('Exception: ', '');
+  }
+
   @override
   State<AuthBottomSheet> createState() => _AuthBottomSheetState();
 }
@@ -35,6 +71,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMessage;
+  String? _successMessage;
 
   @override
   void dispose() {
@@ -44,30 +81,8 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
     super.dispose();
   }
 
-  String _getAuthErrorMessage(dynamic error) {
-    if (error is FirebaseAuthException) {
-      switch (error.code) {
-        case 'user-not-found':
-          return 'Nenhuma conta encontrada com este e-mail.';
-        case 'wrong-password':
-          return 'Senha incorreta.';
-        case 'email-already-in-use':
-          return 'Este e-mail já está cadastrado.';
-        case 'invalid-email':
-          return 'Formato de e-mail inválido.';
-        case 'weak-password':
-          return 'A senha deve ter pelo menos 6 caracteres.';
-        case 'network-request-failed':
-          return 'Falha de conexão à internet.';
-        case 'popup-closed-by-user':
-        case 'canceled':
-          return 'Operação cancelada.';
-        default:
-          return error.message ?? 'Ocorreu um erro na autenticação.';
-      }
-    }
-    return error.toString().replaceFirst('Exception: ', '');
-  }
+  String _getAuthErrorMessage(dynamic error) =>
+      AuthBottomSheet.getAuthErrorMessage(error);
 
   Future<void> _handleGoogleSignIn() async {
     setState(() {
@@ -123,23 +138,10 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
       } else if (_mode == AuthMode.forgotPassword) {
         await _authService.sendPasswordReset(email);
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'E-mail de recuperação enviado com sucesso!',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                ),
-              ),
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          );
           setState(() {
-            _mode = AuthMode.login;
+            _successMessage =
+                'Enviamos as instruções de recuperação para o e-mail $email.\n\nCaso não localize a mensagem na sua Caixa de Entrada em instantes, por favor verifique a pasta de Spam ou Lixo Eletrônico.';
+            _errorMessage = null;
           });
         }
       }
@@ -223,7 +225,9 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
               const SizedBox(height: 8),
               Text(
                 _mode == AuthMode.forgotPassword
-                    ? 'Informe seu e-mail para receber as instruções de redefinição.'
+                    ? (_successMessage != null
+                          ? 'Instruções enviadas para o seu e-mail.'
+                          : 'Informe seu e-mail para receber as instruções de redefinição.')
                     : 'Sincronize seu Plano de Vida e preferências em nuvem.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurfaceVariant,
@@ -231,251 +235,319 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
               ),
               const SizedBox(height: 24),
 
-              // Mensagem de Erro
-              if (_errorMessage != null) ...[
+              // Mensagem de Sucesso (Recuperação de Senha)
+              if (_successMessage != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(10),
+                    color: colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
+                  child: Column(
                     children: [
                       Icon(
-                        Icons.error_outline,
-                        color: colorScheme.error,
-                        size: 20,
+                        Icons.mark_email_read_outlined,
+                        color: colorScheme.onSecondaryContainer,
+                        size: 40,
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          _errorMessage!,
-                          style: TextStyle(
-                            color: colorScheme.onErrorContainer,
-                            fontSize: 13,
-                          ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'E-mail Enviado com Sucesso',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.onSecondaryContainer,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _successMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSecondaryContainer,
+                          height: 1.4,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
-
-              // Botão Google (visível no Login e Cadastro)
-              if (_mode != AuthMode.forgotPassword) ...[
-                OutlinedButton.icon(
-                  onPressed: _isLoading ? null : _handleGoogleSignIn,
-                  icon: const Icon(Icons.g_mobiledata, size: 28),
-                  label: const Text(
-                    'Continuar com o Google',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                  ),
-                  style: OutlinedButton.styleFrom(
+                const SizedBox(height: 20),
+                FilledButton(
+                  onPressed: () {
+                    setState(() {
+                      _mode = AuthMode.login;
+                      _successMessage = null;
+                      _errorMessage = null;
+                    });
+                  },
+                  style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
-
-                // Divisor "ou"
-                Row(
-                  children: [
-                    Expanded(child: Divider(color: colorScheme.outlineVariant)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        'ou com e-mail',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: colorScheme.outline,
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: colorScheme.outlineVariant)),
-                  ],
-                ),
-                const SizedBox(height: 20),
-              ],
-
-              // Campo de E-mail
-              TextFormField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  child: const Text(
+                    'Fazer Login',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
-                validator: (val) {
-                  if (val == null || val.trim().isEmpty) {
-                    return 'Informe seu e-mail';
-                  }
-                  if (!val.contains('@') || !val.contains('.')) {
-                    return 'E-mail inválido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Campo de Senha
-              if (_mode != AuthMode.forgotPassword) ...[
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Senha',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
+                const SizedBox(height: 16),
+              ] else ...[
+                // Mensagem de Erro
+                if (_errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: colorScheme.error,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: TextStyle(
+                              color: colorScheme.onErrorContainer,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Botão Google (visível no Login e Cadastro)
+                if (_mode != AuthMode.forgotPassword) ...[
+                  OutlinedButton.icon(
+                    onPressed: _isLoading ? null : _handleGoogleSignIn,
+                    icon: const Icon(Icons.g_mobiledata, size: 28),
+                    label: const Text(
+                      'Continuar com o Google',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Divisor "ou"
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(color: colorScheme.outlineVariant),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          'ou com e-mail',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: colorScheme.outline,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Divider(color: colorScheme.outlineVariant),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+
+                // Campo de E-mail
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'E-mail',
+                    prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   validator: (val) {
-                    if (val == null || val.isEmpty) {
-                      return 'Informe sua senha';
+                    if (val == null || val.trim().isEmpty) {
+                      return 'Informe seu e-mail';
                     }
-                    if (_mode == AuthMode.register && val.length < 6) {
-                      return 'A senha deve conter no mínimo 6 caracteres';
+                    if (!val.contains('@') || !val.contains('.')) {
+                      return 'E-mail inválido';
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
-              ],
 
-              // Campo de Confirmação de Senha (apenas cadastro)
-              if (_mode == AuthMode.register) ...[
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Confirmar Senha',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    border: OutlineInputBorder(
+                // Campo de Senha
+                if (_mode != AuthMode.forgotPassword) ...[
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Senha',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Informe sua senha';
+                      }
+                      if (_mode == AuthMode.register && val.length < 6) {
+                        return 'A senha deve conter no mínimo 6 caracteres';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Campo de Confirmação de Senha (apenas cadastro)
+                if (_mode == AuthMode.register) ...[
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Confirmar Senha',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (val) {
+                      if (val != _passwordController.text) {
+                        return 'As senhas não coincidem';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Link Esqueci minha senha
+                if (_mode == AuthMode.login) ...[
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _isLoading
+                          ? null
+                          : () {
+                              setState(() {
+                                _mode = AuthMode.forgotPassword;
+                                _errorMessage = null;
+                                _successMessage = null;
+                              });
+                            },
+                      child: const Text('Esqueceu a senha?'),
+                    ),
+                  ),
+                ],
+
+                // Botão Principal (Entrar / Cadastrar / Enviar Link)
+                FilledButton(
+                  onPressed: _isLoading ? null : _handleSubmitEmail,
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  validator: (val) {
-                    if (val != _passwordController.text) {
-                      return 'As senhas não coincidem';
-                    }
-                    return null;
-                  },
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          _mode == AuthMode.login
+                              ? 'Entrar'
+                              : (_mode == AuthMode.register
+                                    ? 'Criar Conta'
+                                    : 'Enviar E-mail de Recuperação'),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 16),
-              ],
 
-              // Link Esqueci minha senha
-              if (_mode == AuthMode.login) ...[
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: _isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _mode = AuthMode.forgotPassword;
-                              _errorMessage = null;
-                            });
-                          },
-                    child: const Text('Esqueceu a senha?'),
-                  ),
-                ),
-              ],
-
-              // Botão Principal (Entrar / Cadastrar / Enviar Link)
-              FilledButton(
-                onPressed: _isLoading ? null : _handleSubmitEmail,
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        _mode == AuthMode.login
-                            ? 'Entrar'
-                            : (_mode == AuthMode.register
-                                  ? 'Criar Conta'
-                                  : 'Enviar E-mail de Recuperação'),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                // Alternância entre Login / Cadastro
+                if (_mode == AuthMode.login) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Não tem uma conta?',
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
-              ),
-              const SizedBox(height: 16),
-
-              // Alternância entre Login / Cadastro
-              if (_mode == AuthMode.login) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Não tem uma conta?',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
-                    ),
-                    TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              setState(() {
-                                _mode = AuthMode.register;
-                                _errorMessage = null;
-                              });
-                            },
-                      child: const Text('Cadastre-se'),
-                    ),
-                  ],
-                ),
-              ] else if (_mode == AuthMode.register ||
-                  _mode == AuthMode.forgotPassword) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Já possui uma conta?',
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
-                    ),
-                    TextButton(
-                      onPressed: _isLoading
-                          ? null
-                          : () {
-                              setState(() {
-                                _mode = AuthMode.login;
-                                _errorMessage = null;
-                              });
-                            },
-                      child: const Text('Fazer Login'),
-                    ),
-                  ],
-                ),
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _mode = AuthMode.register;
+                                  _errorMessage = null;
+                                  _successMessage = null;
+                                });
+                              },
+                        child: const Text('Cadastre-se'),
+                      ),
+                    ],
+                  ),
+                ] else if (_mode == AuthMode.register ||
+                    _mode == AuthMode.forgotPassword) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Já possui uma conta?',
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
+                      TextButton(
+                        onPressed: _isLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _mode = AuthMode.login;
+                                  _errorMessage = null;
+                                  _successMessage = null;
+                                });
+                              },
+                        child: const Text('Fazer Login'),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ],
           ),
