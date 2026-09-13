@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:provider/provider.dart';
@@ -137,6 +138,115 @@ class _TodosOsItensState extends State<TodosOsItens> {
 class Selecionados extends StatelessWidget {
   const Selecionados({super.key});
 
+  /// Mapeia o título da norma de piedade para a rota da oração ou livro correspondente
+  static String? getRouteForNorm(String title) {
+    final normalized = title.trim().toLowerCase();
+
+    // Oferecimento de Obras / Oração da manhã
+    if (normalized.contains('oferecimento') ||
+        normalized == 'oração da manhã' ||
+        normalized == 'oracao da manha') {
+      return '/oferecimento-de-obras';
+    }
+
+    // Angelus / Regina Caeli
+    if (normalized.contains('angelus') ||
+        normalized.contains('ângelus') ||
+        normalized.contains('regina')) {
+      return '/angelus-regina-caeli';
+    }
+
+    // Terço / Santo Rosário
+    if (normalized.contains('terço') ||
+        normalized.contains('terco') ||
+        normalized.contains('rosário') ||
+        normalized.contains('rosario')) {
+      return '/santo-rosario';
+    }
+
+    // Visita ao Santíssimo
+    if (normalized.contains('santíssimo') ||
+        normalized.contains('santissimo')) {
+      return '/visita-ao-santissimo';
+    }
+
+    // Exame de Consciência
+    if (normalized.contains('exame')) {
+      return '/exame-de-consciencia-oracao';
+    }
+
+    // Salmo 2
+    if (normalized.contains('salmo 2') ||
+        normalized.contains('salmo ii')) {
+      return '/salmo-2';
+    }
+
+    // Preces
+    if (normalized.contains('prece')) {
+      return '/preces';
+    }
+
+    // Leitura Espiritual
+    if (normalized.contains('leitura espiritual')) {
+      return '/livros';
+    }
+
+    // Leitura da Bíblia / Novo Testamento
+    if (normalized.contains('novo testamento') ||
+        normalized.contains('bíblia') ||
+        normalized.contains('biblia')) {
+      return '/biblia-page-1';
+    }
+
+    // Santa Missa / Liturgia
+    if (normalized.contains('missa') ||
+        normalized.contains('liturgia')) {
+      return '/liturgia';
+    }
+
+    // Lembrai-vos
+    if (normalized.contains('lembrai')) {
+      return '/lembrai-vos';
+    }
+
+    // Via Sacra
+    if (normalized.contains('via sacra') ||
+        normalized.contains('via-sacra')) {
+      return '/via-sacra-reading';
+    }
+
+    // Falar com Deus / Meditação
+    if (normalized.contains('falar com deus') ||
+        normalized.contains('meditação') ||
+        normalized.contains('meditacao')) {
+      return '/falar-com-deus';
+    }
+
+    // Comentário do Evangelho
+    if (normalized.contains('comentário') ||
+        normalized.contains('comentario')) {
+      return '/comentario-do-evangelho-do-dia';
+    }
+
+    // Adoro Te Devote
+    if (normalized.contains('adoro te') ||
+        normalized.contains('adorote')) {
+      return '/adoro-te-devote';
+    }
+
+    // Te Deum
+    if (normalized.contains('te deum')) {
+      return '/te-deum';
+    }
+
+    // Credo
+    if (normalized.contains('credo')) {
+      return '/credo';
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<PlanoDeVidaProvider>(
@@ -151,17 +261,57 @@ class Selecionados extends StatelessWidget {
                 itemCount: todaysItems.length,
                 itemBuilder: (context, index) {
                   String title = todaysItems[index];
+                  final String? route = getRouteForNorm(title);
+                  final bool isCompleted = provider.titlesIsCompletedToday.contains(title);
+
                   return ListTile(
-                    title: Text(title, style: provider.titlesIsCompletedToday.contains(title) ? const TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough) : const TextStyle(fontSize: 18)),
-                    leading: provider.titlesIsCompletedToday.contains(title) ? const Icon(Icons.check) : const Icon(Icons.watch_later_outlined),
-                    trailing: Checkbox(
-                      value: provider.titlesIsCompletedToday.contains(title),
-                      onChanged: (value) {
-                        provider.toggleItemCompletion(title);
-                      },
+                    title: Text(
+                      title,
+                      style: isCompleted
+                          ? const TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough)
+                          : const TextStyle(fontSize: 18),
+                    ),
+                    subtitle: route != null
+                        ? Text(
+                            "Toque para abrir a oração",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
+                            ),
+                          )
+                        : null,
+                    leading: isCompleted
+                        ? const Icon(Icons.check)
+                        : (route != null
+                            ? Icon(Icons.auto_stories_outlined, color: Theme.of(context).colorScheme.primary)
+                            : const Icon(Icons.watch_later_outlined)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (route != null)
+                          IconButton(
+                            icon: const Icon(Icons.chevron_right),
+                            tooltip: 'Abrir oração',
+                            onPressed: () {
+                              Navigator.pushNamed(context, route);
+                            },
+                          ),
+                        Checkbox(
+                          value: isCompleted,
+                          onChanged: (value) {
+                            HapticFeedback.selectionClick();
+                            provider.toggleItemCompletion(title);
+                          },
+                        ),
+                      ],
                     ),
                     onTap: () {
-                      provider.toggleItemCompletion(title);
+                      if (route != null) {
+                        Navigator.pushNamed(context, route);
+                      } else {
+                        HapticFeedback.selectionClick();
+                        provider.toggleItemCompletion(title);
+                      }
                     },
                   );
                 },
