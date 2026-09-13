@@ -61,3 +61,5 @@ assets/downloads/
 # Firebase cache
 .firebase/
 
+# Roadmap
+roadmap.md
