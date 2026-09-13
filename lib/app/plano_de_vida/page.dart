@@ -138,113 +138,48 @@ class _TodosOsItensState extends State<TodosOsItens> {
 class Selecionados extends StatelessWidget {
   const Selecionados({super.key});
 
-  /// Mapeia o título da norma de piedade para a rota da oração ou livro correspondente
+  /// Mapeamento direto e eficiente entre os nomes das normas/orações e suas respectivas rotas no app
+  static const Map<String, String> _normRoutes = {
+    // Normas padrão do Plano de Vida
+    'Oferecimento de Obras': '/oferecimento-de-obras',
+    'Oração da manhã': '/oferecimento-de-obras',
+    'Santa Missa': '/liturgia',
+    'Visita ao Santíssimo': '/visita-ao-santissimo',
+    'Leitura do Novo Testamento': '/biblia-page-1',
+    'Preces': '/preces',
+    'Ângelus/Regina Cæli': '/angelus-regina-caeli',
+    'Angelus/Regina Cæli': '/angelus-regina-caeli',
+    'Ângelus': '/angelus-regina-caeli',
+    'Angelus': '/angelus-regina-caeli',
+    'Regina Cæli': '/angelus-regina-caeli',
+    'Regina Coeli': '/angelus-regina-caeli',
+    'Terço': '/santo-rosario',
+    'Contemplar o Santo Rosário': '/santo-rosario',
+    'Santo Rosário': '/santo-rosario',
+    'Oração da tarde': '/falar-com-deus',
+    'Leitura Espiritual': '/livros',
+    'Exame de Consciência': '/exame-de-consciencia-oracao',
+    'Três Ave-Marias para a pureza': '/lembrai-vos',
+    'Lembrai-vos': '/lembrai-vos',
+    'Via Sacra': '/via-sacra-reading',
+
+    // Orações e devoções catalogadas no app
+    'Salmo 2': '/salmo-2',
+    'Falar com Deus': '/falar-com-deus',
+    'Meditação Diária do Falar com Deus': '/falar-com-deus',
+    'Comentário do Evangelho do dia': '/comentario-do-evangelho-do-dia',
+    'Comentário do Evangelho': '/comentario-do-evangelho-do-dia',
+    'Adoro Te Devote': '/adoro-te-devote',
+    'Te Deum': '/te-deum',
+    'Credo': '/credo',
+    'Credo Niceno-Constantinopolitano': '/credo',
+    'Credo Atanasiano': '/credo-atanasiano',
+    'Estampa de São Josemaría': '/estampa-josemaria',
+    'Gratias tibi ago': '/gratias-tibi-ago',
+  };
+
   static String? getRouteForNorm(String title) {
-    final normalized = title.trim().toLowerCase();
-
-    // Oferecimento de Obras / Oração da manhã
-    if (normalized.contains('oferecimento') ||
-        normalized == 'oração da manhã' ||
-        normalized == 'oracao da manha') {
-      return '/oferecimento-de-obras';
-    }
-
-    // Angelus / Regina Caeli
-    if (normalized.contains('angelus') ||
-        normalized.contains('ângelus') ||
-        normalized.contains('regina')) {
-      return '/angelus-regina-caeli';
-    }
-
-    // Terço / Santo Rosário
-    if (normalized.contains('terço') ||
-        normalized.contains('terco') ||
-        normalized.contains('rosário') ||
-        normalized.contains('rosario')) {
-      return '/santo-rosario';
-    }
-
-    // Visita ao Santíssimo
-    if (normalized.contains('santíssimo') ||
-        normalized.contains('santissimo')) {
-      return '/visita-ao-santissimo';
-    }
-
-    // Exame de Consciência
-    if (normalized.contains('exame')) {
-      return '/exame-de-consciencia-oracao';
-    }
-
-    // Salmo 2
-    if (normalized.contains('salmo 2') ||
-        normalized.contains('salmo ii')) {
-      return '/salmo-2';
-    }
-
-    // Preces
-    if (normalized.contains('prece')) {
-      return '/preces';
-    }
-
-    // Leitura Espiritual
-    if (normalized.contains('leitura espiritual')) {
-      return '/livros';
-    }
-
-    // Leitura da Bíblia / Novo Testamento
-    if (normalized.contains('novo testamento') ||
-        normalized.contains('bíblia') ||
-        normalized.contains('biblia')) {
-      return '/biblia-page-1';
-    }
-
-    // Santa Missa / Liturgia
-    if (normalized.contains('missa') ||
-        normalized.contains('liturgia')) {
-      return '/liturgia';
-    }
-
-    // Lembrai-vos
-    if (normalized.contains('lembrai')) {
-      return '/lembrai-vos';
-    }
-
-    // Via Sacra
-    if (normalized.contains('via sacra') ||
-        normalized.contains('via-sacra')) {
-      return '/via-sacra-reading';
-    }
-
-    // Falar com Deus / Meditação
-    if (normalized.contains('falar com deus') ||
-        normalized.contains('meditação') ||
-        normalized.contains('meditacao')) {
-      return '/falar-com-deus';
-    }
-
-    // Comentário do Evangelho
-    if (normalized.contains('comentário') ||
-        normalized.contains('comentario')) {
-      return '/comentario-do-evangelho-do-dia';
-    }
-
-    // Adoro Te Devote
-    if (normalized.contains('adoro te') ||
-        normalized.contains('adorote')) {
-      return '/adoro-te-devote';
-    }
-
-    // Te Deum
-    if (normalized.contains('te deum')) {
-      return '/te-deum';
-    }
-
-    // Credo
-    if (normalized.contains('credo')) {
-      return '/credo';
-    }
-
-    return null;
+    return _normRoutes[title.trim()];
   }
 
   @override
