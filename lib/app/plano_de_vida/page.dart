@@ -138,44 +138,22 @@ class _TodosOsItensState extends State<TodosOsItens> {
 class Selecionados extends StatelessWidget {
   const Selecionados({super.key});
 
-  /// Mapeamento direto e eficiente entre os nomes das normas/orações e suas respectivas rotas no app
+  /// Mapeamento direto entre as normas do Plano de Vida e suas orações/leituras exatas no app
   static const Map<String, String> _normRoutes = {
-    // Normas padrão do Plano de Vida
     'Oferecimento de Obras': '/oferecimento-de-obras',
-    'Oração da manhã': '/oferecimento-de-obras',
-    'Santa Missa': '/liturgia',
-    'Visita ao Santíssimo': '/visita-ao-santissimo',
-    'Leitura do Novo Testamento': '/biblia-page-1',
-    'Preces': '/preces',
     'Ângelus/Regina Cæli': '/angelus-regina-caeli',
     'Angelus/Regina Cæli': '/angelus-regina-caeli',
-    'Ângelus': '/angelus-regina-caeli',
-    'Angelus': '/angelus-regina-caeli',
-    'Regina Cæli': '/angelus-regina-caeli',
-    'Regina Coeli': '/angelus-regina-caeli',
     'Terço': '/santo-rosario',
-    'Contemplar o Santo Rosário': '/santo-rosario',
     'Santo Rosário': '/santo-rosario',
-    'Oração da tarde': '/falar-com-deus',
-    'Leitura Espiritual': '/livros',
+    'Contemplar o Santo Rosário': '/santo-rosario-livro',
+    'Visita ao Santíssimo': '/visita-ao-santissimo',
+    'Preces': '/preces',
     'Exame de Consciência': '/exame-de-consciencia-oracao',
-    'Três Ave-Marias para a pureza': '/lembrai-vos',
     'Lembrai-vos': '/lembrai-vos',
+    'Lembrai-Vos': '/lembrai-vos',
     'Via Sacra': '/via-sacra-reading',
-
-    // Orações e devoções catalogadas no app
+    'Leitura Espiritual': '/livros',
     'Salmo 2': '/salmo-2',
-    'Falar com Deus': '/falar-com-deus',
-    'Meditação Diária do Falar com Deus': '/falar-com-deus',
-    'Comentário do Evangelho do dia': '/comentario-do-evangelho-do-dia',
-    'Comentário do Evangelho': '/comentario-do-evangelho-do-dia',
-    'Adoro Te Devote': '/adoro-te-devote',
-    'Te Deum': '/te-deum',
-    'Credo': '/credo',
-    'Credo Niceno-Constantinopolitano': '/credo',
-    'Credo Atanasiano': '/credo-atanasiano',
-    'Estampa de São Josemaría': '/estampa-josemaria',
-    'Gratias tibi ago': '/gratias-tibi-ago',
   };
 
   static String? getRouteForNorm(String title) {
