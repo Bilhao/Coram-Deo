@@ -435,6 +435,123 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
 
+                  // Seção Orações
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Orações",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.language),
+                    title: const Text(
+                      'Idioma padrão das orações',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: Text(
+                      appProvider.prayerLanguage == 'lt' ? 'Latim' : 'Português',
+                      style: const TextStyle(fontSize: 14.0),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Idioma padrão'),
+                          content: RadioGroup<String>(
+                            groupValue: appProvider.prayerLanguage,
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    appProvider.setPrayerLanguage(val);
+                                    Navigator.pop(ctx);
+                                  }
+                                },
+                                child: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    RadioListTile<String>(
+                                      title: Text('Português'),
+                                      value: 'pt',
+                                    ),
+                                    RadioListTile<String>(
+                                      title: Text('Latim'),
+                                      value: 'lt',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                        ),
+                      );
+                    },
+                  ),
+                  SwitchListTile(
+                    secondary: const Icon(Icons.vertical_split_outlined),
+                    title: const Text(
+                      'Abrir em modo bilíngue',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Exibir texto em duas colunas ao abrir orações',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    value: appProvider.openInBilingualMode,
+                    onChanged: (value) {
+                      appProvider.setOpenInBilingualMode(value);
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.view_column_outlined),
+                    title: const Text(
+                      'Ordem das colunas bilíngues',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: Text(
+                      appProvider.isLatinFirst
+                          ? 'Latim à esquerda / Português à direita'
+                          : 'Português à esquerda / Latim à direita',
+                      style: const TextStyle(fontSize: 14.0),
+                    ),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Ordem das colunas'),
+                          content: RadioGroup<String>(
+                            groupValue: appProvider.bilingualOrder,
+                            onChanged: (val) {
+                              if (val != null) {
+                                appProvider.setBilingualOrder(val);
+                                Navigator.pop(ctx);
+                              }
+                            },
+                            child: const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                RadioListTile<String>(
+                                  title: Text('Latim à esquerda / Português à direita'),
+                                  subtitle: Text('Padrão tradicional dos missais'),
+                                  value: 'lt_pt',
+                                ),
+                                RadioListTile<String>(
+                                  title: Text('Português à esquerda / Latim à direita'),
+                                  subtitle: Text('Vernáculo à esquerda'),
+                                  value: 'pt_lt',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
                   // Seção Sincronização em Nuvem (Substituindo Backup Manual)
                   Padding(
                     padding: const EdgeInsets.only(

@@ -11,8 +11,6 @@ class CredoPage extends StatefulWidget {
 }
 
 class _CredoPageState extends State<CredoPage> {
-  String language = "pt";
-
   static const List<Map<String, String>> _articles = [
     {
       "pt": "Creio em um só Deus, Pai todo-poderoso, Criador do Céu e da Terra, de todas as coisas visíveis e invisíveis.",
@@ -32,16 +30,11 @@ class _CredoPageState extends State<CredoPage> {
     },
   ];
 
-  void toggleLanguage(String value) {
-    setState(() {
-      language = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     AppProvider fs = Provider.of<AppProvider>(context);
     final bool isBilingual = fs.bilingualMode;
+    final String language = fs.prayerLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -52,12 +45,6 @@ class _CredoPageState extends State<CredoPage> {
             icon: Icon(isBilingual ? Icons.vertical_split : Icons.vertical_split_outlined),
             tooltip: isBilingual ? "Modo coluna única" : "Modo bilíngue lado a lado",
           ),
-          if (!isBilingual)
-            IconButton(
-              onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
-              icon: Text(language == "pt" ? "LT" : "PT"),
-              tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português",
-            ),
           IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],

@@ -24,6 +24,9 @@ class AppConstants {
   // Prayer preferences
   static const String favoritePrayersKey = 'oracoes.favoritas';
   static const String bilingualModeKey = 'oracoes.bilingual_mode';
+  static const String prayerLanguageKey = 'oracoes.language';
+  static const String bilingualOrderKey = 'oracoes.bilingual_order';
+  static const String openInBilingualModeKey = 'oracoes.open_bilingual';
 
   // Default values
   static const double defaultFontSize = 16.0;
@@ -35,6 +38,9 @@ class AppConstants {
   static const bool defaultBlockExame = true;
   static const bool defaultUseBiometric = true;
   static const bool defaultBilingualMode = false;
+  static const String defaultPrayerLanguage = 'pt';
+  static const String defaultBilingualOrder = 'lt_pt';
+  static const bool defaultOpenInBilingualMode = false;
   static const String defaultTestament = 'Old';
   static const int defaultBookId = 1;
   static const String defaultBook = 'Gênesis';
