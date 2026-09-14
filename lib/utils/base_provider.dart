@@ -17,6 +17,12 @@ abstract class BaseProvider extends ChangeNotifier {
     return _cachedPrefs!;
   }
 
+  /// Reset cached SharedPreferences for testing
+  @visibleForTesting
+  static void resetCachedPrefs() {
+    _cachedPrefs = null;
+  }
+
   /// Set loading state and notify listeners
   void setLoading(bool loading) {
     if (_isLoading != loading) {
