@@ -24,11 +24,14 @@ class _PlanoDeVidaPageState extends State<PlanoDeVidaPage> {
             child: Scaffold(
               appBar: AppBar(
                 title: const Text("Plano de Vida", maxLines: 2, style: TextStyle(fontSize: 20)),
-                bottom: const TabBar(
+              ),
+              bottomNavigationBar: const SafeArea(
+                child: TabBar(
+                  dividerColor: Colors.transparent,
                   tabs: [
-                    Tab(text: "Todos os itens", icon: Icon(Icons.list)),
+                    Tab(text: "Todos os itens", icon: Icon(Icons.format_list_bulleted)),
                     Tab(text: "Itens do dia", icon: Icon(Icons.watch_later_outlined)),
-                    Tab(text: "Progresso", icon: Icon(Icons.analytics)),
+                    Tab(text: "Progresso", icon: Icon(Icons.analytics_outlined)),
                   ],
                 ),
               ),
