@@ -21,8 +21,14 @@ class AppProvider extends BaseProvider {
   bool _useBiometric = AppConstants.defaultUseBiometric;
   bool _canAuthenticate = false;
 
+  // Variables related to prayers
+  bool _bilingualMode = AppConstants.defaultBilingualMode;
+
   // Getters relativos ao tamanho da fonte
   double get fontSize => _fontSize;
+
+  // Getter relativo ao modo bilíngue
+  bool get bilingualMode => _bilingualMode;
 
   // Getters relativos ao tema
   String get currentTheme => _currentTheme;
@@ -65,6 +71,8 @@ class AppProvider extends BaseProvider {
 
       _blockExame = prefs.getBool(AppConstants.blockExameKey) ?? AppConstants.defaultBlockExame;
       _useBiometric = prefs.getBool(AppConstants.biometricKey) ?? AppConstants.defaultUseBiometric;
+
+      _bilingualMode = prefs.getBool(AppConstants.bilingualModeKey) ?? AppConstants.defaultBilingualMode;
 
       _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
 
@@ -161,5 +169,15 @@ class AppProvider extends BaseProvider {
       notifyListeners();
       return true;
     }, errorContext: 'Toggling biometric usage');
+  }
+
+  // Methods related to bilingual mode in prayers
+  Future<void> toggleBilingualMode() async {
+    await safePrefOperation((prefs) async {
+      _bilingualMode = !_bilingualMode;
+      await prefs.setBool(AppConstants.bilingualModeKey, _bilingualMode);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Toggling bilingual mode');
   }
 }
