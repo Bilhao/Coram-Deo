@@ -184,20 +184,9 @@ class Selecionados extends StatelessWidget {
                           ? const TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough)
                           : const TextStyle(fontSize: 18),
                     ),
-                    subtitle: route != null
-                        ? Text(
-                            "Toque para abrir a oração",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.85),
-                            ),
-                          )
-                        : null,
                     leading: isCompleted
                         ? const Icon(Icons.check)
-                        : (route != null
-                            ? Icon(Icons.auto_stories_outlined, color: Theme.of(context).colorScheme.primary)
-                            : const Icon(Icons.watch_later_outlined)),
+                        : const Icon(Icons.watch_later_outlined),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
