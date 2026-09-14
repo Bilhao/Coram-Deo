@@ -11,8 +11,6 @@ class GratiasTibiAgoPage extends StatefulWidget {
 }
 
 class _GratiasTibiAgoPageState extends State<GratiasTibiAgoPage> {
-  String language = "pt";
-
   static const List<Map<String, String>> _paragraphs = [
     {
       "pt": "Dou-Vos graças, Senhor santo, Pai onipotente, Deus, a Vós que, sem merecimento algum de minha parte, mas por efeito da vossa misericórdia, Vos dignastes saciar-me, sendo eu pecador e vosso indigno servo, com o Corpo adorável e com o Sangue precioso do vosso Filho, Nosso Senhor Jesus Cristo.",
@@ -20,7 +18,7 @@ class _GratiasTibiAgoPageState extends State<GratiasTibiAgoPage> {
     },
     {
       "pt": "Eu vos peço que esta comunhão não me seja imputada como uma falta digna de castigo, mas interceda eficazmente para alcançar o meu perdão; seja a armadura da minha fé e o escudo da minha boa vontade; livre-me dos meus vícios; apague os meus maus desejos; mortifique a minha concupiscência; aumente em mim a caridade e a paciência, a humildade, a obediência e todas as virtudes; sirva-me de firme defesa contra os embustes de todos os meus inimigos, tanto visíveis como invisíveis; serene e regule perfeitamente os movimentos, tanto da minha carne como do meu espírito; una-me firmemente a Vós, que sois o único e verdadeiro Deus; e seja enfim a feliz consumação do meu destino.",
-      "lt": "Et precor, ut hæc sancta communio non sit mihi reatus ad pœnam, sed intercessio salutaris ad veniam. Sit mihi armatura fidei et scutum bonæ voluntatis. Sit vitiorum meorum evacuatio, concupiscentiæ et libidinis exterminatio, caritatis et patientiæ, humilitatis et obœdientiæ omniumque virtutum augmentatio: contra insidias inimicorum omnium, tam visibilium quam invisibilium firma defensio; motuum meorum, tam carnalium quam spiritualium, perfecta quietatio: in te uno ac vero Deo firma adhæsio; atque finis mei felix consummatio.",
+      "lt": "Et precor, ut hæc sancta communio non sit mihi reatus ad pœnam, sed intercessio salutaris ad veniam. Sit mihi armatura fidei et scutum bonæ voluntatis. Sit vitiorum meorum evacuatio, concupiscentiæ et libidinis exterminatio, caritatis et patientiæ, humilitatis et obœdientiæ omniumque virtutum augmentatio: contra insidias inimicorum omnium, tam visibilium quam invisibilium firma defensio; motuum meorum, tam carnalium quam spiritualium, perfecta quietatio: in te uno ac vero Deus firma adhæsio; atque finis mei felix consummatio.",
     },
     {
       "pt": "Dignai-Vos, Senhor, eu Vos suplico, conduzir-me, a mim, pecador, a esse inefável banquete onde, com o vosso Filho e o Espírito Santo, sois para os vossos santos luz verdadeira, gozo pleno e alegria eterna, cúmulo de delícias e felicidade perfeita. Pelo mesmo Jesus Cristo, Senhor Nosso.",
@@ -28,16 +26,11 @@ class _GratiasTibiAgoPageState extends State<GratiasTibiAgoPage> {
     },
   ];
 
-  void toggleLanguage(String value) {
-    setState(() {
-      language = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     AppProvider fs = Provider.of<AppProvider>(context);
     final bool isBilingual = fs.bilingualMode;
+    final String language = fs.prayerLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,12 +41,6 @@ class _GratiasTibiAgoPageState extends State<GratiasTibiAgoPage> {
             icon: Icon(isBilingual ? Icons.vertical_split : Icons.vertical_split_outlined),
             tooltip: isBilingual ? "Modo coluna única" : "Modo bilíngue lado a lado",
           ),
-          if (!isBilingual)
-            IconButton(
-              onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
-              icon: Text(language == "pt" ? "LT" : "PT"),
-              tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português",
-            ),
           IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],
