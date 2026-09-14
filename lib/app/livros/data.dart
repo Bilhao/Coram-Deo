@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Livros {
   Livros({required this.bookName}) {
@@ -16,7 +17,12 @@ class Livros {
 
     final exist = await databaseExists(path);
 
-    if (exist) {
+    // Controle de versão para garantir atualização de bancos embutidos
+    final prefs = await SharedPreferences.getInstance();
+    const currentDbVersion = 2;
+    final savedVersion = prefs.getInt('books.$bookName.db_version') ?? 1;
+
+    if (exist && savedVersion >= currentDbVersion) {
       return await openDatabase(path);
     } else {
       try {
@@ -27,6 +33,7 @@ class Livros {
       List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
       await File(path).writeAsBytes(bytes, flush: true);
+      await prefs.setInt('books.$bookName.db_version', currentDbVersion);
 
       return await openDatabase(path);
     }
@@ -46,17 +53,21 @@ class Livros {
     });
   }
 
+  String _sanitizeChapter(String name) {
+    return name.replaceAll(RegExp(r"^'|'\s*$"), '').trim();
+  }
+
   Future<String> getFirstChapterName() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT chapter FROM book');
-    return maps[0]['chapter'];
+    return _sanitizeChapter(maps[0]['chapter'] as String);
   }
 
   Future<List<String>> getChapterNames() async {
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT chapter FROM book');
     return List.generate(maps.length, (i) {
-      return maps[i]['chapter'];
+      return _sanitizeChapter(maps[i]['chapter'] as String);
     });
   }
 
@@ -82,24 +93,26 @@ class Livros {
     final db = await initDb();
     List<Map<String, dynamic>> results = [];
 
-    // Check if title column exists
+    // Check if title or content_name column exists
     var columns = await db.rawQuery("PRAGMA table_info(book)");
     bool hasTitle = columns.any((col) => col['name'] == 'title');
+    bool hasContentName = columns.any((col) => col['name'] == 'content_name');
+    String? titleCol = hasTitle ? 'title' : (hasContentName ? 'content_name' : null);
 
     for (int id in contentIds) {
       String query;
       List<dynamic> args = [id];
 
       if (chapterId != null) {
-        if (hasTitle) {
-          query = 'SELECT title, content FROM book WHERE content_id = ? AND chapter_id = ?';
+        if (titleCol != null) {
+          query = 'SELECT $titleCol AS title, content FROM book WHERE content_id = ? AND chapter_id = ?';
         } else {
           query = 'SELECT content FROM book WHERE content_id = ? AND chapter_id = ?';
         }
         args.add(chapterId);
       } else {
-        if (hasTitle) {
-          query = 'SELECT title, content FROM book WHERE content_id = ?';
+        if (titleCol != null) {
+          query = 'SELECT $titleCol AS title, content FROM book WHERE content_id = ?';
         } else {
           query = 'SELECT content FROM book WHERE content_id = ?';
         }
@@ -108,11 +121,11 @@ class Livros {
       final List<Map<String, dynamic>> maps = await db.rawQuery(query, args);
 
       if (maps.isNotEmpty) {
-        if (hasTitle) {
-          results.add({'title': maps[0]['title'], 'content': maps[0]['content']});
-        } else {
-          results.add({'title': null, 'content': maps[0]['content']});
+        String? titleVal = maps[0]['title'] as String?;
+        if (titleVal != null) {
+          titleVal = _sanitizeChapter(titleVal);
         }
+        results.add({'title': titleVal, 'content': maps[0]['content']});
       }
     }
     return results;

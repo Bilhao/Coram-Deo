@@ -11,6 +11,8 @@ class AppConstants {
   static const String blockExameKey = 'exame.block';
   static const String biometricKey = 'exame.biometric';
   static const String onboardingKey = 'app.onboarding';
+  static const String autoBackupKey = 'backup.auto_backup';
+  static const String lastAutoBackupDateKey = 'backup.last_auto_date';
 
   // Bible preferences keys
   static const String bibleTestamentKey = 'bible.testament';
@@ -37,6 +39,7 @@ class AppConstants {
   static const int defaultColorSeed = 0xFF004B8D;
   static const bool defaultBlockExame = true;
   static const bool defaultUseBiometric = true;
+  static const bool defaultAutoBackup = true;
   static const bool defaultBilingualMode = false;
   static const String defaultPrayerLanguage = 'pt';
   static const String defaultBilingualOrder = 'lt_pt';
