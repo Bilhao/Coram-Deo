@@ -23,12 +23,19 @@ class AppProvider extends BaseProvider {
 
   // Variables related to prayers
   bool _bilingualMode = AppConstants.defaultBilingualMode;
+  String _prayerLanguage = AppConstants.defaultPrayerLanguage;
+  String _bilingualOrder = AppConstants.defaultBilingualOrder;
+  bool _openInBilingualMode = AppConstants.defaultOpenInBilingualMode;
 
   // Getters relativos ao tamanho da fonte
   double get fontSize => _fontSize;
 
-  // Getter relativo ao modo bilíngue
+  // Getters relativos às orações e modo bilíngue
   bool get bilingualMode => _bilingualMode;
+  String get prayerLanguage => _prayerLanguage;
+  String get bilingualOrder => _bilingualOrder;
+  bool get isLatinFirst => _bilingualOrder == 'lt_pt';
+  bool get openInBilingualMode => _openInBilingualMode;
 
   // Getters relativos ao tema
   String get currentTheme => _currentTheme;
@@ -73,6 +80,12 @@ class AppProvider extends BaseProvider {
       _useBiometric = prefs.getBool(AppConstants.biometricKey) ?? AppConstants.defaultUseBiometric;
 
       _bilingualMode = prefs.getBool(AppConstants.bilingualModeKey) ?? AppConstants.defaultBilingualMode;
+      _prayerLanguage = prefs.getString(AppConstants.prayerLanguageKey) ?? AppConstants.defaultPrayerLanguage;
+      _bilingualOrder = prefs.getString(AppConstants.bilingualOrderKey) ?? AppConstants.defaultBilingualOrder;
+      _openInBilingualMode = prefs.getBool(AppConstants.openInBilingualModeKey) ?? AppConstants.defaultOpenInBilingualMode;
+      if (prefs.containsKey(AppConstants.openInBilingualModeKey)) {
+        _bilingualMode = _openInBilingualMode;
+      }
 
       _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
 
@@ -171,7 +184,7 @@ class AppProvider extends BaseProvider {
     }, errorContext: 'Toggling biometric usage');
   }
 
-  // Methods related to bilingual mode in prayers
+  // Methods related to bilingual mode and prayers preferences
   Future<void> toggleBilingualMode() async {
     await safePrefOperation((prefs) async {
       _bilingualMode = !_bilingualMode;
@@ -179,5 +192,34 @@ class AppProvider extends BaseProvider {
       notifyListeners();
       return true;
     }, errorContext: 'Toggling bilingual mode');
+  }
+
+  Future<void> setPrayerLanguage(String lang) async {
+    await safePrefOperation((prefs) async {
+      _prayerLanguage = lang;
+      await prefs.setString(AppConstants.prayerLanguageKey, lang);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Setting prayer language');
+  }
+
+  Future<void> setBilingualOrder(String order) async {
+    await safePrefOperation((prefs) async {
+      _bilingualOrder = order;
+      await prefs.setString(AppConstants.bilingualOrderKey, order);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Setting bilingual order');
+  }
+
+  Future<void> setOpenInBilingualMode(bool value) async {
+    await safePrefOperation((prefs) async {
+      _openInBilingualMode = value;
+      _bilingualMode = value;
+      await prefs.setBool(AppConstants.openInBilingualModeKey, value);
+      await prefs.setBool(AppConstants.bilingualModeKey, value);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Setting open in bilingual mode');
   }
 }

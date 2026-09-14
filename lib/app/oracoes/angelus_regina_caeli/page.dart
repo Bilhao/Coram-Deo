@@ -12,17 +12,10 @@ class AngelusReginaCaeliPage extends StatefulWidget {
 
 class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
   String selected = "angelus";
-  String language = "pt";
 
   void toggleSelected(String value) {
     setState(() {
       selected = value;
-    });
-  }
-
-  void toggleLanguage(String value) {
-    setState(() {
-      language = value;
     });
   }
 
@@ -165,6 +158,7 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
   Widget build(BuildContext context) {
     AppProvider fs = Provider.of<AppProvider>(context);
     final bool isBilingual = fs.bilingualMode;
+    final String language = fs.prayerLanguage;
 
     return Scaffold(
       appBar: AppBar(
@@ -175,12 +169,6 @@ class _AngelusReginaCaeliPageState extends State<AngelusReginaCaeliPage> {
             icon: Icon(isBilingual ? Icons.vertical_split : Icons.vertical_split_outlined),
             tooltip: isBilingual ? "Modo coluna única" : "Modo bilíngue lado a lado",
           ),
-          if (!isBilingual)
-            IconButton(
-              onPressed: () => toggleLanguage(language == "pt" ? "lt" : "pt"),
-              icon: Text(language == "pt" ? "LT" : "PT"),
-              tooltip: language == "pt" ? "Mudar para Latim" : "Mudar para Português",
-            ),
           IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
           IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
         ],
