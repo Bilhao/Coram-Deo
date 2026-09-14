@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
 
@@ -27,8 +28,14 @@ class AppProvider extends BaseProvider {
   String _bilingualOrder = AppConstants.defaultBilingualOrder;
   bool _openInBilingualMode = AppConstants.defaultOpenInBilingualMode;
 
+  // Variables related to backup
+  bool _autoBackup = AppConstants.defaultAutoBackup;
+
   // Getters relativos ao tamanho da fonte
   double get fontSize => _fontSize;
+
+  // Getters relativos ao backup
+  bool get autoBackup => _autoBackup;
 
   // Getters relativos às orações e modo bilíngue
   bool get bilingualMode => _bilingualMode;
@@ -87,6 +94,7 @@ class AppProvider extends BaseProvider {
         _bilingualMode = _openInBilingualMode;
       }
 
+      _autoBackup = prefs.getBool(AppConstants.autoBackupKey) ?? AppConstants.defaultAutoBackup;
       _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
 
       return true;
@@ -95,6 +103,10 @@ class AppProvider extends BaseProvider {
     _canAuthenticate = await checkBiometric();
 
     setLoading(false);
+
+    if (!_showOnboarding) {
+      CloudSyncService().triggerDailyAutoBackup();
+    }
   }
 
   // Renamed from 'load' to avoid confusion with Flutter's load methods
@@ -111,6 +123,7 @@ class AppProvider extends BaseProvider {
       _showOnboarding = false;
       await prefs.setBool(AppConstants.onboardingKey, false);
       notifyListeners();
+      CloudSyncService().triggerDailyAutoBackup();
       return true;
     }, errorContext: 'Completing onboarding');
   }
@@ -221,5 +234,23 @@ class AppProvider extends BaseProvider {
       notifyListeners();
       return true;
     }, errorContext: 'Setting open in bilingual mode');
+  }
+
+  Future<void> toggleAutoBackup() async {
+    await safePrefOperation((prefs) async {
+      _autoBackup = !_autoBackup;
+      await prefs.setBool(AppConstants.autoBackupKey, _autoBackup);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Toggling auto backup');
+  }
+
+  Future<void> setAutoBackup(bool value) async {
+    await safePrefOperation((prefs) async {
+      _autoBackup = value;
+      await prefs.setBool(AppConstants.autoBackupKey, _autoBackup);
+      notifyListeners();
+      return true;
+    }, errorContext: 'Setting auto backup');
   }
 }

@@ -770,6 +770,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ],
                               ),
                               const Divider(height: 24),
+                              SwitchListTile(
+                                contentPadding: EdgeInsets.zero,
+                                title: const Text(
+                                  'Backup automático diário',
+                                  style: TextStyle(fontSize: 15.0),
+                                ),
+                                subtitle: const Text(
+                                  'Salvar dados na nuvem 1x ao dia ao abrir o app',
+                                  style: TextStyle(fontSize: 13.0),
+                                ),
+                                value: appProvider.autoBackup,
+                                onChanged: _isSyncing
+                                    ? null
+                                    : (val) => appProvider.setAutoBackup(val),
+                              ),
+                              const Divider(height: 24),
                               if (_lastBackupInfo != null &&
                                   _lastBackupInfo!['timestamp'] != null) ...[
                                 Text(
