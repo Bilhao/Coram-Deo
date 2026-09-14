@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/services/auth_service.dart';
+import 'package:coramdeo/utils/constants.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,6 +47,33 @@ class CloudSyncService {
     } catch (e) {
       debugPrint('Erro ao buscar info de backup na nuvem: $e');
       return null;
+    }
+  }
+
+  /// Executa o backup automático diário de forma silenciosa em segundo plano
+  Future<void> triggerDailyAutoBackup() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      final isAutoBackupEnabled =
+          prefs.getBool(AppConstants.autoBackupKey) ?? AppConstants.defaultAutoBackup;
+      if (!isAutoBackupEnabled) return;
+
+      final now = DateTime.now();
+      final todayStr = '${now.day}-${now.month}-${now.year}';
+      final lastBackupDate = prefs.getString(AppConstants.lastAutoBackupDateKey);
+
+      if (lastBackupDate == todayStr) {
+        return; // Já executou o backup automático hoje
+      }
+
+      await uploadBackup();
+      await prefs.setString(AppConstants.lastAutoBackupDateKey, todayStr);
+      debugPrint('CloudSyncService: Backup automático diário concluído com sucesso.');
+    } catch (e) {
+      debugPrint('CloudSyncService: Falha silenciosa no backup automático: $e');
     }
   }
 
