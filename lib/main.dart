@@ -63,14 +63,28 @@ class CoramDeoApp extends StatelessWidget {
                 themeMode: provider.themeMode,
                 theme: ThemeData(
                   colorScheme: provider.dynamicColor && lightDynamic != null
-                      ? ColorScheme.fromSeed(dynamicSchemeVariant: DynamicSchemeVariant.fidelity, seedColor: lightDynamic.primary, primary: lightDynamic.primary, brightness: Brightness.light)
-                      : ColorScheme.fromSeed(dynamicSchemeVariant: DynamicSchemeVariant.fidelity, seedColor: Color(provider.colorSeed), primary: Color(provider.colorSeed), brightness: Brightness.light),
+                      ? lightDynamic.harmonized()
+                      : ColorScheme.fromSeed(
+                          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                          seedColor: Color(provider.colorSeed),
+                          primary: Color(provider.colorSeed),
+                          brightness: Brightness.light,
+                        ),
                   useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
                   colorScheme: provider.dynamicColor && darkDynamic != null
-                      ? ColorScheme.fromSeed(dynamicSchemeVariant: DynamicSchemeVariant.fidelity, seedColor: darkDynamic.primary, brightness: Brightness.dark)
-                      : ColorScheme.fromSeed(dynamicSchemeVariant: DynamicSchemeVariant.fidelity, seedColor: Color(provider.colorSeed), brightness: Brightness.dark),
+                      ? darkDynamic.harmonized()
+                      : (provider.dynamicColor && lightDynamic != null
+                          ? ColorScheme.fromSeed(
+                              seedColor: lightDynamic.primary,
+                              brightness: Brightness.dark,
+                            )
+                          : ColorScheme.fromSeed(
+                              dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                              seedColor: Color(provider.colorSeed),
+                              brightness: Brightness.dark,
+                            )),
                   useMaterial3: true,
                 ),
                 initialRoute: provider.showOnboarding ? '/onboarding' : Routes.initial,
@@ -78,10 +92,6 @@ class CoramDeoApp extends StatelessWidget {
                 navigatorKey: Routes.navigatorKey,
               );
 
-              if (lightDynamic != null && darkDynamic != null) {
-                // Intentionally left here, though removing splash might verify provider loaded too
-              }
-              // Ideally remove splash screen here since we return 'app' now
               FlutterNativeSplash.remove();
 
               return app;

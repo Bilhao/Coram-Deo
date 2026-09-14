@@ -457,7 +457,9 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: TextStyle(fontSize: 16.0),
                     ),
                     subtitle: Text(
-                      appProvider.prayerLanguage == 'lt' ? 'Latim' : 'Português',
+                      appProvider.prayerLanguage == 'lt'
+                          ? 'Latim'
+                          : 'Português',
                       style: const TextStyle(fontSize: 14.0),
                     ),
                     onTap: () {
@@ -467,26 +469,26 @@ class _SettingsPageState extends State<SettingsPage> {
                           title: const Text('Idioma padrão'),
                           content: RadioGroup<String>(
                             groupValue: appProvider.prayerLanguage,
-                                onChanged: (val) {
-                                  if (val != null) {
-                                    appProvider.setPrayerLanguage(val);
-                                    Navigator.pop(ctx);
-                                  }
-                                },
-                                child: const Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    RadioListTile<String>(
-                                      title: Text('Português'),
-                                      value: 'pt',
-                                    ),
-                                    RadioListTile<String>(
-                                      title: Text('Latim'),
-                                      value: 'lt',
-                                    ),
-                                  ],
+                            onChanged: (val) {
+                              if (val != null) {
+                                appProvider.setPrayerLanguage(val);
+                                Navigator.pop(ctx);
+                              }
+                            },
+                            child: const Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                RadioListTile<String>(
+                                  title: Text('Português'),
+                                  value: 'pt',
                                 ),
-                              ),
+                                RadioListTile<String>(
+                                  title: Text('Latim'),
+                                  value: 'lt',
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     },
@@ -535,13 +537,15 @@ class _SettingsPageState extends State<SettingsPage> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 RadioListTile<String>(
-                                  title: Text('Latim à esquerda / Português à direita'),
-                                  subtitle: Text('Padrão tradicional dos missais'),
+                                  title: Text(
+                                    'Latim à esquerda / Português à direita',
+                                  ),
                                   value: 'lt_pt',
                                 ),
                                 RadioListTile<String>(
-                                  title: Text('Português à esquerda / Latim à direita'),
-                                  subtitle: Text('Vernáculo à esquerda'),
+                                  title: Text(
+                                    'Português à esquerda / Latim à direita',
+                                  ),
                                   value: 'pt_lt',
                                 ),
                               ],
@@ -551,6 +555,53 @@ class _SettingsPageState extends State<SettingsPage> {
                       );
                     },
                   ),
+
+                  // Seção Segurança
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Segurança",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: const Text(
+                      'Bloquear Exame de Consciência',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Pedir autenticação ao abrir exame de consciência',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    value: appProvider.blockExame,
+                    secondary: const Icon(Icons.lock),
+                    onChanged: (value) {
+                      setState(() {
+                        appProvider.toggleBlockExame();
+                      });
+                    },
+                  ),
+                  if (appProvider.blockExame && appProvider.canAuthenticate)
+                    SwitchListTile(
+                      title: const Text(
+                        'Usar autenticação biométrica',
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                      value: appProvider.useBiometric,
+                      secondary: const Icon(Icons.fingerprint),
+                      onChanged: (value) {
+                        setState(() {
+                          appProvider.toggleUseBiometric();
+                        });
+                      },
+                    ),
 
                   // Seção Sincronização em Nuvem (Substituindo Backup Manual)
                   Padding(
@@ -802,52 +853,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     },
                   ),
 
-                  // Seção Segurança
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 15.0,
-                      top: 15.0,
-                      bottom: 10.0,
-                    ),
-                    child: Text(
-                      "Segurança",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  SwitchListTile(
-                    title: const Text(
-                      'Bloquear Exame de Consciência',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
-                    subtitle: const Text(
-                      'Pedir autenticação ao abrir exame de consciência',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                    value: appProvider.blockExame,
-                    secondary: const Icon(Icons.lock),
-                    onChanged: (value) {
-                      setState(() {
-                        appProvider.toggleBlockExame();
-                      });
-                    },
-                  ),
-                  if (appProvider.blockExame && appProvider.canAuthenticate)
-                    SwitchListTile(
-                      title: const Text(
-                        'Usar autenticação biométrica',
-                        style: TextStyle(fontSize: 16.0),
-                      ),
-                      value: appProvider.useBiometric,
-                      secondary: const Icon(Icons.fingerprint),
-                      onChanged: (value) {
-                        setState(() {
-                          appProvider.toggleUseBiometric();
-                        });
-                      },
-                    ),
                   // Seção Sobre e Privacidade
                   Padding(
                     padding: const EdgeInsets.only(
