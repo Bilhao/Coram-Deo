@@ -34,7 +34,11 @@ jobs:
 
     - name: Read version from pubspec.yaml
       id: read_version
-      run: echo "VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2)" >> $GITHUB_ENV
+      run: |
+        VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2)
+        VERSION_NAME=$(echo "$VERSION" | cut -d'+' -f1)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
 
     - name: Download Android keystore
       id: android_keystore
@@ -74,6 +78,7 @@ jobs:
             Coram-Deo-x86_64-${{ env.VERSION }}.apk \
             Coram-Deo-${{ env.VERSION }}.aab \
             --clobber
+          gh release edit "${{ env.VERSION }}" --title "Release ${{ env.VERSION_NAME }}"
         else
           echo "Creating release..."
           gh release create "${{ env.VERSION }}" \
@@ -81,6 +86,6 @@ jobs:
             Coram-Deo-arm64-v8a-${{ env.VERSION }}.apk \
             Coram-Deo-x86_64-${{ env.VERSION }}.apk \
             Coram-Deo-${{ env.VERSION }}.aab \
-            --title "Release ${{ env.VERSION }}" \
-            --notes "Release ${{ env.VERSION }}"
+            --title "Release ${{ env.VERSION_NAME }}" \
+            --notes "Release ${{ env.VERSION_NAME }}"
         fi
