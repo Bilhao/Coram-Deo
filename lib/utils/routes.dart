@@ -46,6 +46,7 @@ import 'package:coramdeo/app/plano_de_vida/page.dart';
 import 'package:coramdeo/app/santo_do_dia/page.dart';
 import 'package:coramdeo/app/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/onboarding/page.dart';
+import 'package:coramdeo/app/calendario/page.dart';
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -76,6 +77,9 @@ class Routes {
 
       case "/santo-do-dia":
         return MaterialPageRoute(builder: (context) => const SantoDoDiaPage());
+
+      case "/calendario":
+        return MaterialPageRoute(builder: (context) => const CalendarioPage());
 
       case "/liturgia":
         return MaterialPageRoute(builder: (context) => const LiturgiaDiariaPage());
