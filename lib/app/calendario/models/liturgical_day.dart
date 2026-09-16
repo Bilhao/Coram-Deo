@@ -217,6 +217,7 @@ class LiturgicalDay {
   bool get isSunday => date.weekday == DateTime.sunday;
   bool get hasOpusDeiCelebration => opusDeiCelebration != null;
   bool get hasNovena => novenaNotice != null && novenaNotice!.isNotEmpty;
-  bool get hasSaintOfTheDay => saintOfTheDay != null && saintOfTheDay!.isNotEmpty;
+  bool get hasSaintOfTheDay =>
+      saintOfTheDay != null && saintOfTheDay!.isNotEmpty && saintOfTheDay != title;
 }
 

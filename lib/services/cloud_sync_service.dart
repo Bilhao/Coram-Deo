@@ -50,6 +50,39 @@ class CloudSyncService {
     }
   }
 
+  /// Verifica se a nuvem possui dados de backup e a base local está vazia.
+  /// Em caso afirmativo, restaura automaticamente para evitar perda de dados no primeiro login.
+  Future<bool> checkAndRestoreOnLogin() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return false;
+
+      final cloudInfo = await getLastBackupInfo();
+      if (cloudInfo == null) return false;
+
+      final cloudCount = (cloudInfo['planoCount'] as int?) ?? 0;
+      if (cloudCount <= 0) return false;
+
+      // Verificar se a base local do Plano de Vida está vazia
+      List<Map<String, dynamic>> localPlano = [];
+      try {
+        final db = await _planoDeVidaDb.initDb();
+        localPlano = await db.query('data');
+      } catch (e) {
+        debugPrint('CloudSyncService: Erro ao verificar dados locais: $e');
+      }
+
+      if (localPlano.isEmpty) {
+        debugPrint('CloudSyncService: Restaurando automaticamente dados da nuvem ($cloudCount itens)...');
+        final success = await restoreBackup();
+        return success;
+      }
+    } catch (e) {
+      debugPrint('CloudSyncService: Erro ao verificar e restaurar no login: $e');
+    }
+    return false;
+  }
+
   /// Executa o backup automático diário de forma silenciosa em segundo plano
   Future<void> triggerDailyAutoBackup() async {
     try {
@@ -69,6 +102,25 @@ class CloudSyncService {
         return; // Já executou o backup automático hoje
       }
 
+      // Trava de segurança: verificar se os dados locais estão vazios mas a nuvem possui backup
+      List<Map<String, dynamic>> localPlano = [];
+      try {
+        final db = await _planoDeVidaDb.initDb();
+        localPlano = await db.query('data');
+      } catch (e) {
+        debugPrint('CloudSyncService: Erro ao verificar dados locais no auto backup: $e');
+      }
+
+      final cloudInfo = await getLastBackupInfo();
+      final cloudCount = (cloudInfo?['planoCount'] as int?) ?? 0;
+
+      if (localPlano.isEmpty && cloudCount > 0) {
+        debugPrint('CloudSyncService: Base local vazia e nuvem possui $cloudCount itens. Restaurando em vez de sobrescrever...');
+        await restoreBackup();
+        await prefs.setString(AppConstants.lastAutoBackupDateKey, todayStr);
+        return;
+      }
+
       await uploadBackup();
       await prefs.setString(AppConstants.lastAutoBackupDateKey, todayStr);
       debugPrint('CloudSyncService: Backup automático diário concluído com sucesso.');
@@ -78,7 +130,7 @@ class CloudSyncService {
   }
 
   /// Faz upload de todos os dados locais para a nuvem Firestore
-  Future<void> uploadBackup() async {
+  Future<void> uploadBackup({bool force = false}) async {
     final user = _authService.currentUser;
     if (user == null) {
       throw Exception('Você precisa estar autenticado para realizar o backup na nuvem.');
@@ -107,6 +159,16 @@ class CloudSyncService {
       planoData = await db.query('data');
     } catch (e) {
       debugPrint('Erro ao ler plano_de_vida.db: $e');
+    }
+
+    // Trava de segurança: não sobrescrever dados existentes na nuvem se a base local estiver vazia
+    if (!force && planoData.isEmpty) {
+      final cloudInfo = await getLastBackupInfo();
+      final cloudCount = (cloudInfo?['planoCount'] as int?) ?? 0;
+      if (cloudCount > 0) {
+        debugPrint('CloudSyncService: Abortando upload de backup vazio pois existem $cloudCount itens na nuvem.');
+        return;
+      }
     }
 
     // 3. Monta o pacote de dados
