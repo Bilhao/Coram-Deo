@@ -1,5 +1,6 @@
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/services/opus_dei_calendar_data.dart';
+import 'package:coramdeo/app/calendario/services/roman_sanctoral_data.dart';
 
 class ComputusEngine {
   /// Algoritmo de Butcher (Meeus/Jones/Butcher) para cálculo exato da Páscoa Gregoriana.
@@ -250,6 +251,26 @@ class ComputusEngine {
       }
     }
 
+    // Santo ou Memória do Calendário Romano Geral
+    String? saintOfTheDay;
+    final sanctoralEntry = RomanSanctoralData.getSaint(dateOnly.month, dateOnly.day);
+    if (sanctoralEntry != null) {
+      saintOfTheDay = sanctoralEntry.name;
+      if (season == LiturgicalSeason.tempoComum && dateOnly.weekday != DateTime.sunday) {
+        if (sanctoralEntry.rank.precedence < rank.precedence) {
+          rank = sanctoralEntry.rank;
+          color = sanctoralEntry.color;
+          title = sanctoralEntry.name;
+        }
+      } else if (sanctoralEntry.rank == LiturgicalRank.solenidade || sanctoralEntry.rank == LiturgicalRank.festa) {
+        if (sanctoralEntry.rank.precedence <= rank.precedence) {
+          rank = sanctoralEntry.rank;
+          color = sanctoralEntry.color;
+          title = sanctoralEntry.name;
+        }
+      }
+    }
+
     // Solenidades e Festas Fixas do Calendário Romano Geral
     final fixedFeast = _checkFixedRomanFeasts(dateOnly);
     if (fixedFeast != null) {
@@ -257,6 +278,7 @@ class ComputusEngine {
         rank = fixedFeast.rank;
         color = fixedFeast.color;
         title = fixedFeast.title;
+        saintOfTheDay ??= fixedFeast.title;
       }
     }
 
@@ -284,6 +306,7 @@ class ComputusEngine {
       rank: rank,
       opusDeiCelebration: opusDei,
       novenaNotice: novena,
+      saintOfTheDay: saintOfTheDay,
     );
   }
 

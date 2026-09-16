@@ -86,8 +86,16 @@ void main() {
       final day = ComputusEngine.getLiturgicalDay(DateTime(2026, 6, 26));
       expect(day.hasOpusDeiCelebration, isTrue);
       expect(day.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
+      expect(day.opusDeiCelebration!.classRank.badgeLabel, 'Opus Dei - A');
       expect(day.rank, LiturgicalRank.solenidade);
       expect(day.color, LiturgicalColor.white);
     });
+
+    test('Nomenclatura das classes segue o padrão estrito Opus Dei - A, B, C', () {
+      expect(OpusDeiClass.classeA.badgeLabel, 'Opus Dei - A');
+      expect(OpusDeiClass.classeB.badgeLabel, 'Opus Dei - B');
+      expect(OpusDeiClass.classeC.badgeLabel, 'Opus Dei - C');
+    });
   });
 }
+
