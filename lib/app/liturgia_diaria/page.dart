@@ -4,7 +4,8 @@ import 'package:coramdeo/app/liturgia_diaria/provider.dart';
 import 'package:provider/provider.dart';
 
 class LiturgiaDiariaPage extends StatefulWidget {
-  const LiturgiaDiariaPage({super.key});
+  final DateTime? initialDate;
+  const LiturgiaDiariaPage({super.key, this.initialDate});
 
   @override
   State<LiturgiaDiariaPage> createState() => _LiturgiaDiariaPageState();
@@ -12,193 +13,206 @@ class LiturgiaDiariaPage extends StatefulWidget {
 
 class _LiturgiaDiariaPageState extends State<LiturgiaDiariaPage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final targetDate = widget.initialDate ??
+          (ModalRoute.of(context)?.settings.arguments as DateTime?);
+      if (targetDate != null) {
+        final provider = Provider.of<LiturgiaDiariaProvider>(context, listen: false);
+        if (provider.day != targetDate.day || provider.month != targetDate.month || provider.year != targetDate.year) {
+          provider.changeDate(targetDate.day, targetDate.month, year: targetDate.year);
+        }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => LiturgiaDiariaProvider(),
-      child: Consumer2<LiturgiaDiariaProvider, AppProvider>(
-        builder: (context, provider, fs, child) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (provider.error != null) {
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text("Erro de Conexão"),
-                  content: const Text("Não foi possível conectar ao servidor para carregar a Liturgia Diária. Verifique sua conexão com a internet."),
-                  actions: <Widget>[
-                    TextButton(
-                      child: const Text('OK'),
-                      onPressed: () {
-                        provider.clearError();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            }
-          });
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text("Liturgia Diária", maxLines: 2, style: TextStyle(fontSize: 20)),
-              actions: [
-                IconButton(icon: const Icon(Icons.remove), onPressed: () => fs.decreaseFontSize()),
-                IconButton(icon: const Icon(Icons.add), onPressed: () => fs.increaseFontSize()),
-              ],
-              bottom: provider.isLoading ? const PreferredSize(preferredSize: Size.fromHeight(2.0), child: LinearProgressIndicator()) : null,
-            ),
-            body: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : provider.liturgia.isEmpty
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.cloud_off_rounded,
-                                size: 56,
-                                color: Theme.of(context).colorScheme.outline,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                "Não foi possível carregar a liturgia diária.",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: fs.fontSize + 1),
-                              ),
-                              const SizedBox(height: 16),
-                              FilledButton.tonalIcon(
-                                onPressed: () {
-                                  provider.changeDate(provider.day, provider.month);
-                                },
-                                icon: const Icon(Icons.refresh_rounded),
-                                label: const Text("Tentar novamente"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : SafeArea(
-                    child: SelectionArea(
+    return Consumer2<LiturgiaDiariaProvider, AppProvider>(
+      builder: (context, provider, fs, child) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (provider.error != null) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Erro de Conexão"),
+                content: const Text("Não foi possível conectar ao servidor para carregar a Liturgia Diária. Verifique sua conexão com a internet."),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      provider.clearError();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            );
+          }
+        });
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Liturgia Diária", maxLines: 2, style: TextStyle(fontSize: 20)),
+            actions: [
+              IconButton(icon: const Icon(Icons.remove), onPressed: () => fs.decreaseFontSize()),
+              IconButton(icon: const Icon(Icons.add), onPressed: () => fs.increaseFontSize()),
+            ],
+            bottom: provider.isLoading ? const PreferredSize(preferredSize: Size.fromHeight(2.0), child: LinearProgressIndicator()) : null,
+          ),
+          body: provider.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : provider.liturgia.isEmpty
+                  ? Center(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.cloud_off_rounded,
+                              size: 56,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Não foi possível carregar a liturgia diária.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: fs.fontSize + 1),
+                            ),
+                            const SizedBox(height: 16),
+                            FilledButton.tonalIcon(
+                              onPressed: () {
+                                provider.changeDate(provider.day, provider.month, year: provider.year, forceRefresh: true);
+                              },
+                              icon: const Icon(Icons.refresh_rounded),
+                              label: const Text("Tentar novamente"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : SafeArea(
+                  child: SelectionArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text("Liturgia do dia: ${provider.date}", style: TextStyle(fontSize: fs.fontSize + 2)),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      firstDate: DateTime(DateTime.now().year - 1, 1, 1),
+                                      lastDate: DateTime(DateTime.now().year + 1, 12, 31),
+                                      initialDate: DateTime(provider.year, provider.month, provider.day),
+                                    );
+                                    if (pickedDate != null) {
+                                      provider.changeDate(pickedDate.day, pickedDate.month, year: pickedDate.year);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.calendar_month),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(provider.liturgia, style: TextStyle(fontSize: fs.fontSize + 2)),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Primeira Leitura (${provider.primeiraLeituraReferencia})",
+                                style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(
+                              provider.primeiraLeituraTitulo,
+                              style: TextStyle(fontSize: fs.fontSize + 3),
+                              textAlign: TextAlign.left,
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(provider.primeiraLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
+                            const Divider(height: 25, color: Colors.transparent),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Salmo (${provider.salmoReferencia})",
+                                style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const Divider(height: 10, color: Colors.transparent),
+                            Text.rich(
+                              TextSpan(
                                 children: [
-                                  Expanded(
-                                    child: Text("Liturgia do dia: ${provider.date}", style: TextStyle(fontSize: fs.fontSize + 2)),
+                                  TextSpan(
+                                    text: "℟. ",
+                                    style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold, color: Colors.red),
                                   ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      DateTime? pickedDate = await showDatePicker(
-                                        context: context,
-                                        firstDate: DateTime(DateTime.now().year, DateTime.now().month),
-                                        lastDate: DateTime(DateTime.now().year, DateTime.now().month + 1),
-                                        initialDate: DateTime(DateTime.now().year, provider.month, provider.day),
-                                      );
-                                      if (pickedDate != null) {
-                                        provider.changeDate(pickedDate.day, pickedDate.month);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.calendar_month),
+                                  TextSpan(
+                                    text: provider.salmoRefrao,
+                                    style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.liturgia, style: TextStyle(fontSize: fs.fontSize + 2)),
-                              const Divider(height: 15, color: Colors.transparent),
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(provider.salmoText, style: TextStyle(fontSize: fs.fontSize + 2)),
+                            const Divider(height: 25, color: Colors.transparent),
+                            if (provider.segundaLeituraTitulo != "")
                               Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  "Primeira Leitura (${provider.primeiraLeituraReferencia})",
+                                  "Segunda Leitura (${provider.segundaLeituraReferencia})",
                                   style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
                                 ),
                               ),
-                              const Divider(height: 15, color: Colors.transparent),
+                            if (provider.segundaLeituraReferencia != "") const Divider(height: 15, color: Colors.transparent),
+                            if (provider.segundaLeituraTitulo != "")
                               Text(
-                                provider.primeiraLeituraTitulo,
+                                provider.segundaLeituraTitulo,
                                 style: TextStyle(fontSize: fs.fontSize + 3),
                                 textAlign: TextAlign.left,
                               ),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.primeiraLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
-                              const Divider(height: 25, color: Colors.transparent),
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Salmo (${provider.salmoReferencia})",
-                                  style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
-                                ),
+                            if (provider.segundaLeituraText != "") const Divider(height: 15, color: Colors.transparent),
+                            if (provider.segundaLeituraText != "") Text(provider.segundaLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
+                            if (provider.segundaLeituraText != "") const Divider(height: 25, color: Colors.transparent),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Evangelho (${provider.evangelhoReferencia})",
+                                style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
                               ),
-                              const Divider(height: 10, color: Colors.transparent),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: "℟. ",
-                                      style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold, color: Colors.red),
-                                    ),
-                                    TextSpan(
-                                      text: provider.salmoRefrao,
-                                      style: TextStyle(fontSize: fs.fontSize + 2, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.salmoText, style: TextStyle(fontSize: fs.fontSize + 2)),
-                              const Divider(height: 25, color: Colors.transparent),
-                              if (provider.segundaLeituraTitulo != "")
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    "Segunda Leitura (${provider.segundaLeituraReferencia})",
-                                    style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              if (provider.segundaLeituraReferencia != "") const Divider(height: 15, color: Colors.transparent),
-                              if (provider.segundaLeituraTitulo != "")
-                                Text(
-                                  provider.segundaLeituraTitulo,
-                                  style: TextStyle(fontSize: fs.fontSize + 3),
-                                  textAlign: TextAlign.left,
-                                ),
-                              if (provider.segundaLeituraText != "") const Divider(height: 15, color: Colors.transparent),
-                              if (provider.segundaLeituraText != "") Text(provider.segundaLeituraText, style: TextStyle(fontSize: fs.fontSize + 2)),
-                              if (provider.segundaLeituraText != "") const Divider(height: 25, color: Colors.transparent),
-                              Align(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "Evangelho (${provider.evangelhoReferencia})",
-                                  style: TextStyle(fontSize: fs.fontSize + 6, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(
-                                provider.evangelhoTitle,
-                                style: TextStyle(fontSize: fs.fontSize + 3),
-                                textAlign: TextAlign.left,
-                              ),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(provider.evangelhoText, style: TextStyle(fontSize: fs.fontSize + 2)),
-                              const Divider(height: 15, color: Colors.transparent),
-                              Text(
-                                "Fonte: https://liturgia.up.railway.app",
-                                style: TextStyle(fontSize: fs.fontSize - 2, fontWeight: FontWeight.w300),
-                              ),
-                            ],
-                          ),
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(
+                              provider.evangelhoTitle,
+                              style: TextStyle(fontSize: fs.fontSize + 3),
+                              textAlign: TextAlign.left,
+                            ),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(provider.evangelhoText, style: TextStyle(fontSize: fs.fontSize + 2)),
+                            const Divider(height: 15, color: Colors.transparent),
+                            Text(
+                              "Fonte: https://liturgia.up.railway.app",
+                              style: TextStyle(fontSize: fs.fontSize - 2, fontWeight: FontWeight.w300),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
-          );
-        },
-      ),
+                ),
+        );
+      },
     );
   }
 }
