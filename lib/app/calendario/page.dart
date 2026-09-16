@@ -13,7 +13,6 @@ class CalendarioPage extends StatefulWidget {
 
 class _CalendarioPageState extends State<CalendarioPage> {
   late DateTime _displayMonth;
-  bool _filterOpusDeiOnly = false;
 
   final List<String> _monthNames = [
     'Janeiro',
@@ -61,8 +60,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<CalendarioLiturgicoProvider>(context);
     final selectedDay = provider.currentSelectedDay;
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,29 +84,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // Filtro Opus Dei
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Grade Litúrgica Mensal',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  FilterChip(
-                    label: const Text('Festas Opus Dei', style: TextStyle(fontSize: 12)),
-                    selected: _filterOpusDeiOnly,
-                    onSelected: (val) => setState(() => _filterOpusDeiOnly = val),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 4),
 
             // Grade do Mês
             _buildCalendarGrid(context, provider),
@@ -184,13 +159,6 @@ class _CalendarioPageState extends State<CalendarioPage> {
               final isSelected = cellDate.year == provider.selectedDate.year &&
                   cellDate.month == provider.selectedDate.month &&
                   cellDate.day == provider.selectedDate.day;
-
-              if (_filterOpusDeiOnly && !dayData.hasOpusDeiCelebration) {
-                return Opacity(
-                  opacity: 0.3,
-                  child: _buildDayCell(context, provider, cellDate, dayData, isToday, isSelected),
-                );
-              }
 
               return _buildDayCell(context, provider, cellDate, dayData, isToday, isSelected);
             },
@@ -381,9 +349,55 @@ class _CalendarioPageState extends State<CalendarioPage> {
             ],
           ),
 
+          // Santo do Dia Celebrado na Liturgia
+          if (day.hasSaintOfTheDay) ...[
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  width: 0.8,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.person_pin_rounded, size: 20, color: colorScheme.primary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Santo / Memória da Liturgia:',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          day.saintOfTheDay!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           // Card Especial Opus Dei
           if (day.hasOpusDeiCelebration) ...[
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12.0),
@@ -407,7 +421,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        day.opusDeiCelebration!.classRank.fullTitle,
+                        day.opusDeiCelebration!.classRank.badgeLabel, // Opus Dei - A / B / C
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
