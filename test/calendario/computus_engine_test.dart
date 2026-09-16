@@ -92,5 +92,25 @@ void main() {
       expect(natal.season, LiturgicalSeason.natal);
       expect(natal.color, LiturgicalColor.white);
     });
+
+    test('Retorna corretamente os santos celebrados na liturgia pelo Calendário Romano Geral', () {
+      // 16 de Setembro: Santos Cornélio e Cipriano
+      final cornelio = ComputusEngine.getLiturgicalDay(DateTime(2026, 9, 16));
+      expect(cornelio.hasSaintOfTheDay, isTrue);
+      expect(cornelio.saintOfTheDay, contains('Cornélio'));
+      expect(cornelio.color, LiturgicalColor.red); // Mártires
+
+      // 01 de Outubro: Santa Teresinha do Menino Jesus
+      final teresinha = ComputusEngine.getLiturgicalDay(DateTime(2026, 10, 1));
+      expect(teresinha.hasSaintOfTheDay, isTrue);
+      expect(teresinha.saintOfTheDay, contains('Teresinha'));
+
+      // 04 de Outubro: São Francisco de Assis (em 2026, 4 de outubro é um domingo, logo o Domingo tem precedência mas o santo é identificado)
+      final francisco = ComputusEngine.getLiturgicalDay(DateTime(2026, 10, 4));
+      expect(francisco.hasSaintOfTheDay, isTrue);
+      expect(francisco.saintOfTheDay, contains('Francisco de Assis'));
+      expect(francisco.title, contains('Domingo do Tempo Comum'));
+    });
   });
 }
+
