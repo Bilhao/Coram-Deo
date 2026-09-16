@@ -5,10 +5,10 @@ class LiturgiaDiaria {
   dynamic data;
   RegExp regExp = RegExp(r'\d+');
 
-  Future<void> initLD({required int day, required int month}) async {
+  Future<void> initLD({required int day, required int month, int? year}) async {
     String formatedDay = day.toString().padLeft(2, "0");
     String formatedMonth = month.toString().padLeft(2, "0");
-    String formatedYear = DateTime.now().year.toString();
+    String formatedYear = (year ?? DateTime.now().year).toString();
     try {
       var response = await http.get(
         Uri.parse('https://liturgia.up.railway.app/$formatedDay-$formatedMonth-$formatedYear'),

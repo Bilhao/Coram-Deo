@@ -302,7 +302,7 @@ class LiturgiaCard extends StatelessWidget {
         radius: 100,
         borderRadius: BorderRadius.circular(10.0),
         onTap: () => Navigator.pushNamed(context, '/liturgia'),
-        child: provider.isLoading && provider.liturgia.isEmpty
+        child: provider.isLoading && provider.todayLiturgia.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -316,15 +316,15 @@ class LiturgiaCard extends StatelessWidget {
                     ),
                     Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
                     const SizedBox(height: 5),
-                    if (provider.primeiraLeituraReferencia.isNotEmpty) Text("1ª Leitura: ${provider.primeiraLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (provider.todayPrimeiraLeituraReferencia.isNotEmpty) Text("1ª Leitura: ${provider.todayPrimeiraLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 5),
-                    if (provider.salmoReferencia.isNotEmpty) Text("Salmo: ${provider.salmoReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (provider.todaySalmoReferencia.isNotEmpty) Text("Salmo: ${provider.todaySalmoReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
                     const SizedBox(height: 5),
-                    if (provider.segundaLeituraReferencia.isNotEmpty) Text("2ª Leitura: ${provider.segundaLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    if (provider.segundaLeituraReferencia.isNotEmpty) const SizedBox(height: 5),
-                    if (provider.evangelhoReferencia.isNotEmpty)
+                    if (provider.todaySegundaLeituraReferencia.isNotEmpty) Text("2ª Leitura: ${provider.todaySegundaLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (provider.todaySegundaLeituraReferencia.isNotEmpty) const SizedBox(height: 5),
+                    if (provider.todayEvangelhoReferencia.isNotEmpty)
                       Text(
-                        "Evangelho: ${provider.evangelhoReferencia}",
+                        "Evangelho: ${provider.todayEvangelhoReferencia}",
                         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                         textAlign: TextAlign.left,
                         maxLines: 1,
