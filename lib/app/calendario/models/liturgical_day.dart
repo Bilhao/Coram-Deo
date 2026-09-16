@@ -150,22 +150,22 @@ extension OpusDeiClassExtension on OpusDeiClass {
   String get badgeLabel {
     switch (this) {
       case OpusDeiClass.classeA:
-        return 'Classe A';
+        return 'Opus Dei - A';
       case OpusDeiClass.classeB:
-        return 'Classe B';
+        return 'Opus Dei - B';
       case OpusDeiClass.classeC:
-        return 'Classe C';
+        return 'Opus Dei - C';
     }
   }
 
   String get fullTitle {
     switch (this) {
       case OpusDeiClass.classeA:
-        return 'Solenidade da Prelazia (Classe A)';
+        return 'Opus Dei - A';
       case OpusDeiClass.classeB:
-        return 'Festa da Prelazia (Classe B)';
+        return 'Opus Dei - B';
       case OpusDeiClass.classeC:
-        return 'Memória Histórica (Classe C)';
+        return 'Opus Dei - C';
     }
   }
 
@@ -201,6 +201,7 @@ class LiturgicalDay {
   final LiturgicalRank rank;
   final OpusDeiCelebration? opusDeiCelebration;
   final String? novenaNotice;
+  final String? saintOfTheDay;
 
   const LiturgicalDay({
     required this.date,
@@ -210,9 +211,12 @@ class LiturgicalDay {
     required this.rank,
     this.opusDeiCelebration,
     this.novenaNotice,
+    this.saintOfTheDay,
   });
 
   bool get isSunday => date.weekday == DateTime.sunday;
   bool get hasOpusDeiCelebration => opusDeiCelebration != null;
   bool get hasNovena => novenaNotice != null && novenaNotice!.isNotEmpty;
+  bool get hasSaintOfTheDay => saintOfTheDay != null && saintOfTheDay!.isNotEmpty;
 }
+
