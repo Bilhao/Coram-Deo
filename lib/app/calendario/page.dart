@@ -490,8 +490,8 @@ class _CalendarioPageState extends State<CalendarioPage> {
             child: FilledButton.tonalIcon(
               onPressed: () {
                 final liturgiaProvider = Provider.of<LiturgiaDiariaProvider>(context, listen: false);
-                liturgiaProvider.changeDate(day.date.day, day.date.month);
-                Navigator.pushNamed(context, '/liturgia');
+                liturgiaProvider.changeDate(day.date.day, day.date.month, year: day.date.year);
+                Navigator.pushNamed(context, '/liturgia', arguments: day.date);
               },
               icon: const Icon(Icons.menu_book_rounded),
               label: const Text('Ver Liturgia do Dia', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),

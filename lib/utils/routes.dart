@@ -82,7 +82,8 @@ class Routes {
         return MaterialPageRoute(builder: (context) => const CalendarioPage());
 
       case "/liturgia":
-        return MaterialPageRoute(builder: (context) => const LiturgiaDiariaPage());
+        final dateArg = settings.arguments is DateTime ? settings.arguments as DateTime : null;
+        return MaterialPageRoute(builder: (context) => LiturgiaDiariaPage(initialDate: dateArg));
 
       case "/plano-de-vida":
         return MaterialPageRoute(builder: (context) => const PlanoDeVidaPage());

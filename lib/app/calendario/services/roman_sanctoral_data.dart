@@ -234,3 +234,4 @@ class RomanSanctoralData {
     return _sanctoral[key];
   }
 }
+
