@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:coramdeo/app/liturgia_diaria/data.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
@@ -8,6 +9,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
 
   LiturgiaDiaria data = LiturgiaDiaria();
 
+  int _year = DateTime.now().year;
   int _month = DateTime.now().month;
   int _day = DateTime.now().day;
   String _date = "";
@@ -25,6 +27,14 @@ class LiturgiaDiariaProvider extends BaseProvider {
   String _evangelhoReferencia = "";
   String _evangelhoTexto = "";
 
+  // Dedicated properties for today's liturgy (used by HomePage LiturgiaCard)
+  String _todayLiturgia = "";
+  String _todayPrimeiraLeituraReferencia = "";
+  String _todaySalmoReferencia = "";
+  String _todaySegundaLeituraReferencia = "";
+  String _todayEvangelhoReferencia = "";
+
+  int get year => _year;
   int get month => _month;
   int get day => _day;
   String get date => _date;
@@ -42,12 +52,57 @@ class LiturgiaDiariaProvider extends BaseProvider {
   String get evangelhoReferencia => _evangelhoReferencia;
   String get evangelhoText => _evangelhoTexto;
 
+  // Getters for today's liturgy (guarantees HomePage card always shows today)
+  String get todayLiturgia => _todayLiturgia.isNotEmpty ? _todayLiturgia : _liturgia;
+  String get todayPrimeiraLeituraReferencia => _todayPrimeiraLeituraReferencia.isNotEmpty ? _todayPrimeiraLeituraReferencia : _primeiraLeituraReferencia;
+  String get todaySalmoReferencia => _todaySalmoReferencia.isNotEmpty ? _todaySalmoReferencia : _salmoReferencia;
+  String get todaySegundaLeituraReferencia => _todaySegundaLeituraReferencia.isNotEmpty ? _todaySegundaLeituraReferencia : _segundaLeituraReferencia;
+  String get todayEvangelhoReferencia => _todayEvangelhoReferencia.isNotEmpty ? _todayEvangelhoReferencia : _evangelhoReferencia;
+
+  bool _isToday(int day, int month, int year) {
+    final now = DateTime.now();
+    return day == now.day && month == now.month && year == now.year;
+  }
+
+  void _syncTodayFields() {
+    _todayLiturgia = _liturgia;
+    _todayPrimeiraLeituraReferencia = _primeiraLeituraReferencia;
+    _todaySalmoReferencia = _salmoReferencia;
+    _todaySegundaLeituraReferencia = _segundaLeituraReferencia;
+    _todayEvangelhoReferencia = _evangelhoReferencia;
+  }
+
+  String _cacheKey(int day, int month, int year) => "liturgia_cache_${day}_${month}_$year";
+
   Future<void> _initialize() async {
     setLoading(true);
 
-    final todayKey = "$_day-$_month-${DateTime.now().year}";
+    final loaded = await _loadFromCache(_day, _month, _year);
+    if (!loaded || _liturgia.isEmpty) {
+      clearError();
+      await _fetchFreshData();
+    }
 
+    setLoading(false);
+    notifyListeners();
+  }
+
+  Future<bool> _loadFromCache(int day, int month, int year) async {
+    bool loaded = false;
     await safePrefOperation((prefs) async {
+      final key = _cacheKey(day, month, year);
+      final cachedJson = prefs.getString(key);
+      if (cachedJson != null && cachedJson.isNotEmpty) {
+        try {
+          final Map<String, dynamic> map = jsonDecode(cachedJson);
+          _applyDataMap(map);
+          loaded = _liturgia.isNotEmpty;
+          return true;
+        } catch (_) {}
+      }
+
+      // Fallback: check legacy keys if this matches todayKey
+      final todayKey = "$day-$month-$year";
       final storedDate = prefs.getString('liturgiaDiariaDate');
       if (storedDate == todayKey) {
         _date = prefs.getString('liturgiaDiaria_date') ?? '';
@@ -64,22 +119,41 @@ class LiturgiaDiariaProvider extends BaseProvider {
         _evangelhoReferencia = prefs.getString('liturgiaDiaria_evangelhoReferencia') ?? '';
         _evangelhoTitulo = prefs.getString('liturgiaDiaria_evangelhoTitulo') ?? '';
         _evangelhoTexto = prefs.getString('liturgiaDiaria_evangelhoTexto') ?? '';
+        if (_isToday(day, month, year)) {
+          _syncTodayFields();
+        }
+        loaded = _liturgia.isNotEmpty;
         return true;
       }
       return false;
     }, errorContext: 'Loading cached daily liturgy');
+    return loaded;
+  }
 
-    if (error != null || _liturgia.isEmpty) {
-      clearError();
-      await _fetchFreshData();
+  void _applyDataMap(Map<String, dynamic> map) {
+    _date = map['date'] ?? '';
+    _liturgia = map['liturgia'] ?? '';
+    _primeiraLeituraReferencia = map['primeiraLeituraReferencia'] ?? '';
+    _primeiraLeituraTitulo = map['primeiraLeituraTitulo'] ?? '';
+    _primeiraLeituraTexto = map['primeiraLeituraTexto'] ?? '';
+    _salmoReferencia = map['salmoReferencia'] ?? '';
+    _salmoRefrao = map['salmoRefrao'] ?? '';
+    _salmoTexto = map['salmoTexto'] ?? '';
+    _segundaLeituraReferencia = map['segundaLeituraReferencia'] ?? '';
+    _segundaLeituraTitulo = map['segundaLeituraTitulo'] ?? '';
+    _segundaLeituraTexto = map['segundaLeituraTexto'] ?? '';
+    _evangelhoReferencia = map['evangelhoReferencia'] ?? '';
+    _evangelhoTitulo = map['evangelhoTitulo'] ?? '';
+    _evangelhoTexto = map['evangelhoTexto'] ?? '';
+
+    if (_isToday(_day, _month, _year)) {
+      _syncTodayFields();
     }
-
-    setLoading(false);
   }
 
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
-      await data.initLD(day: _day, month: _month);
+      await data.initLD(day: _day, month: _month, year: _year);
       if (data.data == null) {
         setError('Erro ao carregar liturgia diária');
         return false;
@@ -99,6 +173,10 @@ class LiturgiaDiariaProvider extends BaseProvider {
         _evangelhoTitulo = data.getEvangelhoTitulo();
         _evangelhoTexto = data.getEvangelhoTexto();
 
+        if (_isToday(_day, _month, _year)) {
+          _syncTodayFields();
+        }
+
         await _cacheData();
         return true;
       }
@@ -107,31 +185,71 @@ class LiturgiaDiariaProvider extends BaseProvider {
 
   Future<void> _cacheData() async {
     await safePrefOperation((prefs) async {
-      final todayKey = "$_day-$_month-${DateTime.now().year}";
-      await prefs.setString('liturgiaDiariaDate', todayKey);
-      await prefs.setString('liturgiaDiaria_date', _date);
-      await prefs.setString('liturgiaDiaria_liturgia', _liturgia);
-      await prefs.setString('liturgiaDiaria_primeiraLeituraReferencia', _primeiraLeituraReferencia);
-      await prefs.setString('liturgiaDiaria_primeiraLeituraTitulo', _primeiraLeituraTitulo);
-      await prefs.setString('liturgiaDiaria_primeiraLeituraTexto', _primeiraLeituraTexto);
-      await prefs.setString('liturgiaDiaria_salmoReferencia', _salmoReferencia);
-      await prefs.setString('liturgiaDiaria_salmoRefrao', _salmoRefrao);
-      await prefs.setString('liturgiaDiaria_salmoTexto', _salmoTexto);
-      await prefs.setString('liturgiaDiaria_segundaLeituraReferencia', _segundaLeituraReferencia);
-      await prefs.setString('liturgiaDiaria_segundaLeituraTitulo', _segundaLeituraTitulo);
-      await prefs.setString('liturgiaDiaria_segundaLeituraTexto', _segundaLeituraTexto);
-      await prefs.setString('liturgiaDiaria_evangelhoReferencia', _evangelhoReferencia);
-      await prefs.setString('liturgiaDiaria_evangelhoTitulo', _evangelhoTitulo);
-      await prefs.setString('liturgiaDiaria_evangelhoTexto', _evangelhoTexto);
+      final key = _cacheKey(_day, _month, _year);
+      final map = {
+        'date': _date,
+        'liturgia': _liturgia,
+        'primeiraLeituraReferencia': _primeiraLeituraReferencia,
+        'primeiraLeituraTitulo': _primeiraLeituraTitulo,
+        'primeiraLeituraTexto': _primeiraLeituraTexto,
+        'salmoReferencia': _salmoReferencia,
+        'salmoRefrao': _salmoRefrao,
+        'salmoTexto': _salmoTexto,
+        'segundaLeituraReferencia': _segundaLeituraReferencia,
+        'segundaLeituraTitulo': _segundaLeituraTitulo,
+        'segundaLeituraTexto': _segundaLeituraTexto,
+        'evangelhoReferencia': _evangelhoReferencia,
+        'evangelhoTitulo': _evangelhoTitulo,
+        'evangelhoTexto': _evangelhoTexto,
+      };
+      await prefs.setString(key, jsonEncode(map));
+
+      // If today, also update legacy keys for backward compatibility
+      if (_isToday(_day, _month, _year)) {
+        final todayKey = "$_day-$_month-$_year";
+        await prefs.setString('liturgiaDiariaDate', todayKey);
+        await prefs.setString('liturgiaDiaria_date', _date);
+        await prefs.setString('liturgiaDiaria_liturgia', _liturgia);
+        await prefs.setString('liturgiaDiaria_primeiraLeituraReferencia', _primeiraLeituraReferencia);
+        await prefs.setString('liturgiaDiaria_primeiraLeituraTitulo', _primeiraLeituraTitulo);
+        await prefs.setString('liturgiaDiaria_primeiraLeituraTexto', _primeiraLeituraTexto);
+        await prefs.setString('liturgiaDiaria_salmoReferencia', _salmoReferencia);
+        await prefs.setString('liturgiaDiaria_salmoRefrao', _salmoRefrao);
+        await prefs.setString('liturgiaDiaria_salmoTexto', _salmoTexto);
+        await prefs.setString('liturgiaDiaria_segundaLeituraReferencia', _segundaLeituraReferencia);
+        await prefs.setString('liturgiaDiaria_segundaLeituraTitulo', _segundaLeituraTitulo);
+        await prefs.setString('liturgiaDiaria_segundaLeituraTexto', _segundaLeituraTexto);
+        await prefs.setString('liturgiaDiaria_evangelhoReferencia', _evangelhoReferencia);
+        await prefs.setString('liturgiaDiaria_evangelhoTitulo', _evangelhoTitulo);
+        await prefs.setString('liturgiaDiaria_evangelhoTexto', _evangelhoTexto);
+      }
       return true;
     }, errorContext: 'Caching daily liturgy');
   }
 
-  Future<void> changeDate(int day, int month) async {
+  Future<void> changeDate(int day, int month, {int? year, bool forceRefresh = false}) async {
+    final targetYear = year ?? _year;
+
+    // If already loaded in memory and not forcing refresh, return immediately
+    if (!forceRefresh && _day == day && _month == month && _year == targetYear && _liturgia.isNotEmpty) {
+      return;
+    }
+
     setLoading(true);
+    clearError();
     _day = day;
     _month = month;
-    await _fetchFreshData();
+    _year = targetYear;
+
+    bool loadedFromCache = false;
+    if (!forceRefresh) {
+      loadedFromCache = await _loadFromCache(day, month, targetYear);
+    }
+
+    if (!loadedFromCache) {
+      await _fetchFreshData();
+    }
+
     setLoading(false);
     notifyListeners();
   }
