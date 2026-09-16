@@ -13,6 +13,7 @@ import 'package:local_auth_android/local_auth_android.dart';
 import 'package:provider/provider.dart';
 
 import 'package:coramdeo/app/search/page.dart';
+import 'package:coramdeo/app/calendario/widgets/calendario_home_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -59,6 +60,7 @@ class HomePage extends StatelessWidget {
                   const HomePageButtons(text: "Orações", route: '/oracoes'),
                   const HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
                   const HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
+                  const HomePageButtons(text: "Calendário Litúrgico", route: '/calendario'),
                   const HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
                   HomePageButtons(text: "Exame de consciência", route: '/exame-de-consciencia', requireAuth: appProvider.blockExame),
                   // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
@@ -435,7 +437,13 @@ class HomePageCardCarusel extends StatelessWidget {
         indicatorMargin: 10.0,
         slideIndicator: CircularSlideIndicator(slideIndicatorOptions: SlideIndicatorOptions(currentIndicatorColor: Theme.of(context).colorScheme.primary, indicatorRadius: 3.0, itemSpacing: 12.0)),
       ),
-      items: const [BibliaReadingCard(), RandomPointCard(), LiturgiaCard(), SantoDoDiaCard()],
+      items: const [
+        BibliaReadingCard(),
+        RandomPointCard(),
+        LiturgiaCard(),
+        SantoDoDiaCard(),
+        CalendarioHomeCard(),
+      ],
     );
   }
 }
