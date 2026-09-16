@@ -255,12 +255,15 @@ class ComputusEngine {
     String? saintOfTheDay;
     final sanctoralEntry = RomanSanctoralData.getSaint(dateOnly.month, dateOnly.day);
     if (sanctoralEntry != null) {
-      saintOfTheDay = sanctoralEntry.name;
       if (season == LiturgicalSeason.tempoComum && dateOnly.weekday != DateTime.sunday) {
         if (sanctoralEntry.rank.precedence < rank.precedence) {
           rank = sanctoralEntry.rank;
           color = sanctoralEntry.color;
-          title = sanctoralEntry.name;
+          if (sanctoralEntry.rank == LiturgicalRank.solenidade || sanctoralEntry.rank == LiturgicalRank.festa) {
+            title = sanctoralEntry.name;
+          } else {
+            saintOfTheDay = sanctoralEntry.name;
+          }
         }
       } else if (sanctoralEntry.rank == LiturgicalRank.solenidade || sanctoralEntry.rank == LiturgicalRank.festa) {
         if (sanctoralEntry.rank.precedence <= rank.precedence) {
@@ -268,6 +271,8 @@ class ComputusEngine {
           color = sanctoralEntry.color;
           title = sanctoralEntry.name;
         }
+      } else {
+        saintOfTheDay = sanctoralEntry.name;
       }
     }
 
@@ -278,7 +283,7 @@ class ComputusEngine {
         rank = fixedFeast.rank;
         color = fixedFeast.color;
         title = fixedFeast.title;
-        saintOfTheDay ??= fixedFeast.title;
+        saintOfTheDay = null; // A solenidade/festa já é o próprio título principal do dia
       }
     }
 

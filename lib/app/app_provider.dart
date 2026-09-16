@@ -105,7 +105,10 @@ class AppProvider extends BaseProvider {
     setLoading(false);
 
     if (!_showOnboarding) {
-      CloudSyncService().triggerDailyAutoBackup();
+      final restored = await CloudSyncService().checkAndRestoreOnLogin();
+      if (!restored) {
+        CloudSyncService().triggerDailyAutoBackup();
+      }
     }
   }
 
@@ -123,7 +126,10 @@ class AppProvider extends BaseProvider {
       _showOnboarding = false;
       await prefs.setBool(AppConstants.onboardingKey, false);
       notifyListeners();
-      CloudSyncService().triggerDailyAutoBackup();
+      final restored = await CloudSyncService().checkAndRestoreOnLogin();
+      if (!restored) {
+        CloudSyncService().triggerDailyAutoBackup();
+      }
       return true;
     }, errorContext: 'Completing onboarding');
   }

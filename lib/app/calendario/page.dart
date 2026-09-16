@@ -351,43 +351,45 @@ class _CalendarioPageState extends State<CalendarioPage> {
 
           // Santo do Dia Celebrado na Liturgia
           if (day.hasSaintOfTheDay) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 9.0),
+              padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(8.0),
+                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(12.0),
                 border: Border.all(
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                  width: 0.8,
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                  width: 1.0,
                 ),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.person_pin_rounded, size: 20, color: colorScheme.primary),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Santo / Memória da Liturgia:',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.person_rounded,
+                        size: 16,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Santo do Dia',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          day.saintOfTheDay!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    day.saintOfTheDay!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -397,15 +399,15 @@ class _CalendarioPageState extends State<CalendarioPage> {
 
           // Card Especial Opus Dei
           if (day.hasOpusDeiCelebration) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10.0),
+                color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12.0),
                 border: Border.all(
-                  color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.4),
+                  color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.35),
                   width: 1.0,
                 ),
               ),
@@ -416,7 +418,7 @@ class _CalendarioPageState extends State<CalendarioPage> {
                     children: [
                       Icon(
                         Icons.stars_rounded,
-                        size: 18,
+                        size: 16,
                         color: day.opusDeiCelebration!.classRank.badgeColor(context),
                       ),
                       const SizedBox(width: 8),
@@ -434,17 +436,17 @@ class _CalendarioPageState extends State<CalendarioPage> {
                   Text(
                     day.opusDeiCelebration!.name,
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     day.opusDeiCelebration!.description,
                     style: TextStyle(
                       fontSize: 13,
-                      height: 1.4,
-                      color: colorScheme.onSurface,
+                      height: 1.35,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -457,23 +459,43 @@ class _CalendarioPageState extends State<CalendarioPage> {
             const SizedBox(height: 10),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(8.0),
+                color: colorScheme.primaryContainer.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1.0,
+                ),
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.event_note_rounded, size: 16, color: colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      day.novenaNotice!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.event_note_rounded,
+                        size: 16,
                         color: colorScheme.primary,
                       ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Novena / Devoção',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    day.novenaNotice!,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ],

@@ -1,4 +1,5 @@
 import 'package:coramdeo/services/auth_service.dart';
+import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -93,8 +94,11 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
     try {
       final cred = await _authService.signInWithGoogle();
       if (cred != null && mounted) {
-        Navigator.pop(context);
-        widget.onSuccess?.call();
+        await CloudSyncService().checkAndRestoreOnLogin();
+        if (mounted) {
+          Navigator.pop(context);
+          widget.onSuccess?.call();
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -125,6 +129,7 @@ class _AuthBottomSheetState extends State<AuthBottomSheet> {
 
       if (_mode == AuthMode.login) {
         await _authService.signInWithEmail(email, password);
+        await CloudSyncService().checkAndRestoreOnLogin();
         if (mounted) {
           Navigator.pop(context);
           widget.onSuccess?.call();
