@@ -31,6 +31,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
   String _todayLiturgia = "";
   String _todayPrimeiraLeituraReferencia = "";
   String _todaySalmoReferencia = "";
+  String _todaySalmoRefrao = "";
   String _todaySegundaLeituraReferencia = "";
   String _todayEvangelhoReferencia = "";
 
@@ -56,6 +57,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
   String get todayLiturgia => _todayLiturgia.isNotEmpty ? _todayLiturgia : _liturgia;
   String get todayPrimeiraLeituraReferencia => _todayPrimeiraLeituraReferencia.isNotEmpty ? _todayPrimeiraLeituraReferencia : _primeiraLeituraReferencia;
   String get todaySalmoReferencia => _todaySalmoReferencia.isNotEmpty ? _todaySalmoReferencia : _salmoReferencia;
+  String get todaySalmoRefrao => _todaySalmoRefrao.isNotEmpty ? _todaySalmoRefrao : _salmoRefrao;
   String get todaySegundaLeituraReferencia => _todaySegundaLeituraReferencia.isNotEmpty ? _todaySegundaLeituraReferencia : _segundaLeituraReferencia;
   String get todayEvangelhoReferencia => _todayEvangelhoReferencia.isNotEmpty ? _todayEvangelhoReferencia : _evangelhoReferencia;
 
@@ -68,6 +70,7 @@ class LiturgiaDiariaProvider extends BaseProvider {
     _todayLiturgia = _liturgia;
     _todayPrimeiraLeituraReferencia = _primeiraLeituraReferencia;
     _todaySalmoReferencia = _salmoReferencia;
+    _todaySalmoRefrao = _salmoRefrao;
     _todaySegundaLeituraReferencia = _segundaLeituraReferencia;
     _todayEvangelhoReferencia = _evangelhoReferencia;
   }

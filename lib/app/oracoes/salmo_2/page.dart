@@ -14,13 +14,16 @@ class _Salmo2PageState extends State<Salmo2Page> {
   static const List<Map<String, String>> _verses = [
     {
       "num": "1. ",
-      "pt": "Porque se agitam em tumulto as nações e os povos intentam vãos projectos?",
+      "pt":
+          "Porque se agitam em tumulto as nações e os povos intentam vãos projectos?",
       "lt": "Quare fremuérunt gentes, et pópuli meditáti sunt inánia?",
     },
     {
       "num": "2. ",
-      "pt": "Revoltam-se os reis da terra e os príncipes conspiram juntos contra o Senhor e contra o Seu Ungido:",
-      "lt": "Astitérunt reges terræ, et príncipes convenérunt in unum advérsus Dóminum et advérsus Christum eius:",
+      "pt":
+          "Revoltam-se os reis da terra e os príncipes conspiram juntos contra o Senhor e contra o Seu Ungido:",
+      "lt":
+          "Astitérunt reges terræ, et príncipes convenérunt in unum advérsus Dóminum et advérsus Christum eius:",
     },
     {
       "num": "3. ",
@@ -40,21 +43,27 @@ class _Salmo2PageState extends State<Salmo2Page> {
     {
       "num": "6. ",
       "pt": "«Fui Eu quem ungiu o meu Rei sobre Sião, minha montanha sagrada».",
-      "lt": "«Ego autem constítui regem meum super Sion, montem sanctum meum!».",
+      "lt":
+          "«Ego autem constítui regem meum super Sion, montem sanctum meum!».",
     },
     {
       "num": "7. ",
-      "pt": "Vou proclamar o decreto do Senhor. Ele disse-me: «Tu és meu Filho, Eu hoje te gerei.",
-      "lt": "Prædicábo decrétum eius. Dóminus dixit ad me: «Fílius meus es tu; ego hódie génui te.",
+      "pt":
+          "Vou proclamar o decreto do Senhor. Ele disse-me: «Tu és meu Filho, Eu hoje te gerei.",
+      "lt":
+          "Prædicábo decrétum eius. Dóminus dixit ad me: «Fílius meus es tu; ego hódie génui te.",
     },
     {
       "num": "8. ",
-      "pt": "Pede-me e te darei as nações por herança e os confins da terra para teu domínio.",
-      "lt": "Póstula a me, et dabo tibi gentes hereditátem tuam et possessiónem tuam términos terræ.",
+      "pt":
+          "Pede-me e te darei as nações por herança e os confins da terra para teu domínio.",
+      "lt":
+          "Póstula a me, et dabo tibi gentes hereditátem tuam et possessiónem tuam términos terræ.",
     },
     {
       "num": "9. ",
-      "pt": "Hás-de governá-los com ceptro de ferro, quebrá-los como vasos de barro».",
+      "pt":
+          "Hás-de governá-los com ceptro de ferro, quebrá-los como vasos de barro».",
       "lt": "Reges eos in virga férrea et tamquam vas fíguli confrínges eos».",
     },
     {
@@ -69,8 +78,10 @@ class _Salmo2PageState extends State<Salmo2Page> {
     },
     {
       "num": "12. ",
-      "pt": "Reverenciai-O para que não Se irrite, e fiqueis perdidos; porque num repente se inflama a Sua ira. Felizes todos os que confiam no Senhor.",
-      "lt": "Apprehéndite disciplínam, ne quando irascátur, et pereátis de via, cum exárserit in brevi ira eius. Beati omnes, qui confídunt in eo.",
+      "pt":
+          "Reverenciai-O para que não Se irrite, e fiqueis perdidos; porque num repente se inflama a Sua ira. Felizes todos os que confiam no Senhor.",
+      "lt":
+          "Apprehéndite disciplínam, ne quando irascátur, et pereátis de via, cum exárserit in brevi ira eius. Beati omnes, qui confídunt in eo.",
     },
     {
       "num": "13. ",
@@ -80,7 +91,8 @@ class _Salmo2PageState extends State<Salmo2Page> {
     {
       "num": "14. ",
       "pt": "Como era no princípio, agora e sempre. Ámen.",
-      "lt": "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
+      "lt":
+          "Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.",
     },
   ];
 
@@ -107,19 +119,33 @@ class _Salmo2PageState extends State<Salmo2Page> {
     );
   }
 
-  Widget _buildVersicle(String prefix, String pt, String lt, String lang, double fontSize) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: "$prefix  ",
-            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, color: Colors.red),
-          ),
-          TextSpan(
-            text: lang == "pt" ? pt : lt,
-            style: TextStyle(fontSize: fontSize),
-          ),
-        ],
+  Widget _buildVersicle(
+    String prefix,
+    String pt,
+    String lt,
+    String lang,
+    double fontSize, {
+    EdgeInsetsGeometry padding = const EdgeInsets.symmetric(vertical: 3.0),
+  }) {
+    return Padding(
+      padding: padding,
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: "$prefix  ",
+              style: TextStyle(
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            TextSpan(
+              text: lang == "pt" ? pt : lt,
+              style: TextStyle(fontSize: fontSize),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -132,21 +158,42 @@ class _Salmo2PageState extends State<Salmo2Page> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Salmo 2", maxLines: 2, style: TextStyle(fontSize: 20)),
+        title: const Text(
+          "Salmo 2",
+          maxLines: 2,
+          style: TextStyle(fontSize: 20),
+        ),
         actions: [
           IconButton(
             onPressed: fs.toggleBilingualMode,
-            icon: Icon(isBilingual ? Icons.vertical_split : Icons.vertical_split_outlined),
-            tooltip: isBilingual ? "Modo coluna única" : "Modo bilíngue lado a lado",
+            icon: Icon(
+              isBilingual
+                  ? Icons.vertical_split
+                  : Icons.vertical_split_outlined,
+            ),
+            tooltip: isBilingual
+                ? "Modo coluna única"
+                : "Modo bilíngue lado a lado",
           ),
-          IconButton(onPressed: fs.decreaseFontSize, icon: const Icon(Icons.remove)),
-          IconButton(onPressed: fs.increaseFontSize, icon: const Icon(Icons.add)),
+          IconButton(
+            onPressed: fs.decreaseFontSize,
+            icon: const Icon(Icons.remove),
+          ),
+          IconButton(
+            onPressed: fs.increaseFontSize,
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: SafeArea(
         child: SelectionArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 10, bottom: 20, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+              top: 10,
+              bottom: 20,
+              left: 15,
+              right: 15,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -164,9 +211,16 @@ class _Salmo2PageState extends State<Salmo2Page> {
                           children: [
                             TextSpan(
                               text: v["num"]!,
-                              style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red),
+                              style: TextStyle(
+                                fontSize: fs.fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
                             ),
-                            TextSpan(text: v["lt"]!, style: TextStyle(fontSize: fs.fontSize)),
+                            TextSpan(
+                              text: v["lt"]!,
+                              style: TextStyle(fontSize: fs.fontSize),
+                            ),
                           ],
                         ),
                       ),
@@ -175,9 +229,16 @@ class _Salmo2PageState extends State<Salmo2Page> {
                           children: [
                             TextSpan(
                               text: v["num"]!,
-                              style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red),
+                              style: TextStyle(
+                                fontSize: fs.fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
                             ),
-                            TextSpan(text: v["pt"]!, style: TextStyle(fontSize: fs.fontSize)),
+                            TextSpan(
+                              text: v["pt"]!,
+                              style: TextStyle(fontSize: fs.fontSize),
+                            ),
                           ],
                         ),
                       ),
@@ -187,28 +248,103 @@ class _Salmo2PageState extends State<Salmo2Page> {
                     portuguese: _buildAntiphon("pt", fs.fontSize),
                   ),
                   BilingualPrayerRow(
-                    latin: _buildVersicle("℣.", "", "Dómine, exaudi oratiónem meam.", "lt", fs.fontSize),
-                    portuguese: _buildVersicle("℣.", "Ouvi, Senhor, a minha oração.", "", "pt", fs.fontSize),
+                    latin: _buildVersicle(
+                      "℣.",
+                      "",
+                      "Dómine, exaudi oratiónem meam.",
+                      "lt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                    portuguese: _buildVersicle(
+                      "℣.",
+                      "Ouvi, Senhor, a minha oração.",
+                      "",
+                      "pt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
                   ),
                   BilingualPrayerRow(
-                    latin: _buildVersicle("℟.", "", "Et clamor meus ad te véniat.", "lt", fs.fontSize),
-                    portuguese: _buildVersicle("℟.", "E o meu clamor chegue até Vós.", "", "pt", fs.fontSize),
+                    latin: _buildVersicle(
+                      "℟.",
+                      "",
+                      "Et clamor meus ad te véniat.",
+                      "lt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                    portuguese: _buildVersicle(
+                      "℟.",
+                      "E o meu clamor chegue até Vós.",
+                      "",
+                      "pt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      "Os sacerdotes acrescentam:",
+                      style: TextStyle(
+                        fontSize: fs.fontSize - 1,
+                        color: Colors.red,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
                   BilingualPrayerRow(
-                    latin: Text("Sacerdotes addunt:", style: TextStyle(fontSize: fs.fontSize - 1, color: Colors.red, fontStyle: FontStyle.italic)),
-                    portuguese: Text("Os sacerdotes acrescentam:", style: TextStyle(fontSize: fs.fontSize - 1, color: Colors.red, fontStyle: FontStyle.italic)),
+                    latin: _buildVersicle(
+                      "℣.",
+                      "",
+                      "Dóminus vobíscum.",
+                      "lt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                    portuguese: _buildVersicle(
+                      "℣.",
+                      "O Senhor esteja convosco.",
+                      "",
+                      "pt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
                   ),
                   BilingualPrayerRow(
-                    latin: _buildVersicle("℣.", "", "Dóminus vobíscum.", "lt", fs.fontSize),
-                    portuguese: _buildVersicle("℣.", "O Senhor esteja convosco.", "", "pt", fs.fontSize),
+                    latin: _buildVersicle(
+                      "℟.",
+                      "",
+                      "Et cum spíritu tuo.",
+                      "lt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                    portuguese: _buildVersicle(
+                      "℟.",
+                      "Ele está no meio de nós.",
+                      "",
+                      "pt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
                   ),
                   BilingualPrayerRow(
-                    latin: _buildVersicle("℟.", "", "Et cum spíritu tuo.", "lt", fs.fontSize),
-                    portuguese: _buildVersicle("℟.", "Ele está no meio de nós.", "", "pt", fs.fontSize),
-                  ),
-                  BilingualPrayerRow(
-                    latin: Text("Orémus", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),
-                    portuguese: Text("Oremos", style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold)),
+                    latin: Text(
+                      "Orémus",
+                      style: TextStyle(
+                        fontSize: fs.fontSize + 1,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    portuguese: Text(
+                      "Oremos",
+                      style: TextStyle(
+                        fontSize: fs.fontSize + 1,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   BilingualPrayerRow(
                     latin: Text(
@@ -221,20 +357,41 @@ class _Salmo2PageState extends State<Salmo2Page> {
                     ),
                   ),
                   BilingualPrayerRow(
-                    latin: _buildVersicle("℟.", "", "Amen.", "lt", fs.fontSize),
-                    portuguese: _buildVersicle("℟.", "Amém.", "", "pt", fs.fontSize),
+                    latin: _buildVersicle(
+                      "℟.",
+                      "",
+                      "Amen.",
+                      "lt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
+                    portuguese: _buildVersicle(
+                      "℟.",
+                      "Amém.",
+                      "",
+                      "pt",
+                      fs.fontSize,
+                      padding: EdgeInsets.zero,
+                    ),
                   ),
                 ] else ...[
-                  _buildAntiphon(language, fs.fontSize),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6.0),
+                    child: _buildAntiphon(language, fs.fontSize),
+                  ),
                   for (final v in _verses)
                     Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
                       child: Text.rich(
                         TextSpan(
                           children: [
                             TextSpan(
                               text: v["num"]!,
-                              style: TextStyle(fontSize: fs.fontSize, fontWeight: FontWeight.bold, color: Colors.red),
+                              style: TextStyle(
+                                fontSize: fs.fontSize,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                              ),
                             ),
                             TextSpan(
                               text: language == "pt" ? v["pt"]! : v["lt"]!,
@@ -245,35 +402,69 @@ class _Salmo2PageState extends State<Salmo2Page> {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 12.0),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: _buildAntiphon(language, fs.fontSize),
                   ),
-                  const SizedBox(height: 10),
-                  _buildVersicle("℣.", "Ouvi, Senhor, a minha oração.", "Dómine, exaudi oratiónem meam.", language, fs.fontSize),
-                  _buildVersicle("℟.", "E o meu clamor chegue até Vós.", "Et clamor meus ad te véniat.", language, fs.fontSize),
+                  _buildVersicle(
+                    "℣.",
+                    "Ouvi, Senhor, a minha oração.",
+                    "Dómine, exaudi oratiónem meam.",
+                    language,
+                    fs.fontSize,
+                  ),
+                  _buildVersicle(
+                    "℟.",
+                    "E o meu clamor chegue até Vós.",
+                    "Et clamor meus ad te véniat.",
+                    language,
+                    fs.fontSize,
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 4.0),
                     child: Text(
-                      language == "pt" ? "Os sacerdotes acrescentam:" : "Sacerdotes addunt:",
-                      style: TextStyle(fontSize: fs.fontSize - 1, color: Colors.red, fontStyle: FontStyle.italic),
+                      language == "pt"
+                          ? "Os sacerdotes acrescentam:"
+                          : "Sacerdotes addunt:",
+                      style: TextStyle(
+                        fontSize: fs.fontSize - 1,
+                        color: Colors.red,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
-                  _buildVersicle("℣.", "O Senhor esteja convosco.", "Dóminus vobíscum.", language, fs.fontSize),
-                  _buildVersicle("℟.", "Ele está no meio de nós.", "Et cum spíritu tuo.", language, fs.fontSize),
+                  _buildVersicle(
+                    "℣.",
+                    "O Senhor esteja convosco.",
+                    "Dóminus vobíscum.",
+                    language,
+                    fs.fontSize,
+                  ),
+                  _buildVersicle(
+                    "℟.",
+                    "Ele está no meio de nós.",
+                    "Et cum spíritu tuo.",
+                    language,
+                    fs.fontSize,
+                  ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 12.0, bottom: 6.0),
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 4.0),
                     child: Text(
                       language == "pt" ? "Oremos" : "Orémus",
-                      style: TextStyle(fontSize: fs.fontSize + 1, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: fs.fontSize + 1,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  Text(
-                    language == "pt"
-                        ? "Ó Deus, omnipotente e eterno, que quisestes restaurar toda a criação na pessoa do Vosso amado Filho, Senhor do universo, concedei-nos, pela Vossa misericórdia, que todas as nações, divididas pela ferida do pecado, se submetam ao suave império de Cristo. Que conVosco vive e reina na unidade do Espírito Santo."
-                        : "Omnípotens sempitérne Deus, qui in dilécto Fílio tuo, universórum Rege, ómnia instauráre voluísti: ut cunctæ famíliæ géntium, peccáti vúlnere disgregátæ, eius suavíssimo subdántur império: Qui tecum vivit et regnat in unitáte Spíritus Sancti Deus: per ómnia sǽcula sæculórum.",
-                    style: TextStyle(fontSize: fs.fontSize),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      language == "pt"
+                          ? "Ó Deus, omnipotente e eterno, que quisestes restaurar toda a criação na pessoa do Vosso amado Filho, Senhor do universo, concedei-nos, pela Vossa misericórdia, que todas as nações, divididas pela ferida do pecado, se submetam ao suave império de Cristo. Que conVosco vive e reina na unidade do Espírito Santo."
+                          : "Omnípotens sempitérne Deus, qui in dilécto Fílio tuo, universórum Rege, ómnia instauráre voluísti: ut cunctæ famíliæ géntium, peccáti vúlnere disgregátæ, eius suavíssimo subdántur império: Qui tecum vivit et regnat in unitáte Spíritus Sancti Deus: per ómnia sǽcula sæculórum.",
+                      style: TextStyle(fontSize: fs.fontSize),
+                    ),
                   ),
-                  const SizedBox(height: 6),
                   _buildVersicle("℟.", "Amém.", "Amen.", language, fs.fontSize),
                 ],
                 const Divider(height: 15, color: Colors.transparent),

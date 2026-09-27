@@ -17,33 +17,61 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
     AppProvider appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Estampa de São Josemaría", maxLines: 2, style: TextStyle(fontSize: 20)),
+        title: const Text(
+          "Estampa de São Josemaría",
+          maxLines: 2,
+          style: TextStyle(fontSize: 20),
+        ),
         actions: [
-          IconButton(onPressed: appProvider.decreaseFontSize, icon: const Icon(Icons.remove)),
-          IconButton(onPressed: appProvider.increaseFontSize, icon: const Icon(Icons.add)),
+          IconButton(
+            onPressed: appProvider.decreaseFontSize,
+            icon: const Icon(Icons.remove),
+          ),
+          IconButton(
+            onPressed: appProvider.increaseFontSize,
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: SafeArea(
         child: SelectionArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 10, bottom: 20, left: 15, right: 15),
+            padding: const EdgeInsets.only(
+              top: 10,
+              bottom: 20,
+              left: 15,
+              right: 15,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image(
-                    frameBuilder: (BuildContext context, Widget child, int? frame, bool? wasSynchronouslyLoaded) {
-                      return child;
-                    },
-                    loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
-                    image: AssetImage("assets/images/oracoes/estampajosemaria.png"),
+                    frameBuilder:
+                        (
+                          BuildContext context,
+                          Widget child,
+                          int? frame,
+                          bool? wasSynchronouslyLoaded,
+                        ) {
+                          return child;
+                        },
+                    loadingBuilder:
+                        (
+                          BuildContext context,
+                          Widget child,
+                          ImageChunkEvent? loadingProgress,
+                        ) {
+                          if (loadingProgress == null) {
+                            return child;
+                          } else {
+                            return Center(child: CircularProgressIndicator());
+                          }
+                        },
+                    image: AssetImage(
+                      "assets/images/oracoes/estampajosemaria.png",
+                    ),
                     width: double.maxFinite,
                     fit: BoxFit.cover,
                   ),
@@ -53,19 +81,28 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   alignment: Alignment.center,
                   child: Text(
                     "São Josemaria Escrivá",
-                    style: TextStyle(fontSize: appProvider.fontSize, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: appProvider.fontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Align(
                   alignment: Alignment.center,
-                  child: Text("Fundador do Opus Dei", style: TextStyle(fontSize: appProvider.fontSize - 3)),
+                  child: Text(
+                    "Fundador do Opus Dei",
+                    style: TextStyle(fontSize: appProvider.fontSize - 3),
+                  ),
                 ),
                 const Divider(height: 15, color: Colors.transparent),
                 Align(
                   alignment: Alignment.center,
                   child: Text(
                     "Oração",
-                    style: TextStyle(fontSize: appProvider.fontSize + 3, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: appProvider.fontSize + 3,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Divider(height: 15, color: Colors.transparent),
@@ -80,22 +117,34 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                 ),
                 Align(
                   alignment: Alignment.center,
-                  child: Text(
-                    "\nPai Nosso, Ave-Maria e Glória\n",
-                    style: TextStyle(fontSize: appProvider.fontSize - 1, fontStyle: FontStyle.italic),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Text(
+                      "Pai Nosso, Ave-Maria e Glória",
+                      style: TextStyle(
+                        fontSize: appProvider.fontSize - 1,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
                   ),
                 ),
                 Text(
                   "\"Aí onde estão as nossas aspirações, o nosso trabalho, os nossos amores – aí está o lugar do nosso encontro cotidiano com Cristo. "
                   "É no meio das coisas mais materiais da terra que nos devemos santificar, servindo a Deus e a todos os homens. "
                   "Na linha do horizonte, meus filhos, parecem unir-se o céu e a terra. Mas não: onde de verdade se juntam é no coração, quando se vive santamente a vida diária...\"",
-                  style: TextStyle(fontSize: appProvider.fontSize - 1, fontStyle: FontStyle.italic),
+                  style: TextStyle(
+                    fontSize: appProvider.fontSize - 1,
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
                     "São Josemaria Escrivá, homilia \"Amar o mundo apaixonadamente\", 8-10-1967.",
-                    style: TextStyle(fontSize: appProvider.fontSize - 1, fontStyle: FontStyle.italic),
+                    style: TextStyle(
+                      fontSize: appProvider.fontSize - 1,
+                      fontStyle: FontStyle.italic,
+                    ),
                     textAlign: TextAlign.end,
                   ),
                 ),
@@ -114,15 +163,24 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                 const Divider(height: 15, color: Colors.transparent),
                 Align(
                   alignment: Alignment.center,
-                  child: Text("Mais informações sobre São Josemaria Escrivá em:", style: TextStyle(fontSize: appProvider.fontSize - 3)),
+                  child: Text(
+                    "Mais informações sobre São Josemaria Escrivá em:",
+                    style: TextStyle(fontSize: appProvider.fontSize - 3),
+                  ),
                 ),
                 Align(
                   alignment: Alignment.center,
                   child: RichText(
                     text: TextSpan(
                       text: "www.josemariaescriva.org.br",
-                      style: TextStyle(fontSize: appProvider.fontSize - 3, color: Colors.blue),
-                      recognizer: TapGestureRecognizer()..onTap = () => launchUrlString("https://opusdei.org/pt-br/saint-josemaria/"),
+                      style: TextStyle(
+                        fontSize: appProvider.fontSize - 3,
+                        color: Colors.blue,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => launchUrlString(
+                          "https://opusdei.org/pt-br/saint-josemaria/",
+                        ),
                     ),
                   ),
                 ),
@@ -131,8 +189,13 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   child: RichText(
                     text: TextSpan(
                       text: "www.escrivaworks.org",
-                      style: TextStyle(fontSize: appProvider.fontSize - 3, color: Colors.blue),
-                      recognizer: TapGestureRecognizer()..onTap = () => launchUrlString("https://escriva.org/pt-br/"),
+                      style: TextStyle(
+                        fontSize: appProvider.fontSize - 3,
+                        color: Colors.blue,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () =>
+                            launchUrlString("https://escriva.org/pt-br/"),
                     ),
                   ),
                 ),
@@ -141,8 +204,13 @@ class _EstampaJosemariaPageState extends State<EstampaJosemariaPage> {
                   child: RichText(
                     text: TextSpan(
                       text: "www.opusdei.org.br",
-                      style: TextStyle(fontSize: appProvider.fontSize - 3, color: Colors.blue),
-                      recognizer: TapGestureRecognizer()..onTap = () => launchUrlString("https://opusdei.org/pt-br/"),
+                      style: TextStyle(
+                        fontSize: appProvider.fontSize - 3,
+                        color: Colors.blue,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () =>
+                            launchUrlString("https://opusdei.org/pt-br/"),
                     ),
                   ),
                 ),

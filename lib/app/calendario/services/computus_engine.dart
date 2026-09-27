@@ -75,7 +75,9 @@ class ComputusEngine {
     // Determinação do Tempo Litúrgico e Cor Canônica
     LiturgicalSeason season;
     LiturgicalColor color;
-    LiturgicalRank rank = dateOnly.weekday == DateTime.sunday ? LiturgicalRank.solenidade : LiturgicalRank.feria;
+    LiturgicalRank rank = dateOnly.weekday == DateTime.sunday
+        ? LiturgicalRank.solenidade
+        : LiturgicalRank.feria;
     String title = '';
 
     // 1. Quaresma e Semana Santa
@@ -84,7 +86,8 @@ class ComputusEngine {
       color = LiturgicalColor.purple;
       rank = LiturgicalRank.solenidade;
       title = 'Quarta-feira de Cinzas';
-    } else if (dateOnly.isAfter(ashWednesday) && dateOnly.isBefore(holyThursday)) {
+    } else if (dateOnly.isAfter(ashWednesday) &&
+        dateOnly.isBefore(holyThursday)) {
       season = LiturgicalSeason.quaresma;
       if (dateOnly.isAtSameMomentAs(palmSunday)) {
         color = LiturgicalColor.red;
@@ -98,13 +101,23 @@ class ComputusEngine {
       } else if (dateOnly.weekday == DateTime.sunday) {
         color = LiturgicalColor.purple;
         rank = LiturgicalRank.solenidade;
-        final sundayNum = 5 - (_daysBetween(dateOnly, palmSunday) ~/ 7);
+        final sundayNum = 6 - (_daysBetween(dateOnly, palmSunday) ~/ 7);
         title = '$sundayNumº Domingo da Quaresma';
+      } else if (dateOnly.isBefore(_offset(ashWednesday, 4))) {
+        color = LiturgicalColor.purple;
+        rank = LiturgicalRank.feria;
+        title = '${_weekdayName(dateOnly.weekday)} depois das Cinzas';
+      } else if (dateOnly.isAfter(palmSunday)) {
+        color = LiturgicalColor.purple;
+        rank = LiturgicalRank.feria;
+        title = '${_weekdayName(dateOnly.weekday)} Santa';
       } else {
         color = LiturgicalColor.purple;
         rank = LiturgicalRank.feria;
-        final weekNum = ((_daysBetween(ashWednesday, dateOnly) + 3) ~/ 7) + 1;
-        title = '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana da Quaresma';
+        final firstSundayOfLent = _offset(ashWednesday, 4);
+        final weekNum = (_daysBetween(firstSundayOfLent, dateOnly) ~/ 7) + 1;
+        title =
+            '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana da Quaresma';
       }
     }
     // 2. Tríduo Pascal
@@ -130,7 +143,8 @@ class ComputusEngine {
       title = 'Domingo da Páscoa na Ressurreição do Senhor';
     }
     // 3. Tempo Pascal (até Pentecostes)
-    else if (dateOnly.isAfter(easter) && dateOnly.isBefore(_offset(pentecost, 1))) {
+    else if (dateOnly.isAfter(easter) &&
+        dateOnly.isBefore(_offset(pentecost, 1))) {
       season = LiturgicalSeason.tempoPascal;
       if (dateOnly.isAtSameMomentAs(pentecost)) {
         color = LiturgicalColor.red;
@@ -153,12 +167,14 @@ class ComputusEngine {
         color = LiturgicalColor.white;
         rank = LiturgicalRank.feria;
         final weekNum = (_daysBetween(easter, dateOnly) ~/ 7) + 1;
-        title = '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana do Tempo Pascal';
+        title =
+            '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana do Tempo Pascal';
       }
     }
     // 4. Advento
     else if (dateOnly.isAtSameMomentAs(firstSundayOfAdvent) ||
-        (dateOnly.isAfter(firstSundayOfAdvent) && dateOnly.isBefore(DateTime(year, 12, 25)))) {
+        (dateOnly.isAfter(firstSundayOfAdvent) &&
+            dateOnly.isBefore(DateTime(year, 12, 25)))) {
       season = LiturgicalSeason.advento;
       final gaudeteSunday = _offset(firstSundayOfAdvent, 14);
 
@@ -169,22 +185,30 @@ class ComputusEngine {
       } else if (dateOnly.weekday == DateTime.sunday) {
         color = LiturgicalColor.purple;
         rank = LiturgicalRank.solenidade;
-        final sundayNum = (_daysBetween(firstSundayOfAdvent, dateOnly) ~/ 7) + 1;
+        final sundayNum =
+            (_daysBetween(firstSundayOfAdvent, dateOnly) ~/ 7) + 1;
         title = '$sundayNumº Domingo do Advento';
       } else {
         color = LiturgicalColor.purple;
         rank = LiturgicalRank.feria;
         final weekNum = (_daysBetween(firstSundayOfAdvent, dateOnly) ~/ 7) + 1;
-        title = '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana do Advento';
+        title =
+            '${_weekdayName(dateOnly.weekday)} da $weekNumª Semana do Advento';
       }
     }
     // 5. Natal e Epifania (25/12 até o Batismo do Senhor no início de Janeiro)
     else if (dateOnly.month == 12 && dateOnly.day >= 25) {
       season = LiturgicalSeason.natal;
       color = LiturgicalColor.white;
+      final holyFamily = calculateHolyFamily(year);
+
       if (dateOnly.day == 25) {
         rank = LiturgicalRank.solenidade;
         title = 'Natal de Nosso Senhor Jesus Cristo';
+      } else if (dateOnly.isAtSameMomentAs(holyFamily)) {
+        rank = LiturgicalRank.solenidade;
+        color = LiturgicalColor.white;
+        title = 'Sagrada Família de Jesus, Maria e José';
       } else if (dateOnly.day == 26) {
         rank = LiturgicalRank.festa;
         color = LiturgicalColor.red;
@@ -201,17 +225,29 @@ class ComputusEngine {
         rank = LiturgicalRank.solenidade;
         title = 'Dia ${_getOrdinal(dateOnly.day - 24)} na Oitava do Natal';
       }
-    } else if (dateOnly.month == 1 && dateOnly.day <= 13 && _isBeforeBaptismOfLord(dateOnly)) {
+    } else if (dateOnly.month == 1 &&
+        dateOnly.day <= 13 &&
+        _isBeforeBaptismOfLord(dateOnly)) {
       season = LiturgicalSeason.natal;
       color = LiturgicalColor.white;
+      final baptism = calculateBaptismOfLord(year);
+
       if (dateOnly.day == 1) {
         rank = LiturgicalRank.solenidade;
         title = 'Santa Maria, Mãe de Deus';
       } else if (dateOnly.day == 6) {
         rank = LiturgicalRank.solenidade;
         title = 'Epifania do Senhor';
-      } else {
+      } else if (dateOnly.isAtSameMomentAs(baptism)) {
+        rank = LiturgicalRank.solenidade;
+        title = 'Batismo do Senhor';
+      } else if (dateOnly.weekday == DateTime.sunday) {
+        rank = LiturgicalRank.solenidade;
+        title = '2º Domingo do Natal';
+      } else if (dateOnly.day < 6) {
         title = 'Tempo do Natal (${dateOnly.day} de Janeiro)';
+      } else {
+        title = '${_weekdayName(dateOnly.weekday)} depois da Epifania';
       }
     }
     // 6. Tempo Comum
@@ -242,37 +278,49 @@ class ComputusEngine {
         title = 'Nosso Senhor Jesus Cristo, Rei do Universo';
       } else if (dateOnly.weekday == DateTime.sunday) {
         rank = LiturgicalRank.solenidade;
-        final week = _calculateOrdinaryTimeWeek(dateOnly, easter, firstSundayOfAdvent);
+        final week = _calculateOrdinaryTimeWeek(
+          dateOnly,
+          easter,
+          firstSundayOfAdvent,
+        );
         title = '$weekº Domingo do Tempo Comum';
       } else {
         rank = LiturgicalRank.feria;
-        final week = _calculateOrdinaryTimeWeek(dateOnly, easter, firstSundayOfAdvent);
-        title = '${_weekdayName(dateOnly.weekday)} da $weekª Semana do Tempo Comum';
+        final week = _calculateOrdinaryTimeWeek(
+          dateOnly,
+          easter,
+          firstSundayOfAdvent,
+        );
+        title =
+            '${_weekdayName(dateOnly.weekday)} da $weekª Semana do Tempo Comum';
       }
     }
 
     // Santo ou Memória do Calendário Romano Geral
     String? saintOfTheDay;
-    final sanctoralEntry = RomanSanctoralData.getSaint(dateOnly.month, dateOnly.day);
+    final sanctoralEntry = RomanSanctoralData.getSaint(
+      dateOnly.month,
+      dateOnly.day,
+    );
     if (sanctoralEntry != null) {
-      if (season == LiturgicalSeason.tempoComum && dateOnly.weekday != DateTime.sunday) {
+      saintOfTheDay = sanctoralEntry.name;
+      if (season == LiturgicalSeason.tempoComum &&
+          dateOnly.weekday != DateTime.sunday) {
         if (sanctoralEntry.rank.precedence < rank.precedence) {
           rank = sanctoralEntry.rank;
           color = sanctoralEntry.color;
-          if (sanctoralEntry.rank == LiturgicalRank.solenidade || sanctoralEntry.rank == LiturgicalRank.festa) {
+          if (sanctoralEntry.rank == LiturgicalRank.solenidade ||
+              sanctoralEntry.rank == LiturgicalRank.festa) {
             title = sanctoralEntry.name;
-          } else {
-            saintOfTheDay = sanctoralEntry.name;
           }
         }
-      } else if (sanctoralEntry.rank == LiturgicalRank.solenidade || sanctoralEntry.rank == LiturgicalRank.festa) {
+      } else if (sanctoralEntry.rank == LiturgicalRank.solenidade ||
+          sanctoralEntry.rank == LiturgicalRank.festa) {
         if (sanctoralEntry.rank.precedence <= rank.precedence) {
           rank = sanctoralEntry.rank;
           color = sanctoralEntry.color;
           title = sanctoralEntry.name;
         }
-      } else {
-        saintOfTheDay = sanctoralEntry.name;
       }
     }
 
@@ -283,23 +331,18 @@ class ComputusEngine {
         rank = fixedFeast.rank;
         color = fixedFeast.color;
         title = fixedFeast.title;
-        saintOfTheDay = null; // A solenidade/festa já é o próprio título principal do dia
+        saintOfTheDay =
+            null; // A solenidade/festa já é o próprio título principal do dia
+        // Preserva o santo ou comemoração para permitir acesso à biografia e oração
+        saintOfTheDay ??= fixedFeast.title;
       }
     }
 
-    // Celebrações Próprias do Opus Dei
-    final opusDei = OpusDeiCalendarData.getCelebration(dateOnly.month, dateOnly.day);
-    if (opusDei != null) {
-      if (opusDei.classRank == OpusDeiClass.classeA) {
-        rank = LiturgicalRank.solenidade;
-        color = LiturgicalColor.white;
-      } else if (opusDei.classRank == OpusDeiClass.classeB) {
-        if (rank != LiturgicalRank.solenidade) {
-          rank = LiturgicalRank.festa;
-          color = (dateOnly.month == 9 && dateOnly.day == 14) ? LiturgicalColor.red : LiturgicalColor.white;
-        }
-      }
-    }
+    // Celebrações Próprias do Opus Dei (como conteúdo adicional, sem alterar o calendário romano geral)
+    final opusDei = OpusDeiCalendarData.getCelebration(
+      dateOnly.month,
+      dateOnly.day,
+    );
 
     final novena = OpusDeiCalendarData.getNovenaNotice(dateOnly);
 
@@ -315,79 +358,165 @@ class ComputusEngine {
     );
   }
 
-  static bool _isBeforeBaptismOfLord(DateTime date) {
-    // O Batismo do Senhor ocorre no domingo após 6 de janeiro
-    final epiphany = DateTime(date.year, 1, 6);
+  /// Retorna o domingo do Batismo do Senhor (domingo após 6 de Janeiro).
+  static DateTime calculateBaptismOfLord(int year) {
+    final epiphany = DateTime(year, 1, 6);
     var cursor = _offset(epiphany, 1);
     while (cursor.weekday != DateTime.sunday) {
       cursor = _offset(cursor, 1);
     }
-    return !date.isAfter(cursor);
+    return cursor;
   }
 
-  static int _calculateOrdinaryTimeWeek(DateTime date, DateTime easter, DateTime firstSundayOfAdvent) {
-    // Estimativa canônica da semana do Tempo Comum
+  /// Retorna o dia da Sagrada Família (domingo entre 26 e 31 de dezembro, ou 30 de dezembro se o Natal for no domingo).
+  static DateTime calculateHolyFamily(int year) {
+    for (int d = 26; d <= 31; d++) {
+      final candidate = DateTime(year, 12, d);
+      if (candidate.weekday == DateTime.sunday) {
+        return candidate;
+      }
+    }
+    return DateTime(year, 12, 30);
+  }
+
+  static bool _isBeforeBaptismOfLord(DateTime date) {
+    final baptism = calculateBaptismOfLord(date.year);
+    return !date.isAfter(baptism);
+  }
+
+  static int _calculateOrdinaryTimeWeek(
+    DateTime date,
+    DateTime easter,
+    DateTime firstSundayOfAdvent,
+  ) {
     final ashWednesday = _offset(easter, -46);
     if (date.isBefore(ashWednesday)) {
-      // 1ª Parte do Tempo Comum
-      final baptism = DateTime(date.year, 1, 6);
-      var firstMonday = _offset(baptism, 1);
-      while (firstMonday.weekday != DateTime.monday) {
-        firstMonday = _offset(firstMonday, 1);
+      // 1ª Parte do Tempo Comum:
+      // O Batismo do Senhor ocorre no domingo após 6 de janeiro.
+      // A 1ª Semana começa na segunda-feira após o Batismo do Senhor.
+      // O domingo seguinte é o 2º Domingo do Tempo Comum.
+      final baptism = calculateBaptismOfLord(date.year);
+      final sundayOfThisWeek = _offset(date, -(date.weekday % 7));
+      if (sundayOfThisWeek.isAtSameMomentAs(baptism)) {
+        return 1;
       }
-      final diff = _daysBetween(firstMonday, date);
-      return (diff ~/ 7) + 1;
+      final weeksAfterBaptism = _daysBetween(baptism, sundayOfThisWeek) ~/ 7;
+      return 1 + weeksAfterBaptism;
     } else {
-      // 2ª Parte do Tempo Comum (contada retroativamente a partir de Cristo Rei que é a 34ª semana)
+      // 2ª Parte do Tempo Comum:
+      // Contada retroativamente a partir de Cristo Rei (34ª semana).
+      // Cada semana (do domingo ao sábado) compartilha o mesmo número.
       final christTheKing = _offset(firstSundayOfAdvent, -7);
-      final weeksBeforeEnd = (_daysBetween(date, christTheKing) ~/ 7);
-      final week = 34 - weeksBeforeEnd;
+      final sundayOfThisWeek = _offset(date, -(date.weekday % 7));
+      final weeksBeforeKing =
+          _daysBetween(sundayOfThisWeek, christTheKing) ~/ 7;
+      final week = 34 - weeksBeforeKing;
       return week.clamp(1, 34);
     }
   }
 
-  static ({String title, LiturgicalColor color, LiturgicalRank rank})? _checkFixedRomanFeasts(DateTime date) {
+  static ({String title, LiturgicalColor color, LiturgicalRank rank})?
+  _checkFixedRomanFeasts(DateTime date) {
     final m = date.month;
     final d = date.day;
 
     if (m == 1 && d == 1) {
-      return (title: 'Santa Maria, Mãe de Deus', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Santa Maria, Mãe de Deus',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 3 && d == 19) {
-      return (title: 'São José, Esposo da Virgem Maria', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'São José, Esposo da Virgem Maria',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 3 && d == 25) {
-      return (title: 'Anunciação do Senhor', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Anunciação do Senhor',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 6 && d == 24) {
-      return (title: 'Natividade de São João Batista', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Natividade de São João Batista',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 6 && d == 29) {
-      return (title: 'Santos Pedro e Paulo, Apóstolos', color: LiturgicalColor.red, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Santos Pedro e Paulo, Apóstolos',
+        color: LiturgicalColor.red,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 8 && d == 6) {
-      return (title: 'Transfiguração do Senhor', color: LiturgicalColor.white, rank: LiturgicalRank.festa);
+      return (
+        title: 'Transfiguração do Senhor',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.festa,
+      );
     }
     if (m == 8 && d == 15) {
-      return (title: 'Assunção da Bem-Aventurada Virgem Maria', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Assunção da Bem-Aventurada Virgem Maria',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 9 && d == 8) {
-      return (title: 'Natividade da Bem-Aventurada Virgem Maria', color: LiturgicalColor.white, rank: LiturgicalRank.festa);
+      return (
+        title: 'Natividade da Bem-Aventurada Virgem Maria',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.festa,
+      );
     }
     if (m == 9 && d == 14) {
-      return (title: 'Exaltação da Santa Cruz', color: LiturgicalColor.red, rank: LiturgicalRank.festa);
+      return (
+        title: 'Exaltação da Santa Cruz',
+        color: LiturgicalColor.red,
+        rank: LiturgicalRank.festa,
+      );
     }
     if (m == 9 && d == 29) {
-      return (title: 'Santos Miguel, Gabriel e Rafael, Arcanjos', color: LiturgicalColor.white, rank: LiturgicalRank.festa);
+      return (
+        title: 'Santos Miguel, Gabriel e Rafael, Arcanjos',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.festa,
+      );
+    }
+    if (m == 10 && d == 12) {
+      return (
+        title: 'Nossa Senhora da Conceição Aparecida, Padroeira do Brasil',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 11 && d == 1) {
-      return (title: 'Todos os Santos', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Todos os Santos',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 11 && d == 2) {
-      return (title: 'Comemoração de Todos os Fiéis Defuntos', color: LiturgicalColor.purple, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Comemoração de Todos os Fiéis Defuntos',
+        color: LiturgicalColor.purple,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     if (m == 12 && d == 8) {
-      return (title: 'Imaculada Conceição da Bem-Aventurada Virgem Maria', color: LiturgicalColor.white, rank: LiturgicalRank.solenidade);
+      return (
+        title: 'Imaculada Conceição da Bem-Aventurada Virgem Maria',
+        color: LiturgicalColor.white,
+        rank: LiturgicalRank.solenidade,
+      );
     }
     return null;
   }
