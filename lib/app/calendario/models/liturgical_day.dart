@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum LiturgicalColor {
-  green,
-  white,
-  red,
-  purple,
-  rose,
-}
+enum LiturgicalColor { green, white, red, purple, rose }
 
 extension LiturgicalColorExtension on LiturgicalColor {
   String get displayName {
@@ -29,7 +23,7 @@ extension LiturgicalColorExtension on LiturgicalColor {
       case LiturgicalColor.green:
         return const Color(0xFF2E7D32); // Verde Litúrgico
       case LiturgicalColor.white:
-        return const Color(0xFFD4AF37); // Ouro / Branco Nobre
+        return const Color(0xFFFFFFFF); // Branco Litúrgico Autêntico
       case LiturgicalColor.red:
         return const Color(0xFFC62828); // Vermelho Litúrgico
       case LiturgicalColor.purple:
@@ -40,12 +34,13 @@ extension LiturgicalColorExtension on LiturgicalColor {
   }
 
   Color containerColor(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     switch (this) {
       case LiturgicalColor.green:
         return isDark ? const Color(0xFF1B3B22) : const Color(0xFFE8F5E9);
       case LiturgicalColor.white:
-        return isDark ? const Color(0xFF332B14) : const Color(0xFFFFF9E6);
+        return theme.colorScheme.secondaryContainer;
       case LiturgicalColor.red:
         return isDark ? const Color(0xFF3E1818) : const Color(0xFFFFEBEE);
       case LiturgicalColor.purple:
@@ -56,12 +51,13 @@ extension LiturgicalColorExtension on LiturgicalColor {
   }
 
   Color onContainerColor(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     switch (this) {
       case LiturgicalColor.green:
         return isDark ? const Color(0xFFA5D6A7) : const Color(0xFF1B5E20);
       case LiturgicalColor.white:
-        return isDark ? const Color(0xFFFFE082) : const Color(0xFFB78103);
+        return theme.colorScheme.onSecondaryContainer;
       case LiturgicalColor.red:
         return isDark ? const Color(0xFFEF9A9A) : const Color(0xFFB71C1C);
       case LiturgicalColor.purple:
@@ -69,6 +65,48 @@ extension LiturgicalColorExtension on LiturgicalColor {
       case LiturgicalColor.rose:
         return isDark ? const Color(0xFFF48FB1) : const Color(0xFF880E4F);
     }
+  }
+
+  Color dotColor(BuildContext context, {bool isSelected = false}) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    switch (this) {
+      case LiturgicalColor.green:
+        return isDark ? const Color(0xFF4CAF50) : const Color(0xFF2E7D32);
+      case LiturgicalColor.white:
+        return const Color(0xFFFFFFFF);
+      case LiturgicalColor.red:
+        return isDark ? const Color(0xFFEF5350) : const Color(0xFFC62828);
+      case LiturgicalColor.purple:
+        return isDark ? const Color(0xFFAB47BC) : const Color(0xFF6A1B9A);
+      case LiturgicalColor.rose:
+        return isDark ? const Color(0xFFF06292) : const Color(0xFFE91E63);
+    }
+  }
+
+  BoxDecoration dotDecoration(
+    BuildContext context, {
+    bool isSelected = false,
+    bool onWhiteBackground = false,
+    Color? backgroundColor,
+  }) {
+    if (this == LiturgicalColor.white) {
+      final isReallyWhite =
+          onWhiteBackground ||
+          (backgroundColor != null &&
+              (backgroundColor == Colors.white ||
+                  backgroundColor.computeLuminance() >= 0.95));
+
+      return BoxDecoration(
+        color: const Color(0xFFFFFFFF),
+        shape: BoxShape.circle,
+        border: isReallyWhite
+            ? Border.all(color: const Color(0x38000000), width: 0.65)
+            : null,
+      );
+    }
+
+    return BoxDecoration(color: colorValue, shape: BoxShape.circle);
   }
 }
 
@@ -144,9 +182,23 @@ enum OpusDeiClass {
   classeA, // Grandes Solenidades da Prelazia
   classeB, // Festas de 2ª Classe e Patronos
   classeC, // Memórias e Aniversários Históricos
+  classeD, // Comemorações e Devoções Menores
 }
 
 extension OpusDeiClassExtension on OpusDeiClass {
+  String get letter {
+    switch (this) {
+      case OpusDeiClass.classeA:
+        return 'A';
+      case OpusDeiClass.classeB:
+        return 'B';
+      case OpusDeiClass.classeC:
+        return 'C';
+      case OpusDeiClass.classeD:
+        return 'D';
+    }
+  }
+
   String get badgeLabel {
     switch (this) {
       case OpusDeiClass.classeA:
@@ -155,28 +207,34 @@ extension OpusDeiClassExtension on OpusDeiClass {
         return 'Opus Dei - B';
       case OpusDeiClass.classeC:
         return 'Opus Dei - C';
+      case OpusDeiClass.classeD:
+        return 'Opus Dei - D';
     }
   }
 
   String get fullTitle {
     switch (this) {
       case OpusDeiClass.classeA:
-        return 'Opus Dei - A';
+        return 'Solenidade da Prelazia';
       case OpusDeiClass.classeB:
-        return 'Opus Dei - B';
+        return 'Festa da Prelazia';
       case OpusDeiClass.classeC:
-        return 'Opus Dei - C';
+        return 'Memória Litúrgica da Prelazia';
+      case OpusDeiClass.classeD:
+        return 'Aniversário Histórico da Prelazia';
     }
   }
 
   Color badgeColor(BuildContext context) {
     switch (this) {
       case OpusDeiClass.classeA:
-        return const Color(0xFFDAB264); // Ouro Litúrgico
+        return const Color.fromARGB(255, 219, 202, 93); // Ouro Litúrgico
       case OpusDeiClass.classeB:
-        return Theme.of(context).colorScheme.primary;
+        return const Color.fromARGB(255, 19, 147, 216); // Azul Celeste
       case OpusDeiClass.classeC:
-        return const Color(0xFFD97706); // Âmbar
+        return const Color.fromARGB(255, 62, 194, 6); // Âmbar
+      case OpusDeiClass.classeD:
+        return const Color.fromARGB(255, 128, 137, 143); // Cinza Claro
     }
   }
 }
@@ -218,6 +276,5 @@ class LiturgicalDay {
   bool get hasOpusDeiCelebration => opusDeiCelebration != null;
   bool get hasNovena => novenaNotice != null && novenaNotice!.isNotEmpty;
   bool get hasSaintOfTheDay =>
-      saintOfTheDay != null && saintOfTheDay!.isNotEmpty && saintOfTheDay != title;
+      saintOfTheDay != null && saintOfTheDay!.isNotEmpty;
 }
-

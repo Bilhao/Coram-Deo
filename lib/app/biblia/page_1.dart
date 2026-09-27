@@ -161,11 +161,9 @@ class BibliaPage1 extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushNamed(context, '/biblia-page-2');
                 },
-                style: ButtonStyle(
-                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
+                style: FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
                 child: const Text(

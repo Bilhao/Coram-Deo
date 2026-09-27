@@ -30,6 +30,9 @@ class AppConstants {
   static const String bilingualOrderKey = 'oracoes.bilingual_order';
   static const String openInBilingualModeKey = 'oracoes.open_bilingual';
 
+  // Calendar preferences
+  static const String showOpusDeiCelebrationsKey = 'calendario.show_opus_dei';
+
   // Default values
   static const double defaultFontSize = 16.0;
   static const double minFontSize = 12.0;
@@ -37,13 +40,13 @@ class AppConstants {
   static const String defaultTheme = 'system';
   static const bool defaultDynamicColor = false;
   static const int defaultColorSeed = 0xFF004B8D;
-  static const bool defaultBlockExame = true;
-  static const bool defaultUseBiometric = true;
+  static const bool defaultBlockExame = false;
+  static const bool defaultUseBiometric = false;
   static const bool defaultAutoBackup = true;
-  static const bool defaultBilingualMode = false;
+  static const bool defaultBilingualMode = true;
   static const String defaultPrayerLanguage = 'pt';
   static const String defaultBilingualOrder = 'lt_pt';
-  static const bool defaultOpenInBilingualMode = false;
+  static const bool defaultOpenInBilingualMode = true;
   static const String defaultTestament = 'Old';
   static const int defaultBookId = 1;
   static const String defaultBook = 'Gênesis';
@@ -56,7 +59,8 @@ class AppConstants {
 
   // Error messages
   static const String genericErrorMessage = 'Ocorreu um erro inesperado';
-  static const String networkErrorMessage = 'Erro de conexão. Verifique sua internet.';
+  static const String networkErrorMessage =
+      'Erro de conexão. Verifique sua internet.';
   static const String loadingErrorMessage = 'Erro ao carregar dados';
   static const String saveErrorMessage = 'Erro ao salvar dados';
 }

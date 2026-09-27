@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:coramdeo/app/app_provider.dart';
+import 'package:coramdeo/app/calendario/widgets/opus_dei_icon.dart';
 import 'package:coramdeo/services/auth_service.dart';
 import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/widgets/auth_dialog.dart';
@@ -553,6 +554,37 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                       );
+                    },
+                  ),
+
+                  // Seção Calendário Litúrgico
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15.0,
+                      bottom: 10.0,
+                    ),
+                    child: Text(
+                      "Calendário Litúrgico",
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: const Text(
+                      'Celebrações do Opus Dei (Beta)',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    subtitle: const Text(
+                      'Exibir festas e memórias próprias no calendário litúrgico',
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    value: appProvider.showOpusDeiCelebrations,
+                    secondary: const OpusDeiIcon(size: 22),
+                    onChanged: (value) {
+                      appProvider.setShowOpusDeiCelebrations(value);
                     },
                   ),
 

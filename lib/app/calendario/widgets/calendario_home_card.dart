@@ -1,5 +1,7 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/provider.dart';
+import 'package:coramdeo/app/calendario/widgets/opus_dei_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +11,8 @@ class CalendarioHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CalendarioLiturgicoProvider>(context);
+    final appProvider = Provider.of<AppProvider>(context);
+    final showOpusDei = appProvider.showOpusDeiCelebrations;
     final today = provider.todayDay;
     final now = DateTime.now();
     final week = provider.getWeek(now);
@@ -44,6 +48,8 @@ class CalendarioHomeCard extends StatelessWidget {
                 color: colorScheme.onSecondaryContainer,
               ),
 
+              const SizedBox(height: 6),
+
               // Régua Semanal Litúrgica Compacta (D S T Q Q S S)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -51,7 +57,10 @@ class CalendarioHomeCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(7, (index) {
                     final day = week[index];
-                    final isToday = day.date.year == now.year && day.date.month == now.month && day.date.day == now.day;
+                    final isToday =
+                        day.date.year == now.year &&
+                        day.date.month == now.month &&
+                        day.date.day == now.day;
 
                     return Column(
                       mainAxisSize: MainAxisSize.min,
@@ -60,8 +69,12 @@ class CalendarioHomeCard extends StatelessWidget {
                           dayLetters[index],
                           style: TextStyle(
                             fontSize: 10,
-                            fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                            color: isToday ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                            fontWeight: isToday
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isToday
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -69,17 +82,29 @@ class CalendarioHomeCard extends StatelessWidget {
                           width: 24,
                           height: 24,
                           decoration: BoxDecoration(
-                            color: isToday ? colorScheme.primary : Colors.transparent,
+                            color: isToday
+                                ? colorScheme.primary
+                                : Colors.transparent,
                             shape: BoxShape.circle,
-                            border: isToday ? null : Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.4), width: 0.8),
+                            border: isToday
+                                ? null
+                                : Border.all(
+                                    color: colorScheme.outlineVariant
+                                        .withValues(alpha: 0.4),
+                                    width: 0.8,
+                                  ),
                           ),
                           alignment: Alignment.center,
                           child: Text(
                             day.date.day.toString(),
                             style: TextStyle(
                               fontSize: 11,
-                              fontWeight: isToday ? FontWeight.bold : FontWeight.w500,
-                              color: isToday ? colorScheme.onPrimary : colorScheme.onSecondaryContainer,
+                              fontWeight: isToday
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: isToday
+                                  ? colorScheme.onPrimary
+                                  : colorScheme.onSecondaryContainer,
                             ),
                           ),
                         ),
@@ -88,19 +113,25 @@ class CalendarioHomeCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: 5,
-                              height: 5,
-                              decoration: BoxDecoration(
-                                color: day.color.colorValue,
-                                shape: BoxShape.circle,
+                              width: 6,
+                              height: 6,
+                              decoration: day.color.dotDecoration(
+                                context,
+                                isSelected: isToday,
+                                backgroundColor: isToday
+                                    ? colorScheme.primary
+                                    : colorScheme.secondaryContainer,
                               ),
                             ),
-                            if (day.hasOpusDeiCelebration) ...[
-                              const SizedBox(width: 1),
-                              Icon(
-                                Icons.star_rounded,
-                                size: 8,
-                                color: day.opusDeiCelebration!.classRank.badgeColor(context),
+                            if (showOpusDei && day.hasOpusDeiCelebration) ...[
+                              const SizedBox(width: 2),
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primary,
+                                  shape: BoxShape.circle,
+                                ),
                               ),
                             ],
                           ],
@@ -110,8 +141,6 @@ class CalendarioHomeCard extends StatelessWidget {
                   }),
                 ),
               ),
-
-              const SizedBox(height: 8),
 
               // Informações Canônicas do Dia de Hoje
               Expanded(
@@ -123,7 +152,10 @@ class CalendarioHomeCard extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: today.color.containerColor(context),
                             borderRadius: BorderRadius.circular(6),
@@ -134,9 +166,11 @@ class CalendarioHomeCard extends StatelessWidget {
                               Container(
                                 width: 7,
                                 height: 7,
-                                decoration: BoxDecoration(
-                                  color: today.color.colorValue,
-                                  shape: BoxShape.circle,
+                                decoration: today.color.dotDecoration(
+                                  context,
+                                  backgroundColor: today.color.containerColor(
+                                    context,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 5),
@@ -153,15 +187,26 @@ class CalendarioHomeCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerHighest,
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: colorScheme.outlineVariant.withValues(
+                                alpha: 0.4,
+                              ),
+                              width: 0.8,
+                            ),
                           ),
                           child: Text(
                             today.rank.displayName,
                             style: TextStyle(
                               fontSize: 11,
+                              fontWeight: FontWeight.w500,
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
@@ -169,7 +214,7 @@ class CalendarioHomeCard extends StatelessWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
 
                     // Linha 2: Título Litúrgico
                     Text(
@@ -178,67 +223,51 @@ class CalendarioHomeCard extends StatelessWidget {
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
 
-                    // Linha 3: Santo do Dia Celebrado na Liturgia
-                    if (today.hasSaintOfTheDay) ...[
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.person_pin_rounded,
-                            size: 14,
-                            color: colorScheme.primary,
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              'Santo do dia: ${today.saintOfTheDay!}',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.onSecondaryContainer,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-
-                    // Linha 4: Celebração Opus Dei (se houver)
-                    if (today.hasOpusDeiCelebration) ...[
-                      const SizedBox(height: 3),
+                    // Linha 3: Celebração Opus Dei (se houver)
+                    if (showOpusDei && today.hasOpusDeiCelebration) ...[
+                      const SizedBox(height: 5),
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 5,
+                              vertical: 1,
+                            ),
                             decoration: BoxDecoration(
-                              color: today.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.15),
+                              color: today.opusDeiCelebration!.classRank
+                                  .badgeColor(context)
+                                  .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(4),
                               border: Border.all(
-                                color: today.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.5),
+                                color: today.opusDeiCelebration!.classRank
+                                    .badgeColor(context)
+                                    .withValues(alpha: 0.5),
                                 width: 0.8,
                               ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
-                                  Icons.stars_rounded,
+                                OpusDeiIcon(
                                   size: 10,
-                                  color: today.opusDeiCelebration!.classRank.badgeColor(context),
+                                  color: today.opusDeiCelebration!.classRank
+                                      .badgeColor(context),
                                 ),
                                 const SizedBox(width: 3),
                                 Text(
-                                  today.opusDeiCelebration!.classRank.badgeLabel, // "Opus Dei - A" / "Opus Dei - B" / "Opus Dei - C"
+                                  today
+                                      .opusDeiCelebration!
+                                      .classRank
+                                      .badgeLabel, // "Opus Dei - A" / "Opus Dei - B" / "Opus Dei - C"
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: today.opusDeiCelebration!.classRank.badgeColor(context),
+                                    color: today.opusDeiCelebration!.classRank
+                                        .badgeColor(context),
                                   ),
                                 ),
                               ],
@@ -251,7 +280,8 @@ class CalendarioHomeCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: today.opusDeiCelebration!.classRank.badgeColor(context),
+                                color: today.opusDeiCelebration!.classRank
+                                    .badgeColor(context),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -266,7 +296,11 @@ class CalendarioHomeCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Row(
                         children: [
-                          Icon(Icons.event_note_rounded, size: 12, color: colorScheme.primary),
+                          Icon(
+                            Icons.event_note_rounded,
+                            size: 12,
+                            color: colorScheme.primary,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -294,7 +328,7 @@ class CalendarioHomeCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Ver calendário completo',
+                      'Ver mais',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -302,11 +336,6 @@ class CalendarioHomeCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 2),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 16,
-                      color: colorScheme.onSecondaryContainer,
-                    ),
                   ],
                 ),
               ),
