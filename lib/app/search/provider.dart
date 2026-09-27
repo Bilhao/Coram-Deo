@@ -12,7 +12,17 @@ class SearchProvider extends BaseProvider {
   final Biblia _bibleDb = Biblia();
 
   // List of books to search
-  final List<String> _bookNames = ["caminho", "sulco", "forja", "amigos_de_deus", "e_cristo_que_passa", "santo_rosario_livro", "via_sacra_livro"];
+  final List<String> _bookNames = [
+    "caminho",
+    "sulco",
+    "forja",
+    "amigos_de_deus",
+    "e_cristo_que_passa",
+    "santo_rosario_livro",
+    "via_sacra_livro",
+  ];
+
+  Map<String, String> get prayers => Map.unmodifiable(_prayers);
 
   // Map of prayers (Route -> Title) - Copied from OracoesPage
   final Map<String, String> _prayers = {
@@ -32,6 +42,8 @@ class SearchProvider extends BaseProvider {
     "exame-de-consciencia-oracao": "Exame de Consciência",
     "estampa-josemaria": "Estampa de São Josemaría",
     "gratias-tibi-ago": "Gratias tibi ago",
+    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
+    "responso": "Responso",
   };
 
   Future<void> search(String query) async {
@@ -45,7 +57,11 @@ class SearchProvider extends BaseProvider {
     _results = [];
 
     // Run searches in parallel
-    await Future.wait([_searchBible(query), _searchBooks(query), _searchPrayers(query)]);
+    await Future.wait([
+      _searchBible(query),
+      _searchBooks(query),
+      _searchPrayers(query),
+    ]);
 
     setLoading(false);
   }
@@ -53,7 +69,9 @@ class SearchProvider extends BaseProvider {
   Future<void> _searchBible(String query) async {
     try {
       final prefs = await BaseProvider.getPrefs();
-      String version = prefs.getString(AppConstants.bibleVersionKey) ?? AppConstants.defaultBibleVersion;
+      String version =
+          prefs.getString(AppConstants.bibleVersionKey) ??
+          AppConstants.defaultBibleVersion;
 
       _bibleDb.setVersion(version);
       final db = await _bibleDb.initDb();
@@ -73,7 +91,9 @@ class SearchProvider extends BaseProvider {
               'book': map['book'],
               'chapter': map['chapter'],
               'verse_id': map['verse_id'],
-              'testament': map['testament'] ?? ((map['book_id'] ?? 1) <= 46 ? 'Old' : 'New'),
+              'testament':
+                  map['testament'] ??
+                  ((map['book_id'] ?? 1) <= 46 ? 'Old' : 'New'),
             },
           ),
         );
@@ -93,13 +113,29 @@ class SearchProvider extends BaseProvider {
         String displayTitle = _formatBookName(bookName);
 
         // Search content
-        final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT content_id, content FROM book WHERE content LIKE ? LIMIT 5', ['%\$query%']);
+        final List<Map<String, dynamic>> maps = await db.rawQuery(
+          'SELECT content_id, content FROM book WHERE content LIKE ? LIMIT 5',
+          ['%\$query%'],
+        );
 
         for (var map in maps) {
           String snippet = map['content'].toString().replaceAll('\n', ' ');
-          if (snippet.length > 100) snippet = "\${snippet.substring(0, 100)}...";
+          if (snippet.length > 100) {
+            snippet = "\${snippet.substring(0, 100)}...";
+          }
 
-          _results.add(SearchResult(title: "\$displayTitle - Ponto \${map['content_id']}", subtitle: snippet, type: 'Livro', data: {'bookName': bookName, 'contentId': map['content_id'], 'title': displayTitle}));
+          _results.add(
+            SearchResult(
+              title: "\$displayTitle - Ponto \${map['content_id']}",
+              subtitle: snippet,
+              type: 'Livro',
+              data: {
+                'bookName': bookName,
+                'contentId': map['content_id'],
+                'title': displayTitle,
+              },
+            ),
+          );
         }
       } catch (e) {
         debugPrint("Error searching book \$bookName: \$e");
@@ -110,7 +146,14 @@ class SearchProvider extends BaseProvider {
   Future<void> _searchPrayers(String query) async {
     _prayers.forEach((route, title) {
       if (title.toLowerCase().contains(query.toLowerCase())) {
-        _results.add(SearchResult(title: title, subtitle: "Oração", type: 'Oração', data: {'route': route}));
+        _results.add(
+          SearchResult(
+            title: title,
+            subtitle: "Oração",
+            type: 'Oração',
+            data: {'route': route},
+          ),
+        );
       }
     });
   }

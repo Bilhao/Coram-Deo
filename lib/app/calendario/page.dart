@@ -1,6 +1,9 @@
+import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/provider.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
+import 'package:coramdeo/app/santo_do_dia/provider.dart';
+import 'package:coramdeo/app/calendario/widgets/opus_dei_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +29,21 @@ class _CalendarioPageState extends State<CalendarioPage> {
     'Setembro',
     'Outubro',
     'Novembro',
-    'Dezembro'
+    'Dezembro',
   ];
 
   @override
   void initState() {
     super.initState();
-    final provider = Provider.of<CalendarioLiturgicoProvider>(context, listen: false);
-    _displayMonth = DateTime(provider.selectedDate.year, provider.selectedDate.month, 1);
+    final provider = Provider.of<CalendarioLiturgicoProvider>(
+      context,
+      listen: false,
+    );
+    _displayMonth = DateTime(
+      provider.selectedDate.year,
+      provider.selectedDate.month,
+      1,
+    );
   }
 
   void _previousMonth() {
@@ -59,11 +69,14 @@ class _CalendarioPageState extends State<CalendarioPage> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CalendarioLiturgicoProvider>(context);
+    final appProvider = Provider.of<AppProvider>(context);
     final selectedDay = provider.currentSelectedDay;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${_monthNames[_displayMonth.month - 1]} ${_displayMonth.year}'),
+        title: Text(
+          '${_monthNames[_displayMonth.month - 1]} ${_displayMonth.year}',
+        ),
         actions: [
           IconButton(
             tooltip: 'Mês anterior',
@@ -83,17 +96,27 @@ class _CalendarioPageState extends State<CalendarioPage> {
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 4),
 
             // Grade do Mês
-            _buildCalendarGrid(context, provider),
+            _buildCalendarGrid(
+              context,
+              provider,
+              appProvider.showOpusDeiCelebrations,
+            ),
 
             const Divider(height: 1, thickness: 0.5),
 
             // Painel de Detalhes do Dia Selecionado
             Expanded(
-              child: _buildDayDetailPanel(context, provider, selectedDay),
+              child: _buildDayDetailPanel(
+                context,
+                provider,
+                selectedDay,
+                appProvider.showOpusDeiCelebrations,
+              ),
             ),
           ],
         ),
@@ -101,12 +124,24 @@ class _CalendarioPageState extends State<CalendarioPage> {
     );
   }
 
-  Widget _buildCalendarGrid(BuildContext context, CalendarioLiturgicoProvider provider) {
+  Widget _buildCalendarGrid(
+    BuildContext context,
+    CalendarioLiturgicoProvider provider,
+    bool showOpusDei,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     final now = DateTime.now();
 
-    final firstDayOfMonth = DateTime(_displayMonth.year, _displayMonth.month, 1);
-    final daysInMonth = DateTime(_displayMonth.year, _displayMonth.month + 1, 0).day;
+    final firstDayOfMonth = DateTime(
+      _displayMonth.year,
+      _displayMonth.month,
+      1,
+    );
+    final daysInMonth = DateTime(
+      _displayMonth.year,
+      _displayMonth.month + 1,
+      0,
+    ).day;
     final startWeekday = firstDayOfMonth.weekday % 7; // Domingo = 0
 
     final totalCells = ((startWeekday + daysInMonth) / 7).ceil() * 7;
@@ -116,51 +151,71 @@ class _CalendarioPageState extends State<CalendarioPage> {
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
       child: Column(
         children: [
-          // Cabeçalho dos dias da semana
+          // Cabeçalho dos dias da semana (D S T Q Q S S)
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: weekdays.map((day) {
-              return SizedBox(
-                width: 38,
-                child: Text(
-                  day,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurfaceVariant,
+            children: List.generate(7, (i) {
+              return Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      weekdays[i],
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: i == 0
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ),
-          const SizedBox(height: 6),
-          // Células dos dias
+          const SizedBox(height: 2),
+
+          // Grade 7 colunas
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: totalCells,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              mainAxisSpacing: 4,
-              crossAxisSpacing: 4,
-              childAspectRatio: 1.15,
+              childAspectRatio: 1.05,
+              mainAxisSpacing: 3,
+              crossAxisSpacing: 3,
             ),
             itemBuilder: (context, index) {
-              final dayNum = index - startWeekday + 1;
-              if (dayNum < 1 || dayNum > daysInMonth) {
+              final dayOffset = index - startWeekday + 1;
+              if (dayOffset < 1 || dayOffset > daysInMonth) {
                 return const SizedBox.shrink();
               }
 
-              final cellDate = DateTime(_displayMonth.year, _displayMonth.month, dayNum);
+              final cellDate = DateTime(
+                _displayMonth.year,
+                _displayMonth.month,
+                dayOffset,
+              );
               final dayData = provider.getDay(cellDate);
-
-              final isToday = cellDate.year == now.year && cellDate.month == now.month && cellDate.day == now.day;
-              final isSelected = cellDate.year == provider.selectedDate.year &&
+              final isSelected =
+                  cellDate.year == provider.selectedDate.year &&
                   cellDate.month == provider.selectedDate.month &&
                   cellDate.day == provider.selectedDate.day;
+              final isToday =
+                  cellDate.year == now.year &&
+                  cellDate.month == now.month &&
+                  cellDate.day == now.day;
 
-              return _buildDayCell(context, provider, cellDate, dayData, isToday, isSelected);
+              return _buildDayCell(
+                context,
+                provider,
+                cellDate,
+                dayData,
+                isToday,
+                isSelected,
+                showOpusDei,
+              );
             },
           ),
         ],
@@ -175,32 +230,35 @@ class _CalendarioPageState extends State<CalendarioPage> {
     LiturgicalDay dayData,
     bool isToday,
     bool isSelected,
+    bool showOpusDei,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
 
     BoxDecoration decoration;
+    Color cellBg;
     if (isSelected) {
+      cellBg = colorScheme.primary;
       decoration = BoxDecoration(
-        color: colorScheme.primary,
+        color: cellBg,
         borderRadius: BorderRadius.circular(8),
       );
     } else if (isToday) {
+      cellBg = colorScheme.primaryContainer.withValues(alpha: 0.5);
       decoration = BoxDecoration(
-        color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+        color: cellBg,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: colorScheme.primary, width: 1.2),
       );
     } else {
-      decoration = BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-      );
+      cellBg = colorScheme.surface;
+      decoration = BoxDecoration(borderRadius: BorderRadius.circular(8));
     }
 
     final textColor = isSelected
         ? colorScheme.onPrimary
         : isToday
-            ? colorScheme.primary
-            : colorScheme.onSurface;
+        ? colorScheme.primary
+        : colorScheme.onSurface;
 
     return InkWell(
       borderRadius: BorderRadius.circular(8),
@@ -215,7 +273,9 @@ class _CalendarioPageState extends State<CalendarioPage> {
               cellDate.day.toString(),
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: isToday || isSelected ? FontWeight.bold : FontWeight.normal,
+                fontWeight: isToday || isSelected
+                    ? FontWeight.bold
+                    : FontWeight.normal,
                 color: textColor,
               ),
             ),
@@ -226,19 +286,22 @@ class _CalendarioPageState extends State<CalendarioPage> {
                 Container(
                   width: 6,
                   height: 6,
-                  decoration: BoxDecoration(
-                    color: isSelected ? colorScheme.onPrimary : dayData.color.colorValue,
-                    shape: BoxShape.circle,
+                  decoration: dayData.color.dotDecoration(
+                    context,
+                    backgroundColor: cellBg,
                   ),
                 ),
-                if (dayData.hasOpusDeiCelebration) ...[
-                  const SizedBox(width: 2),
-                  Icon(
-                    Icons.star_rounded,
-                    size: 10,
-                    color: isSelected
-                        ? colorScheme.onPrimary
-                        : dayData.opusDeiCelebration!.classRank.badgeColor(context),
+                if (showOpusDei && dayData.hasOpusDeiCelebration) ...[
+                  const SizedBox(width: 3),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? colorScheme.onPrimary
+                          : colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                 ],
               ],
@@ -253,278 +316,381 @@ class _CalendarioPageState extends State<CalendarioPage> {
     BuildContext context,
     CalendarioLiturgicoProvider provider,
     LiturgicalDay day,
+    bool showOpusDei,
   ) {
     final colorScheme = Theme.of(context).colorScheme;
-    final dateStr = '${_formatWeekday(day.date.weekday)}, ${day.date.day} de ${_monthNames[day.date.month - 1]} de ${day.date.year}';
+    final dateStr =
+        '${_formatWeekday(day.date.weekday)}, ${day.date.day} de ${_monthNames[day.date.month - 1]} de ${day.date.year}';
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Data por extenso
-          Text(
-            dateStr,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: colorScheme.onSurfaceVariant,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
             ),
-          ),
-          const SizedBox(height: 4),
-
-          // Título Litúrgico Principal
-          Text(
-            day.title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Badges: Cor Litúrgica + Tempo + Grau
-          Wrap(
-            spacing: 8,
-            runSpacing: 6,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: day.color.containerColor(context),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: day.color.colorValue,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Cor: ${day.color.displayName}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: day.color.onContainerColor(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colorScheme.secondaryContainer,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  day.season.displayName,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  day.rank.displayName,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          // Santo do Dia Celebrado na Liturgia
-          if (day.hasSaintOfTheDay) ...[
-            const SizedBox(height: 10),
-            Container(
+            child: SizedBox(
               width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.45),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-                  width: 1.0,
-                ),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.person_rounded,
-                        size: 16,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Santo do Dia',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
+                  // Data por extenso
                   Text(
-                    day.saintOfTheDay!,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          // Card Especial Opus Dei
-          if (day.hasOpusDeiCelebration) ...[
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: day.opusDeiCelebration!.classRank.badgeColor(context).withValues(alpha: 0.35),
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.stars_rounded,
-                        size: 16,
-                        color: day.opusDeiCelebration!.classRank.badgeColor(context),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        day.opusDeiCelebration!.classRank.badgeLabel, // Opus Dei - A / B / C
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: day.opusDeiCelebration!.classRank.badgeColor(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    day.opusDeiCelebration!.name,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    day.opusDeiCelebration!.description,
+                    dateStr,
+                    textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 13,
-                      height: 1.35,
+                      fontWeight: FontWeight.w500,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
-                ],
-              ),
-            ),
-          ],
+                  const SizedBox(height: 4),
 
-          // Card de Novena / Devoção Ativa
-          if (day.hasNovena) ...[
-            const SizedBox(height: 10),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withValues(alpha: 0.35),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
-                  width: 1.0,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+                  // Título Litúrgico Principal
+                  Text(
+                    day.title,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Badges: Cor Litúrgica + Tempo + Grau
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    alignment: WrapAlignment.start,
+                    crossAxisAlignment: WrapCrossAlignment.start,
                     children: [
-                      Icon(
-                        Icons.event_note_rounded,
-                        size: 16,
-                        color: colorScheme.primary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: day.color.containerColor(context),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: day.color.dotDecoration(
+                                context,
+                                backgroundColor: day.color.containerColor(
+                                  context,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${day.color.displayName} • ${day.season.displayName}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: day.color.onContainerColor(context),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Novena / Devoção',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.primary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.6,
+                          ),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.4,
+                            ),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          day.rank.displayName,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    day.novenaNotice!,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurface,
+
+                  // Santo do Dia Celebrado na Liturgia
+                  if (day.hasSaintOfTheDay) ...[
+                    const SizedBox(height: 10),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12.0),
+                        onTap: () {
+                          final santoProvider = Provider.of<SantoDoDiaProvider>(
+                            context,
+                            listen: false,
+                          );
+                          santoProvider.changeDate(
+                            day.date.day,
+                            day.date.month,
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            '/santo-do-dia',
+                            arguments: day.date,
+                          );
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12.0),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.45),
+                            borderRadius: BorderRadius.circular(12.0),
+                            border: Border.all(
+                              color: colorScheme.outlineVariant.withValues(
+                                alpha: 0.4,
+                              ),
+                              width: 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          SantoDoDiaProvider.computeHeaderIcon(
+                                            day.saintOfTheDay!,
+                                            day.rank.displayName,
+                                          ),
+                                          size: 16,
+                                          color: colorScheme.primary,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          SantoDoDiaProvider.computeHeaderTitle(
+                                            day.saintOfTheDay!,
+                                            day.rank.displayName,
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: colorScheme.primary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      day.saintOfTheDay!,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                size: 18,
+                                color: colorScheme.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
+
+                  // Card Especial Opus Dei
+                  if (showOpusDei && day.hasOpusDeiCelebration) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.45,
+                        ),
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.4,
+                          ),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              OpusDeiIcon(size: 16, color: colorScheme.primary),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Opus Dei',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: day.opusDeiCelebration!.classRank
+                                      .badgeColor(context)
+                                      .withValues(alpha: 0.18),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: day.opusDeiCelebration!.classRank
+                                        .badgeColor(context)
+                                        .withValues(alpha: 0.5),
+                                    width: 0.8,
+                                  ),
+                                ),
+                                child: Text(
+                                  day.opusDeiCelebration!.classRank.letter,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: day.opusDeiCelebration!.classRank
+                                        .badgeColor(context),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            day.opusDeiCelebration!.name,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            day.opusDeiCelebration!.description,
+                            style: TextStyle(
+                              fontSize: 13,
+                              height: 1.35,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
+                  // Card de Novena / Devoção Ativa
+                  if (day.hasNovena) ...[
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.45,
+                        ),
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.4,
+                          ),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.event_note_rounded,
+                                size: 16,
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Novena / Devoção',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            day.novenaNotice!,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
-          ],
+          ),
+        ),
 
-          const SizedBox(height: 16),
-
-          // Botão para ver a Liturgia do Dia selecionado
-          SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: FilledButton.tonalIcon(
-              onPressed: () {
-                final liturgiaProvider = Provider.of<LiturgiaDiariaProvider>(context, listen: false);
-                liturgiaProvider.changeDate(day.date.day, day.date.month, year: day.date.year);
-                Navigator.pushNamed(context, '/liturgia', arguments: day.date);
-              },
-              icon: const Icon(Icons.menu_book_rounded),
-              label: const Text('Ver Liturgia do Dia', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-              style: FilledButton.styleFrom(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        // Botão para ver a Liturgia do Dia selecionado, fixado no rodapé e sem o ícone do livro
+        Container(
+          width: double.maxFinite,
+          padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 8.0),
+          child: FilledButton.tonal(
+            onPressed: () {
+              final liturgiaProvider = Provider.of<LiturgiaDiariaProvider>(
+                context,
+                listen: false,
+              );
+              liturgiaProvider.changeDate(
+                day.date.day,
+                day.date.month,
+                year: day.date.year,
+              );
+              Navigator.pushNamed(context, '/liturgia', arguments: day.date);
+            },
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
               ),
             ),
+            child: const Text(
+              'Ver Liturgia do Dia',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
-          const SizedBox(height: 16),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

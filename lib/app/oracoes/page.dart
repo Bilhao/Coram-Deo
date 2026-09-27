@@ -27,6 +27,8 @@ class _OracoesPageState extends State<OracoesPage> {
     "exame-de-consciencia-oracao": "Exame de Consciência",
     "estampa-josemaria": "Estampa de São Josemaría",
     "gratias-tibi-ago": "Gratias tibi ago",
+    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
+    "responso": "Responso",
   };
 
   Widget itembuild(String title, String route) {
@@ -39,7 +41,9 @@ class _OracoesPageState extends State<OracoesPage> {
           onPressed: () {
             provider.toggleFavorita(route);
           },
-          icon: provider.favoritas.contains(route) ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary) : const Icon(Icons.star_border),
+          icon: provider.favoritas.contains(route)
+              ? Icon(Icons.star, color: Theme.of(context).colorScheme.primary)
+              : const Icon(Icons.star_border),
         ),
       ),
     );
@@ -58,10 +62,16 @@ class _OracoesPageState extends State<OracoesPage> {
                 Consumer<OracoesProvider>(
                   builder: (context, provider, child) {
                     return ExpansionTile(
-                      title: Text("Favoritas", style: TextStyle(fontSize: 18.0)),
+                      title: Text(
+                        "Favoritas",
+                        style: TextStyle(fontSize: 18.0),
+                      ),
                       initiallyExpanded: true,
                       shape: const Border(),
-                      children: [for (String route in provider.favoritas) itembuild(routeToName[route]!, route)],
+                      children: [
+                        for (String route in provider.favoritas)
+                          itembuild(routeToName[route]!, route),
+                      ],
                     );
                   },
                 ),
@@ -69,7 +79,10 @@ class _OracoesPageState extends State<OracoesPage> {
                   title: const Text("Todas", style: TextStyle(fontSize: 18.0)),
                   initiallyExpanded: false,
                   shape: const Border(),
-                  children: [for (String route in routeToName.keys) itembuild(routeToName[route]!, route)],
+                  children: [
+                    for (String route in routeToName.keys)
+                      itembuild(routeToName[route]!, route),
+                  ],
                 ),
                 const Divider(height: 40, color: Colors.transparent),
               ],
