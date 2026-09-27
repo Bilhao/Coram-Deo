@@ -181,80 +181,17 @@ class SantoDoDiaProvider extends BaseProvider {
     _todayItalicText = List.from(_italicText);
   }
 
-  static const Set<String> _bundledSaintImages = {
-    'assets/images/santos/santo_05_30.webp',
-    'assets/images/santos/santo_06_24.webp',
-    'assets/images/santos/santo_06_29.webp',
-    'assets/images/santos/santo_09_01.webp',
-    'assets/images/santos/santo_09_02.webp',
-    'assets/images/santos/santo_09_03.webp',
-    'assets/images/santos/santo_09_04.webp',
-    'assets/images/santos/santo_09_05.webp',
-    'assets/images/santos/santo_09_06.webp',
-    'assets/images/santos/santo_09_07.webp',
-    'assets/images/santos/santo_09_08.webp',
-    'assets/images/santos/santo_09_09.webp',
-    'assets/images/santos/santo_09_10.webp',
-    'assets/images/santos/santo_09_11.webp',
-    'assets/images/santos/santo_09_12.webp',
-    'assets/images/santos/santo_09_13.webp',
-    'assets/images/santos/santo_09_14.webp',
-    'assets/images/santos/santo_09_15.webp',
-    'assets/images/santos/santo_09_16.webp',
-    'assets/images/santos/santo_09_17.webp',
-    'assets/images/santos/santo_09_18.webp',
-    'assets/images/santos/santo_09_19.webp',
-    'assets/images/santos/santo_09_20.webp',
-    'assets/images/santos/santo_09_21.webp',
-    'assets/images/santos/santo_09_22.webp',
-    'assets/images/santos/santo_09_23.webp',
-    'assets/images/santos/santo_09_24.webp',
-    'assets/images/santos/santo_09_25.webp',
-    'assets/images/santos/santo_09_26.webp',
-    'assets/images/santos/santo_09_27.webp',
-    'assets/images/santos/santo_09_28.webp',
-    'assets/images/santos/santo_09_29.webp',
-    'assets/images/santos/santo_09_30.webp',
-    'assets/images/santos/santo_10_01.webp',
-    'assets/images/santos/santo_10_02.webp',
-    'assets/images/santos/santo_10_03.webp',
-    'assets/images/santos/santo_10_04.webp',
-    'assets/images/santos/santo_10_05.webp',
-    'assets/images/santos/santo_10_06.webp',
-    'assets/images/santos/santo_10_07.webp',
-    'assets/images/santos/santo_10_08.webp',
-    'assets/images/santos/santo_10_09.webp',
-    'assets/images/santos/santo_10_10.webp',
-    'assets/images/santos/santo_10_11.webp',
-    'assets/images/santos/santo_10_12.webp',
-    'assets/images/santos/santo_10_13.webp',
-    'assets/images/santos/santo_10_14.webp',
-    'assets/images/santos/santo_10_15.webp',
-    'assets/images/santos/santo_10_16.webp',
-    'assets/images/santos/santo_10_17.webp',
-  };
-
   static const String githubImagesBaseUrl =
       'https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/santos';
 
   /// Resolve o caminho ou URL da imagem do Santo:
-  /// 1. Se estiver nos assets empacotados, retorna o caminho do asset;
-  /// 2. Se for uma URL externa ou customizada, retorna a URL;
-  /// 3. Caso contrário, retorna a URL raw do GitHub para download e cache sob demanda.
+  /// 1. Se for uma URL externa ou customizada (http:// ou https://), retorna a URL;
+  /// 2. Caso contrário, retorna a URL raw do GitHub para download sob demanda e cache permanente em disco.
   static String resolvePortraitUrl(String? dbUrl, int day, int month) {
-    if (dbUrl != null && dbUrl.isNotEmpty) {
-      if (dbUrl.startsWith('assets/')) {
-        if (_bundledSaintImages.contains(dbUrl)) {
-          return dbUrl;
-        }
-      } else {
-        return dbUrl;
-      }
-    }
-    final candidate =
-        'assets/images/santos/santo_${month.toString().padLeft(2, '0')}_${day.toString().padLeft(2, '0')}.webp';
-    if (_bundledSaintImages.contains(candidate)) {
-      return candidate;
+    if (dbUrl != null &&
+        dbUrl.isNotEmpty &&
+        (dbUrl.startsWith('http://') || dbUrl.startsWith('https://'))) {
+      return dbUrl;
     }
     return '$githubImagesBaseUrl/santo_${month.toString().padLeft(2, '0')}_${day.toString().padLeft(2, '0')}.webp';
   }

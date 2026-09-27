@@ -24,7 +24,7 @@ void main() {
             name: 'São Roberto Belarmino',
             subtitulo: 'Bispo e Doutor da Igreja',
             heroTag: 'hero_test_tag',
-            assetPath: 'assets/images/santos/santo_09_17.webp',
+            assetPath: 'assets/images/logo.png',
           ),
         ),
       );
@@ -62,7 +62,7 @@ void main() {
                       name: 'São Roberto Belarmino',
                       subtitulo: 'Bispo e Doutor da Igreja',
                       heroTag: 'hero_test_tag',
-                      assetPath: 'assets/images/santos/santo_09_17.webp',
+                      assetPath: 'assets/images/logo.png',
                       localPath: null,
                       networkUrl: null,
                     );
@@ -98,7 +98,7 @@ void main() {
         santoProvider.setSaintForTesting(
           name: 'São Roberto Belarmino',
           subtitulo: 'Bispo e Doutor da Igreja',
-          portrait: 'assets/images/santos/santo_09_17.webp',
+          portrait: 'assets/images/logo.png',
           text: ['Biografia resumida de São Roberto Belarmino.'],
           oracao: 'Ó Deus, que cumulastes São Roberto...',
           day: 17,
@@ -131,8 +131,10 @@ void main() {
         );
         expect(imageInkWell, findsOneWidget);
 
-        // Realiza toque simples para abrir a imagem em tela cheia
-        await tester.tap(imageInkWell);
+        // Garante que o elemento está visível e realiza toque para abrir tela cheia
+        await tester.ensureVisible(heroFinder);
+        await tester.pumpAndSettle();
+        await tester.tap(heroFinder, warnIfMissed: false);
         await tester.pumpAndSettle();
 
         expect(find.byType(SaintFullscreenViewer), findsOneWidget);
@@ -144,7 +146,8 @@ void main() {
         expect(find.byType(SaintFullscreenViewer), findsNothing);
 
         // Realiza toque longo na imagem
-        await tester.longPress(imageInkWell);
+        await tester.ensureVisible(heroFinder);
+        await tester.longPress(heroFinder, warnIfMissed: false);
         await tester.pumpAndSettle();
 
         // BottomSheet deve estar visível com todas as ações
