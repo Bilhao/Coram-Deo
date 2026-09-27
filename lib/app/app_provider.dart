@@ -101,7 +101,9 @@ class AppProvider extends BaseProvider {
       }
 
       _autoBackup = prefs.getBool(AppConstants.autoBackupKey) ?? AppConstants.defaultAutoBackup;
-      _showOpusDeiCelebrations = prefs.getBool(AppConstants.showOpusDeiCelebrationsKey) ?? true;
+      _showOpusDeiCelebrations =
+          prefs.getBool(AppConstants.showOpusDeiCelebrationsKey) ??
+          AppConstants.defaultShowOpusDeiCelebrations;
       _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
 
       return true;

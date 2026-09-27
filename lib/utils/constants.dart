@@ -41,8 +41,9 @@ class AppConstants {
   static const bool defaultDynamicColor = false;
   static const int defaultColorSeed = 0xFF004B8D;
   static const bool defaultBlockExame = false;
-  static const bool defaultUseBiometric = false;
+  static const bool defaultUseBiometric = true;
   static const bool defaultAutoBackup = true;
+  static const bool defaultShowOpusDeiCelebrations = false;
   static const bool defaultBilingualMode = true;
   static const String defaultPrayerLanguage = 'pt';
   static const String defaultBilingualOrder = 'lt_pt';
