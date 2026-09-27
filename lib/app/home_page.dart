@@ -23,14 +23,25 @@ class HomePage extends StatelessWidget {
     AppProvider appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        leading: Theme.of(context).brightness == Brightness.dark ? Image.asset('assets/images/logo_dark.png', fit: BoxFit.cover) : Image.asset('assets/images/logo.png', fit: BoxFit.cover),
+        leading: Theme.of(context).brightness == Brightness.dark
+            ? Image.asset('assets/images/logo_dark.png', fit: BoxFit.cover)
+            : Image.asset('assets/images/logo.png', fit: BoxFit.cover),
         leadingWidth: 70,
         title: const Text("Coram Deo"),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const GlobalSearchPage()));
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const GlobalSearchPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.calendar_month_outlined),
+            tooltip: "Calendário Litúrgico",
+            onPressed: () {
+              Navigator.pushNamed(context, '/calendario');
             },
           ),
           IconButton(
@@ -49,20 +60,49 @@ class HomePage extends StatelessWidget {
               child: ListView(
                 children: [
                   const Divider(height: 15, color: Colors.transparent),
-                  const Text("Destaques", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+                  const Text(
+                    "Destaques",
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
                   const Divider(height: 15, color: Colors.transparent),
                   const HomePageCardCarusel(),
                   const Divider(height: 15, color: Colors.transparent),
-                  const Text("Menu", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
+                  const Text(
+                    "Menu",
+                    style: TextStyle(fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
                   const Divider(height: 10, color: Colors.transparent),
-                  const HomePageButtons(text: "Bíblia", route: '/biblia-page-1'),
+                  const HomePageButtons(
+                    text: "Bíblia",
+                    route: '/biblia-page-1',
+                  ),
                   const HomePageButtons(text: "Livros", route: '/livros'),
                   const HomePageButtons(text: "Orações", route: '/oracoes'),
-                  const HomePageButtons(text: "Liturgia diária", route: '/liturgia'),
-                  const HomePageButtons(text: "Santo do Dia", route: '/santo-do-dia'),
-                  const HomePageButtons(text: "Calendário Litúrgico", route: '/calendario'),
-                  const HomePageButtons(text: "Plano de vida", route: '/plano-de-vida'),
-                  HomePageButtons(text: "Exame de consciência", route: '/exame-de-consciencia', requireAuth: appProvider.blockExame),
+                  const HomePageButtons(
+                    text: "Liturgia diária",
+                    route: '/liturgia',
+                  ),
+                  HomePageButtons(
+                    text: "Santo do Dia",
+                    route: '/santo-do-dia',
+                    onTap: () {
+                      Provider.of<SantoDoDiaProvider>(
+                        context,
+                        listen: false,
+                      ).resetToToday();
+                    },
+                  ),
+                  const HomePageButtons(
+                    text: "Plano de vida",
+                    route: '/plano-de-vida',
+                  ),
+                  HomePageButtons(
+                    text: "Exame de consciência",
+                    route: '/exame-de-consciencia',
+                    requireAuth: appProvider.blockExame,
+                  ),
                   // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
                 ],
               ),
@@ -75,11 +115,18 @@ class HomePage extends StatelessWidget {
 }
 
 class HomePageButtons extends StatelessWidget {
-  const HomePageButtons({super.key, required this.text, required this.route, this.requireAuth = false});
+  const HomePageButtons({
+    super.key,
+    required this.text,
+    required this.route,
+    this.requireAuth = false,
+    this.onTap,
+  });
 
   final String text;
   final String route;
   final bool requireAuth;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -90,12 +137,25 @@ class HomePageButtons extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
       child: FilledButton.tonal(
         onPressed: () async {
+          if (onTap != null) {
+            onTap!();
+          } else if (route == '/santo-do-dia') {
+            Provider.of<SantoDoDiaProvider>(
+              context,
+              listen: false,
+            ).resetToToday();
+          }
           if (requireAuth) {
             final LocalAuthentication auth = LocalAuthentication();
             try {
               final bool didAuthenticate = await auth.authenticate(
                 localizedReason: ' ',
-                authMessages: [const AndroidAuthMessages(signInTitle: 'Verifique sua identidade', cancelButton: 'Cancelar')],
+                authMessages: [
+                  const AndroidAuthMessages(
+                    signInTitle: 'Verifique sua identidade',
+                    cancelButton: 'Cancelar',
+                  ),
+                ],
                 biometricOnly: appProvider.useBiometric,
               );
               if (didAuthenticate) {
@@ -110,7 +170,9 @@ class HomePageButtons extends StatelessWidget {
           }
         },
         style: ButtonStyle(
-          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0))),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+          ),
           alignment: Alignment.centerLeft,
         ),
         child: Row(
@@ -139,9 +201,9 @@ class SantoDoDiaCard extends StatelessWidget {
       ),
     );
 
-    if (provider.localImagePath.isNotEmpty && File(provider.localImagePath).existsSync()) {
-      return Image.file(
-        File(provider.localImagePath),
+    if (provider.hasTodayAssetImage) {
+      return Image.asset(
+        provider.todayAssetImagePath,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => placeholder,
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
@@ -156,9 +218,27 @@ class SantoDoDiaCard extends StatelessWidget {
       );
     }
 
-    if (provider.portrait.isNotEmpty) {
+    if (provider.todayLocalImagePath.isNotEmpty &&
+        File(provider.todayLocalImagePath).existsSync()) {
+      return Image.file(
+        File(provider.todayLocalImagePath),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => placeholder,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return child;
+          return AnimatedOpacity(
+            opacity: frame == null ? 0 : 1,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            child: child,
+          );
+        },
+      );
+    }
+
+    if (provider.todayPortrait.isNotEmpty) {
       return Image.network(
-        provider.portrait,
+        provider.todayPortrait,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => placeholder,
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
@@ -184,28 +264,62 @@ class SantoDoDiaCard extends StatelessWidget {
       child: InkWell(
         radius: 100,
         borderRadius: BorderRadius.circular(10.0),
-        child: provider.isLoading && provider.name.isEmpty
+        child: provider.isLoading && provider.todayName.isEmpty
             ? const Center(child: CircularProgressIndicator())
             : Row(
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 15.0),
+                      padding: const EdgeInsets.only(
+                        left: 15.0,
+                        top: 15.0,
+                        bottom: 15.0,
+                      ),
                       child: Stack(
                         children: [
                           Align(
                             alignment: Alignment.center,
-                            child: Text(
-                              provider.name,
-                              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  provider.todayName,
+                                  style: const TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (provider.hasTodaySubtitulo) ...[
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    provider.todaySubtitulo,
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontStyle: FontStyle.italic,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer
+                                          .withValues(alpha: 0.8),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
                           const Align(
                             alignment: Alignment.bottomLeft,
                             child: Text(
                               "Ver mais",
-                              style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w500,
+                              ),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -215,7 +329,12 @@ class SantoDoDiaCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10.0, bottom: 25.0),
+                      padding: const EdgeInsets.only(
+                        left: 10.0,
+                        right: 10.0,
+                        top: 10.0,
+                        bottom: 25.0,
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
                         child: _buildPortrait(context, provider),
@@ -224,7 +343,10 @@ class SantoDoDiaCard extends StatelessWidget {
                   ),
                 ],
               ),
-        onTap: () => Navigator.pushNamed(context, '/santo-do-dia'),
+        onTap: () {
+          provider.resetToToday();
+          Navigator.pushNamed(context, '/santo-do-dia');
+        },
       ),
     );
   }
@@ -247,31 +369,63 @@ class BibliaReadingCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 15.0, bottom: 15.0),
+                      padding: const EdgeInsets.only(
+                        left: 10.0,
+                        right: 10.0,
+                        top: 15.0,
+                        bottom: 15.0,
+                      ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10.0),
-                        child: Image.asset("assets/images/bible.jpeg", fit: BoxFit.cover),
+                        child: Image.asset(
+                          "assets/images/bible.jpeg",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 10.0, top: 20.0, bottom: 15.0),
+                      padding: const EdgeInsets.only(
+                        right: 10.0,
+                        top: 20.0,
+                        bottom: 15.0,
+                      ),
                       child: Column(
                         children: [
                           Text(
                             "${provider.book} - ${provider.chapter}",
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                           ),
-                          Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                          Text(provider.verses.join(" "), maxLines: 6, overflow: TextOverflow.fade, style: const TextStyle(fontSize: 15), textAlign: TextAlign.left),
+                          Divider(
+                            height: 20,
+                            thickness: 1,
+                            indent: 10,
+                            endIndent: 10,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSecondaryContainer,
+                          ),
+                          Text(
+                            provider.verses.join(" "),
+                            maxLines: 6,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(fontSize: 15),
+                            textAlign: TextAlign.left,
+                          ),
                           const Spacer(),
                           Align(
                             alignment: Alignment.bottomRight,
                             child: Text(
                               "Continuar leitura",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                               textAlign: TextAlign.right,
                             ),
                           ),
@@ -311,29 +465,96 @@ class LiturgiaCard extends StatelessWidget {
                   children: [
                     const Text(
                       "Liturgia Diária",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
-                    const SizedBox(height: 5),
-                    if (provider.todayPrimeiraLeituraReferencia.isNotEmpty) Text("1ª Leitura: ${provider.todayPrimeiraLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 5),
-                    if (provider.todaySalmoReferencia.isNotEmpty) Text("Salmo: ${provider.todaySalmoReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 5),
-                    if (provider.todaySegundaLeituraReferencia.isNotEmpty) Text("2ª Leitura: ${provider.todaySegundaLeituraReferencia}", style: const TextStyle(fontSize: 15), textAlign: TextAlign.left, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    if (provider.todaySegundaLeituraReferencia.isNotEmpty) const SizedBox(height: 5),
-                    if (provider.todayEvangelhoReferencia.isNotEmpty)
-                      Text(
-                        "Evangelho: ${provider.todayEvangelhoReferencia}",
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.left,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    Divider(
+                      height: 20,
+                      thickness: 1,
+                      indent: 10,
+                      endIndent: 10,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (provider
+                              .todayPrimeiraLeituraReferencia
+                              .isNotEmpty)
+                            Text(
+                              "1ª Leitura: ${provider.todayPrimeiraLeituraReferencia}",
+                              style: const TextStyle(fontSize: 15),
+                              textAlign: TextAlign.left,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          if (provider.todaySalmoReferencia.isNotEmpty)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Salmo: ${provider.todaySalmoReferencia}",
+                                  style: const TextStyle(fontSize: 15),
+                                  textAlign: TextAlign.left,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (provider.todaySalmoRefrao.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      '«${provider.todaySalmoRefrao}»',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontStyle: FontStyle.italic,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSecondaryContainer
+                                            .withValues(alpha: 0.85),
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          if (provider.todaySegundaLeituraReferencia.isNotEmpty)
+                            Text(
+                              "2ª Leitura: ${provider.todaySegundaLeituraReferencia}",
+                              style: const TextStyle(fontSize: 15),
+                              textAlign: TextAlign.left,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          if (provider.todayEvangelhoReferencia.isNotEmpty)
+                            Text(
+                              "Evangelho: ${provider.todayEvangelhoReferencia}",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.left,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
                       ),
-                    const Spacer(),
-                    Align(
+                    ),
+                    const Align(
                       alignment: Alignment.bottomRight,
-                      child: Text("Ver leituras", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                      child: Text(
+                        "Ver leituras",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -373,15 +594,29 @@ class RandomPointCard extends StatelessWidget {
         child: provider.isLoading
             ? const Center(child: CircularProgressIndicator())
             : Padding(
-                padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0, bottom: 5.0),
+                padding: const EdgeInsets.only(
+                  left: 15.0,
+                  right: 15.0,
+                  top: 15.0,
+                  bottom: 5.0,
+                ),
                 child: Column(
                   children: [
                     Text(
                       provider.bookTitle,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    Divider(height: 20, thickness: 1, indent: 10, endIndent: 10, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                    Divider(
+                      height: 20,
+                      thickness: 1,
+                      indent: 10,
+                      endIndent: 10,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    ),
                     Expanded(
                       child: Center(
                         child: Text(
@@ -389,7 +624,10 @@ class RandomPointCard extends StatelessWidget {
                           maxLines: 6,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontStyle: FontStyle.italic,
+                          ),
                         ),
                       ),
                     ),
@@ -402,10 +640,18 @@ class RandomPointCard extends StatelessWidget {
                             icon: const Icon(Icons.refresh, size: 20),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
-                            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+                            style: const ButtonStyle(
+                              visualDensity: VisualDensity.compact,
+                            ),
                             onPressed: () => provider.loadRandomPoint(),
                           ),
-                          const Text("Ler mais", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                          const Text(
+                            "Ver mais",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -435,14 +681,20 @@ class HomePageCardCarusel extends StatelessWidget {
         enlargeCenterPage: true,
         enlargeFactor: 0.18,
         indicatorMargin: 10.0,
-        slideIndicator: CircularSlideIndicator(slideIndicatorOptions: SlideIndicatorOptions(currentIndicatorColor: Theme.of(context).colorScheme.primary, indicatorRadius: 3.0, itemSpacing: 12.0)),
+        slideIndicator: CircularSlideIndicator(
+          slideIndicatorOptions: SlideIndicatorOptions(
+            currentIndicatorColor: Theme.of(context).colorScheme.primary,
+            indicatorRadius: 3.0,
+            itemSpacing: 12.0,
+          ),
+        ),
       ),
       items: const [
-        BibliaReadingCard(),
-        RandomPointCard(),
-        LiturgiaCard(),
         SantoDoDiaCard(),
         CalendarioHomeCard(),
+        RandomPointCard(),
+        LiturgiaCard(),
+        BibliaReadingCard(),
       ],
     );
   }

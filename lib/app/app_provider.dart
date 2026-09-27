@@ -31,11 +31,17 @@ class AppProvider extends BaseProvider {
   // Variables related to backup
   bool _autoBackup = AppConstants.defaultAutoBackup;
 
+  // Variables related to liturgical calendar
+  bool _showOpusDeiCelebrations = false;
+
   // Getters relativos ao tamanho da fonte
   double get fontSize => _fontSize;
 
   // Getters relativos ao backup
   bool get autoBackup => _autoBackup;
+
+  // Getters relativos ao calendário litúrgico
+  bool get showOpusDeiCelebrations => _showOpusDeiCelebrations;
 
   // Getters relativos às orações e modo bilíngue
   bool get bilingualMode => _bilingualMode;
@@ -95,6 +101,7 @@ class AppProvider extends BaseProvider {
       }
 
       _autoBackup = prefs.getBool(AppConstants.autoBackupKey) ?? AppConstants.defaultAutoBackup;
+      _showOpusDeiCelebrations = prefs.getBool(AppConstants.showOpusDeiCelebrationsKey) ?? true;
       _showOnboarding = prefs.getBool(AppConstants.onboardingKey) ?? true;
 
       return true;
@@ -258,5 +265,30 @@ class AppProvider extends BaseProvider {
       notifyListeners();
       return true;
     }, errorContext: 'Setting auto backup');
+  }
+
+  // Methods related to liturgical calendar
+  Future<void> toggleOpusDeiCelebrations() async {
+    await safePrefOperation((prefs) async {
+      _showOpusDeiCelebrations = !_showOpusDeiCelebrations;
+      await prefs.setBool(
+        AppConstants.showOpusDeiCelebrationsKey,
+        _showOpusDeiCelebrations,
+      );
+      notifyListeners();
+      return true;
+    }, errorContext: 'Toggling Opus Dei celebrations');
+  }
+
+  Future<void> setShowOpusDeiCelebrations(bool value) async {
+    await safePrefOperation((prefs) async {
+      _showOpusDeiCelebrations = value;
+      await prefs.setBool(
+        AppConstants.showOpusDeiCelebrationsKey,
+        _showOpusDeiCelebrations,
+      );
+      notifyListeners();
+      return true;
+    }, errorContext: 'Setting Opus Dei celebrations');
   }
 }

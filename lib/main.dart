@@ -31,7 +31,13 @@ void main() async {
 
   // Ajuste das configurações de tela
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent, systemNavigationBarColor: Colors.transparent, systemNavigationBarContrastEnforced: false));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
 
   runApp(const CoramDeoApp());
 }
@@ -48,7 +54,9 @@ class CoramDeoApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BibleProvider()),
         ChangeNotifierProvider(create: (context) => LiturgiaDiariaProvider()),
         ChangeNotifierProvider(create: (context) => RandomPointProvider()),
-        ChangeNotifierProvider(create: (context) => CalendarioLiturgicoProvider()),
+        ChangeNotifierProvider(
+          create: (context) => CalendarioLiturgicoProvider(),
+        ),
       ],
       child: Consumer<AppProvider>(
         builder: (context, provider, _) {
@@ -57,7 +65,10 @@ class CoramDeoApp extends StatelessWidget {
               if (provider.isLoading) {
                 // Return empty container while loading preferences
                 // FlutterNativeSplash handles the visual splash screen
-                return const Directionality(textDirection: TextDirection.ltr, child: SizedBox.shrink());
+                return const Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: SizedBox.shrink(),
+                );
               }
 
               MaterialApp app = MaterialApp(
@@ -78,18 +89,21 @@ class CoramDeoApp extends StatelessWidget {
                   colorScheme: provider.dynamicColor && darkDynamic != null
                       ? darkDynamic.harmonized()
                       : (provider.dynamicColor && lightDynamic != null
-                          ? ColorScheme.fromSeed(
-                              seedColor: lightDynamic.primary,
-                              brightness: Brightness.dark,
-                            )
-                          : ColorScheme.fromSeed(
-                              dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                              seedColor: Color(provider.colorSeed),
-                              brightness: Brightness.dark,
-                            )),
+                            ? ColorScheme.fromSeed(
+                                seedColor: lightDynamic.primary,
+                                brightness: Brightness.dark,
+                              )
+                            : ColorScheme.fromSeed(
+                                dynamicSchemeVariant:
+                                    DynamicSchemeVariant.fidelity,
+                                seedColor: Color(provider.colorSeed),
+                                brightness: Brightness.dark,
+                              )),
                   useMaterial3: true,
                 ),
-                initialRoute: provider.showOnboarding ? '/onboarding' : Routes.initial,
+                initialRoute: provider.showOnboarding
+                    ? '/onboarding'
+                    : Routes.initial,
                 onGenerateRoute: Routes.onGenerateRoute,
                 navigatorKey: Routes.navigatorKey,
               );
