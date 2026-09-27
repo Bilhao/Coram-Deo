@@ -144,11 +144,45 @@ class CloudSyncService {
     // 1. Coleta SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final allPrefs = <String, dynamic>{};
+
+    // Garante que todas as preferências/configurações do aplicativo estejam presentes com seus valores padrão
+    final defaultSettings = <String, dynamic>{
+      AppConstants.fontSizeKey: AppConstants.defaultFontSize,
+      AppConstants.themeKey: AppConstants.defaultTheme,
+      AppConstants.dynamicColorKey: AppConstants.defaultDynamicColor,
+      AppConstants.colorSeedKey: AppConstants.defaultColorSeed,
+      AppConstants.blockExameKey: AppConstants.defaultBlockExame,
+      AppConstants.biometricKey: AppConstants.defaultUseBiometric,
+      AppConstants.autoBackupKey: AppConstants.defaultAutoBackup,
+      AppConstants.bilingualModeKey: AppConstants.defaultBilingualMode,
+      AppConstants.prayerLanguageKey: AppConstants.defaultPrayerLanguage,
+      AppConstants.bilingualOrderKey: AppConstants.defaultBilingualOrder,
+      AppConstants.openInBilingualModeKey: AppConstants.defaultOpenInBilingualMode,
+      AppConstants.showOpusDeiCelebrationsKey: AppConstants.defaultShowOpusDeiCelebrations,
+      AppConstants.bibleTestamentKey: AppConstants.defaultTestament,
+      AppConstants.bibleBookIdKey: AppConstants.defaultBookId,
+      AppConstants.bibleBookKey: AppConstants.defaultBook,
+      AppConstants.bibleChapterKey: AppConstants.defaultChapter,
+      AppConstants.bibleVersionKey: AppConstants.defaultBibleVersion,
+    };
+    allPrefs.addAll(defaultSettings);
+
     for (var key in prefs.getKeys()) {
-      // Ignora chave de onboarding se desejado, ou salva tudo
+      // Ignora chaves transitórias ou caches diários de rede
+      if (key.startsWith('liturgiaDiaria') ||
+          key.startsWith('comentarioDoEvangelho') ||
+          key.startsWith('falarComDeus') ||
+          key.startsWith('santoDoDia') ||
+          key.endsWith('.db_version') ||
+          key == AppConstants.lastAutoBackupDateKey) {
+        continue;
+      }
+
       final value = prefs.get(key);
-      if (value is String || value is int || value is bool || value is double || value is List<String>) {
+      if (value is String || value is int || value is bool || value is double) {
         allPrefs[key] = value;
+      } else if (value is List) {
+        allPrefs[key] = value.map((e) => e.toString()).toList();
       }
     }
 
@@ -210,16 +244,20 @@ class CloudSyncService {
       final restoredPrefs = Map<String, dynamic>.from(data['preferences'] as Map);
       for (var key in restoredPrefs.keys) {
         final value = restoredPrefs[key];
-        if (value is String) {
-          await prefs.setString(key, value);
-        } else if (value is int) {
-          await prefs.setInt(key, value);
+        if (value == null) continue;
+
+        if (key == AppConstants.fontSizeKey || (key.toLowerCase().contains('fontsize') && value is num)) {
+          await prefs.setDouble(key, (value as num).toDouble());
         } else if (value is bool) {
           await prefs.setBool(key, value);
+        } else if (value is int) {
+          await prefs.setInt(key, value);
         } else if (value is double) {
           await prefs.setDouble(key, value);
+        } else if (value is String) {
+          await prefs.setString(key, value);
         } else if (value is List) {
-          await prefs.setStringList(key, List<String>.from(value));
+          await prefs.setStringList(key, List<String>.from(value.map((e) => e.toString())));
         }
       }
     }

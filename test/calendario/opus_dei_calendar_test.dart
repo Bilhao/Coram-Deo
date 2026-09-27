@@ -202,26 +202,26 @@ void main() {
           );
     });
 
-    test('Padrão de showOpusDeiCelebrations é true', () async {
+    test('Padrão de showOpusDeiCelebrations é false', () async {
       final provider = AppProvider();
       await provider.reload();
-      expect(provider.showOpusDeiCelebrations, isTrue);
+      expect(provider.showOpusDeiCelebrations, isFalse);
     });
 
     test('toggleOpusDeiCelebrations alterna e persiste o valor', () async {
       final provider = AppProvider();
       await provider.reload();
+      expect(provider.showOpusDeiCelebrations, isFalse);
+
+      await provider.toggleOpusDeiCelebrations();
       expect(provider.showOpusDeiCelebrations, isTrue);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isTrue);
 
       await provider.toggleOpusDeiCelebrations();
       expect(provider.showOpusDeiCelebrations, isFalse);
-
-      final prefs = await SharedPreferences.getInstance();
       expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isFalse);
-
-      await provider.toggleOpusDeiCelebrations();
-      expect(provider.showOpusDeiCelebrations, isTrue);
-      expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isTrue);
     });
 
     test(
@@ -230,24 +230,24 @@ void main() {
         final provider = AppProvider();
         await provider.reload();
 
-        await provider.setShowOpusDeiCelebrations(false);
-        expect(provider.showOpusDeiCelebrations, isFalse);
+        await provider.setShowOpusDeiCelebrations(true);
+        expect(provider.showOpusDeiCelebrations, isTrue);
 
         final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isFalse);
+        expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isTrue);
       },
     );
 
     test(
-      'Carrega valor false quando salvo previamente nas preferências',
+      'Carrega valor true quando salvo previamente nas preferências',
       () async {
         SharedPreferences.setMockInitialValues({
-          AppConstants.showOpusDeiCelebrationsKey: false,
+          AppConstants.showOpusDeiCelebrationsKey: true,
         });
 
         final provider = AppProvider();
         await provider.reload();
-        expect(provider.showOpusDeiCelebrations, isFalse);
+        expect(provider.showOpusDeiCelebrations, isTrue);
       },
     );
   });

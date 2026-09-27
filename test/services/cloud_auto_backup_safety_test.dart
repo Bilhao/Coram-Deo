@@ -50,5 +50,32 @@ void main() {
       final allowBackupWithData = !(localWithData.isEmpty && cloudCount > 0);
       expect(allowBackupWithData, isTrue);
     });
+
+    test('Preferences dictionary contains all application settings defaults', () {
+      final defaultSettings = <String, dynamic>{
+        AppConstants.fontSizeKey: AppConstants.defaultFontSize,
+        AppConstants.themeKey: AppConstants.defaultTheme,
+        AppConstants.dynamicColorKey: AppConstants.defaultDynamicColor,
+        AppConstants.colorSeedKey: AppConstants.defaultColorSeed,
+        AppConstants.blockExameKey: AppConstants.defaultBlockExame,
+        AppConstants.biometricKey: AppConstants.defaultUseBiometric,
+        AppConstants.autoBackupKey: AppConstants.defaultAutoBackup,
+        AppConstants.bilingualModeKey: AppConstants.defaultBilingualMode,
+        AppConstants.prayerLanguageKey: AppConstants.defaultPrayerLanguage,
+        AppConstants.bilingualOrderKey: AppConstants.defaultBilingualOrder,
+        AppConstants.openInBilingualModeKey: AppConstants.defaultOpenInBilingualMode,
+        AppConstants.showOpusDeiCelebrationsKey: AppConstants.defaultShowOpusDeiCelebrations,
+        AppConstants.bibleTestamentKey: AppConstants.defaultTestament,
+        AppConstants.bibleBookIdKey: AppConstants.defaultBookId,
+        AppConstants.bibleBookKey: AppConstants.defaultBook,
+        AppConstants.bibleChapterKey: AppConstants.defaultChapter,
+        AppConstants.bibleVersionKey: AppConstants.defaultBibleVersion,
+      };
+
+      expect(defaultSettings[AppConstants.showOpusDeiCelebrationsKey], isFalse);
+      expect(defaultSettings[AppConstants.autoBackupKey], isTrue);
+      expect(defaultSettings.containsKey(AppConstants.fontSizeKey), isTrue);
+      expect(defaultSettings.containsKey(AppConstants.themeKey), isTrue);
+    });
   });
 }

@@ -257,14 +257,18 @@ void main() {
   });
 
   group('SantoDoDia Remote GitHub Image Resolution Tests', () {
-    test('Resolves GitHub raw URL for dates not bundled in assets', () {
-      final url = SantoDoDiaProvider.resolvePortraitUrl(null, 15, 11);
-      expect(url, '${SantoDoDiaProvider.githubImagesBaseUrl}/santo_11_15.webp');
+    test('Resolves GitHub raw URL for all dates on-demand', () {
+      final url1 = SantoDoDiaProvider.resolvePortraitUrl(null, 15, 11);
+      expect(url1, '${SantoDoDiaProvider.githubImagesBaseUrl}/santo_11_15.webp');
+
+      final url2 = SantoDoDiaProvider.resolvePortraitUrl(null, 1, 9);
+      expect(url2, '${SantoDoDiaProvider.githubImagesBaseUrl}/santo_09_01.webp');
     });
 
-    test('Resolves asset path for dates bundled in assets', () {
-      final url = SantoDoDiaProvider.resolvePortraitUrl(null, 1, 9);
-      expect(url, 'assets/images/santos/santo_09_01.webp');
+    test('Preserves explicit remote URL if already present', () {
+      final customUrl = 'https://example.com/custom_saint.jpg';
+      final url = SantoDoDiaProvider.resolvePortraitUrl(customUrl, 1, 9);
+      expect(url, customUrl);
     });
   });
 }
