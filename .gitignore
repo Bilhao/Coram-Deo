@@ -68,3 +68,6 @@ roadmap.md
 tools/screenshots/
 # Widget Preview related
 .widget_preview/
+
+# Python virtual environment
+tools/.venv/
