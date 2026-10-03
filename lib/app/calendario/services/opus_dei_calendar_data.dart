@@ -11,37 +11,30 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da Santa Mãe de Deus e início do ano civil. Invocação da proteção maternal de Maria para toda a Igreja e a Obra.',
-      mass: 'Própria (C1)',
     ),
     '01-03': const OpusDeiCelebration(
       name: 'Santíssimo Nome de Jesus',
       classRank: OpusDeiClass.classeC,
       description:
           'Memória do Santíssimo Nome de Jesus, invocado com amor filial e devoção constante na vida interior.',
-      mass: 'Própria',
     ),
     '01-06': const OpusDeiCelebration(
       name: 'Epifania do Senhor',
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da manifestação do Senhor a todos os povos e nações, representados nos Santos Reis Magos.',
-      mass: 'Própria',
     ),
     '01-09': const OpusDeiCelebration(
       name: 'Aniversário do nascimento de São Josemaria (1902)',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa do nascimento de São Josemaria Escrivá em Barbastro, Espanha. Bênção solene com a santa relíquia nos oratórios.',
-      mass: 'São Josemaria',
-      rubric: 'Bênção com a Relíquia',
     ),
     '01-23': const OpusDeiCelebration(
       name: 'Aniversário da nomeação do Prelado (2017)',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa do aniversário da nomeação e confirmação de Mons. Fernando Ocáriz como Prelado do Opus Dei pelo Papa Francisco.',
-      mass: 'Nosso Senhor Jesus Cristo, Sumo e Eterno Sacerdote',
-      rubric: 'Te Deum',
     ),
     '01-24': const OpusDeiCelebration(
       name: 'Santa Maria da Paz',
@@ -70,7 +63,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeC,
       description:
           'Festa da Apresentação de Jesus no Templo e Encontro com o Santo Velho Simeão e a profetisa Ana.',
-      mass: 'Própria (C1)',
     ),
     '02-07': const OpusDeiCelebration(
       name: 'Cinco Chagas de Nosso Senhor Jesus Cristo',
@@ -90,8 +82,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade de Santa Maria, Mãe do Belo Amor. Nesta data, São Josemaria compreendeu por inspiração divina a extensão do Opus Dei às mulheres (1930) e, em 1943, a fundação da Sociedade Sacerdotal da Santa Cruz. Canto do Te Deum.',
-      mass: 'Cor Iesu (C1)',
-      rubric: 'Te Deum',
     ),
     '02-22': const OpusDeiCelebration(
       name: 'Cátedra de São Pedro, Apóstolo',
@@ -114,8 +104,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade de São José, Patrono da Igreja universal e da Obra. Renovação solene da consagração de todos os fiéis da Prelazia.',
-      mass: 'Própria',
-      rubric: 'Renovação da Consagração',
     ),
     '03-20': const OpusDeiCelebration(
       name: 'Festa da Família (Obra de São Gabriel)',
@@ -128,14 +116,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da Encarnação do Filho de Deus no seio puríssimo da Santíssima Virgem Maria pelo anúncio do Arcanjo Gabriel.',
-      mass: 'Própria',
     ),
     '03-28': const OpusDeiCelebration(
       name: 'Aniversário da Ordenação Sacerdotal de São Josemaria (1925)',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa da ordenação sacerdotal de São Josemaria em Saragoça. Bênção solene com a santa relíquia nos oratórios.',
-      rubric: 'Bênção com a Relíquia',
     ),
 
     // ==========================================
@@ -192,16 +178,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa em sufrágio e ação de graças pela eleição do Romano Pontífice, Sucessor de Pedro e Vigário de Cristo na terra. Canto solene do Te Deum.',
-      mass: 'Pro Pontifice',
-      rubric: 'Te Deum',
     ),
     '05-12': const OpusDeiCelebration(
       name: 'Beato Álvaro del Portillo, bispo',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa do Beato Álvaro del Portillo, bispo e primeiro sucessor de São Josemaria à frente do Opus Dei. Bênção com a santa relíquia.',
-      mass: 'Beato Álvaro',
-      rubric: 'Bênção com a Relíquia',
     ),
     '05-13': const OpusDeiCelebration(
       name: 'Nossa Senhora de Fátima',
@@ -226,15 +208,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeC,
       description:
           'Memória da Beata Guadalupe Ortiz de Landázuri, fiel leiga e numerária do Opus Dei, pioneira apostólica no México e na Espanha.',
-      mass: 'Própria',
     ),
     '05-30': const OpusDeiCelebration(
       name: 'Santo do Padre (São Fernando)',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa do santo onomástico do Prelado do Opus Dei (Mons. Fernando Ocáriz), sob o patrocínio de São Fernando, Rei. Canto do Te Deum.',
-      mass: 'Missa do Santo',
-      rubric: 'Te Deum',
     ),
     '05-31': const OpusDeiCelebration(
       name: 'Visitação da Bem-Aventurada Virgem Maria',
@@ -275,7 +254,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa da Natividade de São João Batista, a voz que clama no deserto e o Precursor do Cordeiro de Deus.',
-      mass: 'Própria',
     ),
     '06-25': const OpusDeiCelebration(
       name: 'Aniversário da Ordenação dos Primeiros Sacerdotes (1944)',
@@ -288,16 +266,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade litúrgica de São Josemaria Escrivá de Balaguer (1902–1975). Bênção solene com a santa relíquia nos oratórios.',
-      mass: 'São Josemaria',
-      rubric: 'Bênção com a Relíquia',
     ),
     '06-29': const OpusDeiCelebration(
       name: 'São Pedro e São Paulo, Apóstolos e Patronos',
       classRank: OpusDeiClass.classeB,
       description:
           'Solenidade em Roma e Festa na Prelazia em honra de São Pedro e São Paulo, patronos dos apostolados da Obra.',
-      mass: 'Própria',
-      rubric: 'Ombrela',
     ),
 
     // ==========================================
@@ -320,14 +294,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeC,
       description:
           'Memória de Nossa Senhora do Monte Carmelo e do Santo Escapulário, sinal de proteção e devoção mariana.',
-      mass: 'Própria (C1)',
     ),
     '07-22': const OpusDeiCelebration(
       name: 'Santa Maria Madalena',
       classRank: OpusDeiClass.classeC,
       description:
           'Festa de Santa Maria Madalena, primeira testemunha da Ressurreição do Senhor e apóstola dos apóstolos.',
-      mass: 'Própria',
     ),
     '07-23': const OpusDeiCelebration(
       name: 'Santa Brígida da Suécia, religiosa e padroeira da Europa',
@@ -356,7 +328,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeD,
       description:
           'Comemoração de Santa Maria dos Anjos e do Perdão da Porciúncula.',
-      mass: 'Votiva de Nossa Senhora',
     ),
     '08-04': const OpusDeiCelebration(
       name: 'São João Maria Vianney (Santo Cura de Ars)',
@@ -369,14 +340,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeC,
       description:
           'Memória da dedicação da Basílica de Santa Maria Maior em Roma, o mais antigo templo mariano do Ocidente.',
-      mass: 'Votiva de Nossa Senhora',
     ),
     '08-06': const OpusDeiCelebration(
       name: 'Transfiguração do Senhor',
       classRank: OpusDeiClass.classeC,
       description:
           'Festa da Transfiguração de Jesus no Monte Tabor na presença de Pedro, Tiago e João.',
-      mass: 'Própria',
     ),
     '08-09': const OpusDeiCelebration(
       name: 'Santa Teresa Benedita da Cruz (Edith Stein)',
@@ -390,8 +359,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da Assunção de Maria e aniversário da consagração do Opus Dei ao Santíssimo e Imaculado Coração de Maria no Santuário de Loreto. Renovação solene da consagração.',
-      mass: 'Própria (C1)',
-      rubric: 'Renovação da Consagração',
     ),
     '08-16': const OpusDeiCelebration(
       name: 'São Roque',
@@ -432,14 +399,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeD,
       description:
           'Comemoração do aniversário da petição de admissão do jovem Josemaria no Seminário Conciliar de Saragoça.',
-      mass: 'Nosso Senhor Jesus Cristo, Sumo e Eterno Sacerdote',
     ),
     '09-08': const OpusDeiCelebration(
       name: 'Natividade da Bem-Aventurada Virgem Maria',
       classRank: OpusDeiClass.classeC,
       description:
           'Festa da Natividade de Nossa Senhora, aurora da salvação e estrela da manhã que precede a vinda do Redentor.',
-      mass: 'Própria (C1)',
     ),
     '09-12': const OpusDeiCelebration(
       name: 'Santíssimo Nome de Maria',
@@ -452,15 +417,12 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa da Exaltação da Santa Cruz e veneração solene do Lignum Crucis nos oratórios da Obra. Canto do Te Deum.',
-      mass: 'Própria',
-      rubric: 'Te Deum / Veneração do Lignum Crucis',
     ),
     '09-15': const OpusDeiCelebration(
       name: 'Nossa Senhora das Dores e Eleição do Beato Álvaro (1975)',
       classRank: OpusDeiClass.classeC,
       description:
           'Memória de Nossa Senhora das Dores e aniversário da eleição unânime do Beato Álvaro del Portillo como primeiro sucessor de São Josemaria.',
-      mass: 'Própria',
     ),
     '09-21': const OpusDeiCelebration(
       name: 'São Mateus, Apóstolo e Evangelista',
@@ -479,8 +441,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa dos três Santos Arcanjos, patronos dos três apostolados da Obra: São Miguel (celibato apostólico), São Gabriel (supernumerários e cooperadores) e São Rafael (juventude). Canto do Te Deum.',
-      mass: 'Própria',
-      rubric: 'Te Deum',
     ),
 
     // ==========================================
@@ -491,8 +451,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da fundação do Opus Dei por inspiração divina recebida por São Josemaria em Madrid, no dia dos Santos Anjos da Guarda. Canto solene do Te Deum.',
-      mass: 'Santos Anjos',
-      rubric: 'Te Deum',
     ),
     '10-04': const OpusDeiCelebration(
       name: 'São Francisco de Assis (Obra de São Rafael)',
@@ -505,8 +463,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade do aniversário da proclamação solene de São Josemaria como Santo da Igreja por São João Paulo II na Praça de São Pedro. Bênção com a santa relíquia.',
-      mass: 'São Josemaria',
-      rubric: 'Bênção com a Relíquia',
     ),
     '10-07': const OpusDeiCelebration(
       name: 'Nossa Senhora do Rosário',
@@ -537,7 +493,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeC,
       description:
           'Memória de São João Paulo II, Sumo Pontífice que erigiu o Opus Dei em Prelazia Pessoal (1982) e beatificou e canonizou São Josemaria.',
-      mass: 'São João Paulo II',
     ),
     '10-24': const OpusDeiCelebration(
       name: 'Festa da Família (Obra de São Rafael)',
@@ -550,8 +505,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa do aniversário natalício do Prelado do Opus Dei, Mons. Fernando Ocáriz. Oração filial e canto do Te Deum.',
-      mass: 'Nosso Senhor Jesus Cristo, Sumo e Eterno Sacerdote',
-      rubric: 'Te Deum',
     ),
     '10-28': const OpusDeiCelebration(
       name: 'Santos Simão e Judas Tadeu, Apóstolos',
@@ -568,8 +521,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeB,
       description:
           'Festa de Todos os Santos no calendário litúrgico da Prelazia. Celebração do chamado universal à santidade. Canto do Te Deum.',
-      mass: 'Própria',
-      rubric: 'Te Deum',
     ),
     '11-08': const OpusDeiCelebration(
       name: 'São Severino e Relíquias dos Santos nos Oratórios',
@@ -600,8 +551,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da publicação da Constituição Apostólica "Ut Sit", pela qual São João Paulo II erigiu o Opus Dei em Prelazia Pessoal internacional. Canto solene do Te Deum.',
-      mass: 'Ação de Graças',
-      rubric: 'Te Deum',
     ),
     '11-30': const OpusDeiCelebration(
       name: 'Santo André, Apóstolo',
@@ -624,7 +573,6 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade da Imaculada Conceição de Maria, padroeira principal de Espanha e objeto de singular amor e pureza no Opus Dei.',
-      mass: 'Própria (C1)',
     ),
     '12-10': const OpusDeiCelebration(
       name: 'Nossa Senhora de Loreto',
@@ -643,30 +591,24 @@ class OpusDeiCalendarData {
       classRank: OpusDeiClass.classeA,
       description:
           'Solenidade do Nascimento do Salvador do Mundo no presépio de Belém.',
-      mass: 'Própria',
     ),
     '12-27': const OpusDeiCelebration(
       name: 'São João, Apóstolo e Evangelista (Patrono de São Gabriel)',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa de São João Apóstolo e Evangelista, o discípulo amado, patrono do apostolado com as pessoas casadas (Obra de São Gabriel). Bênção com o Santíssimo Sacramento.',
-      mass: 'Própria',
-      rubric: 'Bênção com o Santíssimo Sacramento (Salve)',
     ),
     '12-28': const OpusDeiCelebration(
       name: 'Santos Inocentes, mártires',
       classRank: OpusDeiClass.classeB,
       description:
           'Festa dos Santos Meninos Inocentes, mártires que confessaram a Cristo não com palavras, mas com o próprio sangue.',
-      mass: 'Própria (C1)',
     ),
     '12-31': const OpusDeiCelebration(
       name: 'Encerramento do Ano Civil (Ação de Graças)',
       classRank: OpusDeiClass.classeD,
       description:
           'Comemoração do último dia do ano civil, com canto solene do Te Deum em ação de graças por todos os benefícios recebidos de Deus.',
-      mass: 'Própria (C1)',
-      rubric: 'Te Deum',
     ),
   };
 
@@ -714,7 +656,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeC,
         description:
             'Festa do Batismo de Jesus no Jordão por São João Batista, conclusão do Tempo do Natal.',
-        mass: 'Própria',
       );
     }
 
@@ -737,7 +678,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeB,
         description:
             'Festa da entrada messiânica de Jesus em Jerusalém e início da Semana Santa.',
-        mass: 'Própria',
       );
     }
 
@@ -749,7 +689,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade da instituição da Sagrada Eucaristia, do Sacerdócio Católico e do Mandamento Novo do Amor.',
-        mass: 'Própria',
       );
     }
 
@@ -761,7 +700,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade das solenidades: a gloriosa Ressurreição de Jesus Cristo, vitória sobre o pecado e a morte.',
-        mass: 'Própria',
       );
     }
 
@@ -777,7 +715,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade da subida triunfante de Jesus Cristo aos Céus na presença de seus discípulos.',
-        mass: 'Própria',
       );
     }
 
@@ -789,8 +726,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade da descida do Espírito Santo sobre os Apóstolos reunidos com a Virgem Maria no Cenáculo. Renovação da consagração.',
-        mass: 'Própria',
-        rubric: 'Renovação da Consagração',
       );
     }
 
@@ -802,7 +737,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeC,
         description:
             'Memória de Maria Santíssima como Mãe de toda a Igreja e da família dos filhos de Deus.',
-        mass: 'Própria',
       );
     }
 
@@ -814,8 +748,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade de Deus Uno e Trino: Pai, Filho e Espírito Santo, mistério central da fé católica. Bênção com a santa relíquia.',
-        mass: 'Própria',
-        rubric: 'Bênção com a Relíquia',
       );
     }
 
@@ -827,7 +759,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade do Sacramento do Amor. Louvor e ação de graças pela presença real de Jesus na Sagrada Eucaristia.',
-        mass: 'Própria',
       );
     }
 
@@ -839,7 +770,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade do Coração de Jesus, fornalha ardente de caridade e misericórdia infinita. Recitação das Ladainhas do Sagrado Coração.',
-        rubric: 'Ladainha do Sagrado Coração',
       );
     }
 
@@ -867,7 +797,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade de Cristo Rei. Renovação solene da consagração do Opus Dei ao Sagrado Coração de Jesus.',
-        rubric: 'Renovação da Consagração',
       );
     }
 
@@ -883,8 +812,6 @@ class OpusDeiCalendarData {
         classRank: OpusDeiClass.classeA,
         description:
             'Solenidade da Sagrada Família de Nazaré, modelo supremo de todas as famílias e dos lares cristãos. Renovação da consagração.',
-        mass: 'Própria',
-        rubric: 'Renovação da Consagração',
       );
     }
 
