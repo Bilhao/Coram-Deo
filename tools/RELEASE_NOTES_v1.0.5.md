@@ -1,6 +1,6 @@
 ## Versão 1.0.5
 
-• Calendário Litúrgico: Novo calendário completo com cálculo canônico de tempos e festas móveis, cores litúrgicas dinâmicas, santos do dia e catálogo integral das celebrações do Opus Dei com graus e rubricas oficiais.
+• Calendário Litúrgico: Novo calendário completo com cálculo canônico de tempos e festas móveis, cores litúrgicas dinâmicas, santos do dia e catálogo integral das celebrações da Prelazia do Opus Dei com descrições e classificações canônicas (Classes A, B, C e D).
 • Santo do Dia: Novo módulo com biografias, orações e acervo de arte sacra para todos os 366 dias do ano, com visualizador em tela cheia, zoom e cache em disco para uso offline.
 • Novas Devoções Litúrgicas: Inclusão dos ritos de Adoração e Bênção com o Santíssimo Sacramento e do Responso pelos Fiéis Defuntos, com partituras sacras gregorianas e modo bilíngue.
 • Liturgia Diária Offline: Otimização do sistema de cache multidata, permitindo consultar leituras litúrgicas de diferentes datas instantaneamente sem conexão com a internet.
