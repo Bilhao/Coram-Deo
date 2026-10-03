@@ -243,15 +243,11 @@ class OpusDeiCelebration {
   final String name;
   final OpusDeiClass classRank;
   final String description;
-  final String? rubric;
-  final String? mass;
 
   const OpusDeiCelebration({
     required this.name,
     required this.classRank,
     required this.description,
-    this.rubric,
-    this.mass,
   });
 }
 

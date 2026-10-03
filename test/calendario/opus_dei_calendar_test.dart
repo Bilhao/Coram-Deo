@@ -18,20 +18,16 @@ void main() {
       expect(catedra!.classRank, OpusDeiClass.classeD);
       expect(catedra.name, contains('Cátedra de São Pedro'));
 
-      // 3. Aniv. Eleição do Papa (08/05) -> Classe B (TD, Pro Pontifice)
+      // 3. Aniv. Eleição do Papa (08/05) -> Classe B
       final eleicaoPapa = OpusDeiCalendarData.getCelebration(5, 8);
       expect(eleicaoPapa, isNotNull);
       expect(eleicaoPapa!.classRank, OpusDeiClass.classeB);
-      expect(eleicaoPapa.rubric, 'Te Deum');
-      expect(eleicaoPapa.mass, 'Pro Pontifice');
 
-      // 4. Santo do Padre (30/05, São Fernando) -> Classe B (TD, Missa do Santo)
+      // 4. Santo do Padre (30/05, São Fernando) -> Classe B
       final santoPadre = OpusDeiCalendarData.getCelebration(5, 30);
       expect(santoPadre, isNotNull);
       expect(santoPadre!.classRank, OpusDeiClass.classeB);
       expect(santoPadre.name, contains('São Fernando'));
-      expect(santoPadre.rubric, 'Te Deum');
-      expect(santoPadre.mass, 'Missa do Santo');
 
       // 5. Aniv. Ordenação dos três primeiros sacerdotes (25/06/1944) -> Classe C
       final tresSacerdotes = OpusDeiCalendarData.getCelebration(6, 25);
@@ -51,18 +47,16 @@ void main() {
       expect(pilar!.classRank, OpusDeiClass.classeD);
       expect(pilar.name, contains('Pilar'));
 
-      // 8. Aniversário do Padre (27/10, Mons. Fernando Ocáriz) -> Classe B (TD)
+      // 8. Aniversário do Padre (27/10, Mons. Fernando Ocáriz) -> Classe B
       final anivPadre = OpusDeiCalendarData.getCelebration(10, 27);
       expect(anivPadre, isNotNull);
       expect(anivPadre!.classRank, OpusDeiClass.classeB);
-      expect(anivPadre.rubric, 'Te Deum');
       expect(anivPadre.name, contains('Aniversário do Padre'));
 
-      // 9. Todos os Santos (01/11) -> Classe B (TD)
+      // 9. Todos os Santos (01/11) -> Classe B
       final todosSantos = OpusDeiCalendarData.getCelebration(11, 1);
       expect(todosSantos, isNotNull);
       expect(todosSantos!.classRank, OpusDeiClass.classeB);
-      expect(todosSantos.rubric, 'Te Deum');
 
       // 10. São Severino e Relíquias nos Oratórios (08/11) -> Classe B
       final severino = OpusDeiCalendarData.getCelebration(11, 8);
@@ -114,7 +108,6 @@ void main() {
       final sacredHeartDay = ComputusEngine.getLiturgicalDay(DateTime(2026, 6, 12));
       expect(sacredHeartDay.opusDeiCelebration, isNotNull);
       expect(sacredHeartDay.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
-      expect(sacredHeartDay.opusDeiCelebration!.rubric, contains('Ladainha'));
 
       // Cristo Rei: 22/11/2026 -> Classe A
       final christKingDay = ComputusEngine.getLiturgicalDay(DateTime(2026, 11, 22));
