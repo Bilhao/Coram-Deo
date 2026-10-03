@@ -1,0 +1,194 @@
+{
+  "timestamp": "2026-10-03 11:43:55",
+  "total": 86,
+  "aprovadas": 63,
+  "reprovadas": 23,
+  "erros": 0,
+  "lista_reprovadas": [
+    {
+      "dia": 2,
+      "mes": 1,
+      "nome": "São Basílio Magno e São Gregório Nazianzeno",
+      "subtitulo": "Bispos e Doutores da Igreja",
+      "motivo": "A imagem apresenta apenas um santo (provavelmente representando São Basílio Magno), falhando na representação conjunta exigida de dois santos (São Basílio e São Gregório Nazianzeno).",
+      "nota": 6.0
+    },
+    {
+      "dia": 7,
+      "mes": 1,
+      "nome": "São Raimundo de Peñafort",
+      "subtitulo": "Presbítero e Doutor em Direito Canônico",
+      "motivo": "A anatomia das mãos apresenta falhas graves e deformidades nos dedos, o que descumpre o critério obrigatório de reprovação se houver mãos deformadas.",
+      "nota": 5.0
+    },
+    {
+      "dia": 10,
+      "mes": 1,
+      "nome": "São Gregório de Nissa",
+      "subtitulo": "Bispo e Doutor da Igreja",
+      "motivo": "A imagem apresenta falhas graves na anatomia das mãos, com dedos excessivos, deformados e mal posicionados ao segurar o livro, o que viola o critério eliminatório de anatomia.",
+      "nota": 6.4
+    },
+    {
+      "dia": 30,
+      "mes": 5,
+      "nome": "Santa Joana d'Arc",
+      "subtitulo": "Virgem e Heroína da França",
+      "motivo": "A imagem apresenta texto visível na bandeira (reprovação automática conforme as regras do aplicativo).",
+      "nota": 5.0
+    },
+    {
+      "dia": 24,
+      "mes": 6,
+      "nome": "Natividade de São João Batista",
+      "subtitulo": "Solenidade do Precursor do Senhor",
+      "motivo": "A imagem apresenta texto explícito na faixa do cajado (ECCE AGNUS DEI), o que viola a regra de reprovação automática para imagens com letras.",
+      "nota": 0.0
+    },
+    {
+      "dia": 29,
+      "mes": 6,
+      "nome": "Santos Pedro e Paulo",
+      "subtitulo": "Apóstolos e Colunas da Igreja",
+      "motivo": "A imagem representa apenas São Pedro (com suas chaves), faltando o Apóstolo São Paulo, que faz parte da iconografia exigida para 'Santos Pedro e Paulo'. Além disso, há falhas anatômicas significativas nas mãos cruzadas sobre as chaves.",
+      "nota": 5.7
+    },
+    {
+      "dia": 8,
+      "mes": 9,
+      "nome": "Natividade de Nossa Senhora",
+      "subtitulo": "Festa da Santíssima Virgem Maria",
+      "motivo": "A imagem retrata a Virgem Maria com o Menino Jesus (Natividade de Nosso Senhor ou Maternidade Divina) e nao a Natividade de Nossa Senhora (que mostraria o nascimento de Maria com Santa Ana e Sao Joaquim). Alem disso, ha pequenas falhas na anatomia das maos.",
+      "nota": 5.4
+    },
+    {
+      "dia": 9,
+      "mes": 9,
+      "nome": "São Pedro Claver",
+      "subtitulo": "Presbítero da Companhia de Jesus, Padroeiro das Missões entre os Negros",
+      "motivo": "A imagem apresenta falhas graves na anatomia das mãos e deformações estruturais no crucifixo segurado pelo santo.",
+      "nota": 6.1
+    },
+    {
+      "dia": 11,
+      "mes": 9,
+      "nome": "São Pafnúncio",
+      "subtitulo": "Bispo e Confessor",
+      "motivo": "A imagem foi reprovada devido à presença de texto legível (letras) no pergaminho, o que viola a regra de reprovação automática para imagens devocionais.",
+      "nota": 5.0
+    },
+    {
+      "dia": 12,
+      "mes": 9,
+      "nome": "Santíssimo Nome de Maria",
+      "subtitulo": "Memória da Santíssima Virgem Maria",
+      "motivo": "A imagem apresenta falhas graves na anatomia das mãos, com dedos extras e proporções deformadas, violando o critério obrigatório de anatomia.",
+      "nota": 6.0
+    },
+    {
+      "dia": 13,
+      "mes": 9,
+      "nome": "São João Crisóstomo",
+      "subtitulo": "Bispo de Constantinopla e Doutor da Igreja",
+      "motivo": "A imagem apresenta falhas graves na anatomia das mãos (dedos excessivamente longos e deformados na mão que segura o livro e na que abençoa), além de inconsistências iconográficas nos trajes episcopais bizantinos combinados incorretamente com elementos ocidentais.",
+      "nota": 6.1
+    },
+    {
+      "dia": 25,
+      "mes": 9,
+      "nome": "São Sérgio de Radonezh",
+      "subtitulo": "Abade e Reorganizador do Monaquismo Russo",
+      "motivo": "A imagem possui texto explícito no pergaminho segurado pelo santo, o que viola a regra de reprovação automática.",
+      "nota": 5.0
+    },
+    {
+      "dia": 11,
+      "mes": 10,
+      "nome": "São João XXIII",
+      "subtitulo": "Papa",
+      "motivo": "A anatomia da mão que abençoa apresenta falhas evidentes, com distorções nos dedos e proporções incorretas.",
+      "nota": 6.5
+    },
+    {
+      "dia": 15,
+      "mes": 10,
+      "nome": "Santa Teresa de Ávila",
+      "subtitulo": "Virgem e Doutora da Igreja",
+      "motivo": "A imagem apresenta texto ilegível no livro aberto, o que aciona a regra de reprovação automática.",
+      "nota": 6.8
+    },
+    {
+      "dia": 17,
+      "mes": 10,
+      "nome": "Santo Inácio de Antioquia",
+      "subtitulo": "Bispo e Mártir",
+      "motivo": "A imagem foi reprovada automaticamente devido à presença de texto legível (\"IESUS CHRISTUS\") no papel segurado pelo santo, violando a regra de reprovação automática para imagens com texto.",
+      "nota": 0.0
+    },
+    {
+      "dia": 20,
+      "mes": 10,
+      "nome": "Santa Irene de Portugal",
+      "subtitulo": "Virgem e Mártir",
+      "motivo": "A imagem representa um homem idoso com barba e hábito monástico (aparentando um santo homem ou abade), totalmente inadequado para Santa Irene de Portugal, que é uma virgem e mártir jovem. A anatomia das mãos também apresenta deformações severas e traços confusos.",
+      "nota": 2.1
+    },
+    {
+      "dia": 21,
+      "mes": 10,
+      "nome": "Santa Úrsula e Companheiras",
+      "subtitulo": "Virgens e Mártires",
+      "motivo": "A imagem retrata um homem idoso, sacerdote ou religioso, e não Santa Úrsula e suas companheiras que são virgens e mártires, falhando totalmente na iconografia.",
+      "nota": 2.5
+    },
+    {
+      "dia": 22,
+      "mes": 10,
+      "nome": "São João Paulo II",
+      "subtitulo": "Papa",
+      "motivo": "A imagem apresenta falhas graves na iconografia histórica: retrata um papa idoso com barba longa e trajes genéricos que não correspondem à fisionomia ou época de São João Paulo II.",
+      "nota": 5.4
+    },
+    {
+      "dia": 23,
+      "mes": 10,
+      "nome": "São João de Capistrano",
+      "subtitulo": "Presbítero",
+      "motivo": "A mão levantada apresenta sérios problemas anatômicos, contando com 6 dedos visíveis, o que viola o critério obrigatório de anatomia.",
+      "nota": 5.7
+    },
+    {
+      "dia": 25,
+      "mes": 10,
+      "nome": "São Frei Galvão",
+      "subtitulo": "Presbítero e Primeiro Santo Nascido no Brasil",
+      "motivo": "A imagem apresenta texto ilegível simulado nas pílulas (pãezinhos) que Frei Galvão segura, o que viola a regra de reprovação automática para imagens com texto. Além disso, a mão esquerda apresenta anomalias anatômicas sutis na junção dos dedos.",
+      "nota": 6.5
+    },
+    {
+      "dia": 30,
+      "mes": 10,
+      "nome": "São Marcelo de Tânger",
+      "subtitulo": "Mártir Centurião",
+      "motivo": "A anatomia das mãos apresenta falhas evidentes na contagem e proporção dos dedos, o que viola o critério eliminatório de anatomia.",
+      "nota": 6.7
+    },
+    {
+      "dia": 31,
+      "mes": 10,
+      "nome": "Santo Afonso Rodrigues",
+      "subtitulo": "Religioso da Companhia de Jesus",
+      "motivo": "Erro iconográfico grave: Santo Afonso Rodrigues foi um irmão lego jesuíta e humilde porteiro, e não um abade ou bispo (está incorretamente retratado com báculo pastoral e vestimentas prelaticas/mitradas). Além disso, a mão esquerda apresenta deformidades anatômicas nos dedos.",
+      "nota": 5.4
+    },
+    {
+      "dia": 9,
+      "mes": 11,
+      "nome": "Dedicação da Basílica de Latrão",
+      "subtitulo": "Festa",
+      "motivo": "A imagem apresenta boa qualidade pictórica e iluminação barroca, mas falha na iconografia: a maquete segurada pelo bispo representa claramente a Basílica de São Pedro no Vaticano (com a cúpula de Miguel Ângelo e a fachada de Maderno), e não a Arquibasílica de São João de Latrão, que é a catedral de Roma celebrada nesta festa. Além disso, as mãos usando luvas litúrgicas (manoplas) apresentam certa rigidez anatômica.",
+      "nota": 6.4
+    }
+  ],
+  "lista_erros": []
+}
