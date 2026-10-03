@@ -215,13 +215,13 @@ extension OpusDeiClassExtension on OpusDeiClass {
   String get fullTitle {
     switch (this) {
       case OpusDeiClass.classeA:
-        return 'Solenidade da Prelazia';
+        return 'Solenidade da Prelazia (Classe A)';
       case OpusDeiClass.classeB:
-        return 'Festa da Prelazia';
+        return 'Festa da Prelazia (Classe B)';
       case OpusDeiClass.classeC:
-        return 'Memória Litúrgica da Prelazia';
+        return 'Memória da Prelazia (Classe C)';
       case OpusDeiClass.classeD:
-        return 'Aniversário Histórico da Prelazia';
+        return 'Comemoração da Prelazia (Classe D)';
     }
   }
 
@@ -243,11 +243,15 @@ class OpusDeiCelebration {
   final String name;
   final OpusDeiClass classRank;
   final String description;
+  final String? rubric;
+  final String? mass;
 
   const OpusDeiCelebration({
     required this.name,
     required this.classRank,
     required this.description,
+    this.rubric,
+    this.mass,
   });
 }
 

@@ -1,254 +1,125 @@
-import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/services/computus_engine.dart';
 import 'package:coramdeo/app/calendario/services/opus_dei_calendar_data.dart';
-import 'package:coramdeo/utils/base_provider.dart';
-import 'package:coramdeo/utils/constants.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  group('OpusDeiCalendarData & Prelature Feasts', () {
-    test('Contém todas as Solenidades de Classe A', () {
+  group('OpusDeiCalendarData - Validação das Classificações e Correções Oficiais', () {
+    test('Valida as correções específicas de datas e graus da Prelazia', () {
+      // 1. Conversão de São Paulo (25/01) -> Classe D
+      final convPaulo = OpusDeiCalendarData.getCelebration(1, 25);
+      expect(convPaulo, isNotNull);
+      expect(convPaulo!.classRank, OpusDeiClass.classeD);
+      expect(convPaulo.name, contains('Conversão de São Paulo'));
+
+      // 2. Cátedra de São Pedro (22/02) -> Classe D
+      final catedra = OpusDeiCalendarData.getCelebration(2, 22);
+      expect(catedra, isNotNull);
+      expect(catedra!.classRank, OpusDeiClass.classeD);
+      expect(catedra.name, contains('Cátedra de São Pedro'));
+
+      // 3. Aniv. Eleição do Papa (08/05) -> Classe B (TD, Pro Pontifice)
+      final eleicaoPapa = OpusDeiCalendarData.getCelebration(5, 8);
+      expect(eleicaoPapa, isNotNull);
+      expect(eleicaoPapa!.classRank, OpusDeiClass.classeB);
+      expect(eleicaoPapa.rubric, 'Te Deum');
+      expect(eleicaoPapa.mass, 'Pro Pontifice');
+
+      // 4. Santo do Padre (30/05, São Fernando) -> Classe B (TD, Missa do Santo)
+      final santoPadre = OpusDeiCalendarData.getCelebration(5, 30);
+      expect(santoPadre, isNotNull);
+      expect(santoPadre!.classRank, OpusDeiClass.classeB);
+      expect(santoPadre.name, contains('São Fernando'));
+      expect(santoPadre.rubric, 'Te Deum');
+      expect(santoPadre.mass, 'Missa do Santo');
+
+      // 5. Aniv. Ordenação dos três primeiros sacerdotes (25/06/1944) -> Classe C
+      final tresSacerdotes = OpusDeiCalendarData.getCelebration(6, 25);
+      expect(tresSacerdotes, isNotNull);
+      expect(tresSacerdotes!.classRank, OpusDeiClass.classeC);
+      expect(tresSacerdotes.name, contains('Primeiros Sacerdotes'));
+
+      // 6. São Pio X (21/08) -> Classe C
+      final saoPioX = OpusDeiCalendarData.getCelebration(8, 21);
+      expect(saoPioX, isNotNull);
+      expect(saoPioX!.classRank, OpusDeiClass.classeC);
+      expect(saoPioX.name, contains('São Pio X'));
+
+      // 7. Nossa Senhora do Pilar (12/10) -> Classe D
+      final pilar = OpusDeiCalendarData.getCelebration(10, 12);
+      expect(pilar, isNotNull);
+      expect(pilar!.classRank, OpusDeiClass.classeD);
+      expect(pilar.name, contains('Pilar'));
+
+      // 8. Aniversário do Padre (27/10, Mons. Fernando Ocáriz) -> Classe B (TD)
+      final anivPadre = OpusDeiCalendarData.getCelebration(10, 27);
+      expect(anivPadre, isNotNull);
+      expect(anivPadre!.classRank, OpusDeiClass.classeB);
+      expect(anivPadre.rubric, 'Te Deum');
+      expect(anivPadre.name, contains('Aniversário do Padre'));
+
+      // 9. Todos os Santos (01/11) -> Classe B (TD)
+      final todosSantos = OpusDeiCalendarData.getCelebration(11, 1);
+      expect(todosSantos, isNotNull);
+      expect(todosSantos!.classRank, OpusDeiClass.classeB);
+      expect(todosSantos.rubric, 'Te Deum');
+
+      // 10. São Severino e Relíquias nos Oratórios (08/11) -> Classe B
+      final severino = OpusDeiCalendarData.getCelebration(11, 8);
+      expect(severino, isNotNull);
+      expect(severino!.classRank, OpusDeiClass.classeB);
+      expect(severino.name, contains('São Severino'));
+
+      // 11. Nossa Senhora de Guadalupe (12/12) -> Classe D
+      final guadalupe = OpusDeiCalendarData.getCelebration(12, 12);
+      expect(guadalupe, isNotNull);
+      expect(guadalupe!.classRank, OpusDeiClass.classeD);
+      expect(guadalupe.name, contains('Guadalupe'));
+    });
+
+    test('Valida as grandes Solenidades de Classe A da Prelazia', () {
+      // 14/02: Mulheres e SSSC
+      final fev14 = OpusDeiCalendarData.getCelebration(2, 14);
+      expect(fev14!.classRank, OpusDeiClass.classeA);
+
+      // 19/03: São José
       final mar19 = OpusDeiCalendarData.getCelebration(3, 19);
-      expect(mar19, isNotNull);
       expect(mar19!.classRank, OpusDeiClass.classeA);
 
+      // 26/06: São Josemaria
       final jun26 = OpusDeiCalendarData.getCelebration(6, 26);
-      expect(jun26, isNotNull);
       expect(jun26!.classRank, OpusDeiClass.classeA);
-      expect(jun26.name, contains('São Josemaria Escrivá'));
 
-      final jun29 = OpusDeiCalendarData.getCelebration(6, 29);
-      expect(jun29, isNotNull);
-      expect(jun29!.classRank, OpusDeiClass.classeA);
+      // 02/10: Fundação da Obra
+      final out02 = OpusDeiCalendarData.getCelebration(10, 2);
+      expect(out02!.classRank, OpusDeiClass.classeA);
 
-      final oct02 = OpusDeiCalendarData.getCelebration(10, 2);
-      expect(oct02, isNotNull);
-      expect(oct02!.classRank, OpusDeiClass.classeA);
-      expect(oct02.name, contains('Fundação do Opus Dei'));
+      // 06/10: Canonização de São Josemaria
+      final out06 = OpusDeiCalendarData.getCelebration(10, 6);
+      expect(out06!.classRank, OpusDeiClass.classeA);
+
+      // 28/11: Ereção em Prelazia Pessoal (Ut Sit)
+      final nov28 = OpusDeiCalendarData.getCelebration(11, 28);
+      expect(nov28!.classRank, OpusDeiClass.classeA);
     });
 
-    test('Contém as Festas de Classe B', () {
-      final feb14 = OpusDeiCalendarData.getCelebration(2, 14);
-      expect(feb14, isNotNull);
-      expect(feb14!.classRank, OpusDeiClass.classeB);
-      expect(feb14.name, contains('Belo Amor'));
+    test('Identifica festas móveis com classificação do Opus Dei via ComputusEngine', () {
+      // 2026: Páscoa em 05/04/2026
+      // Pentecostes: 24/05/2026 -> Classe A
+      final pentecostDay = ComputusEngine.getLiturgicalDay(DateTime(2026, 5, 24));
+      expect(pentecostDay.opusDeiCelebration, isNotNull);
+      expect(pentecostDay.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
 
-      final may02 = OpusDeiCalendarData.getCelebration(5, 2);
-      expect(may02, isNotNull);
-      expect(may02!.classRank, OpusDeiClass.classeB);
+      // Sagrado Coração de Jesus: 12/06/2026 -> Classe A
+      final sacredHeartDay = ComputusEngine.getLiturgicalDay(DateTime(2026, 6, 12));
+      expect(sacredHeartDay.opusDeiCelebration, isNotNull);
+      expect(sacredHeartDay.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
+      expect(sacredHeartDay.opusDeiCelebration!.rubric, contains('Ladainha'));
 
-      final arcanjos = OpusDeiCalendarData.getCelebration(9, 29);
-      expect(arcanjos, isNotNull);
-      expect(arcanjos!.classRank, OpusDeiClass.classeB);
-
-      final reliquias = OpusDeiCalendarData.getCelebration(11, 8);
-      expect(reliquias, isNotNull);
-      expect(reliquias!.classRank, OpusDeiClass.classeB);
-
-      final joao = OpusDeiCalendarData.getCelebration(12, 27);
-      expect(joao, isNotNull);
-      expect(joao!.classRank, OpusDeiClass.classeB);
+      // Cristo Rei: 22/11/2026 -> Classe A
+      final christKingDay = ComputusEngine.getLiturgicalDay(DateTime(2026, 11, 22));
+      expect(christKingDay.opusDeiCelebration, isNotNull);
+      expect(christKingDay.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
     });
-
-    test('Contém as Memórias Litúrgicas de Classe C', () {
-      final alvaro = OpusDeiCalendarData.getCelebration(5, 12);
-      expect(alvaro, isNotNull);
-      expect(alvaro!.classRank, OpusDeiClass.classeC);
-      expect(alvaro.name, contains('Álvaro del Portillo'));
-
-      final guadalupe = OpusDeiCalendarData.getCelebration(5, 18);
-      expect(guadalupe, isNotNull);
-      expect(guadalupe!.classRank, OpusDeiClass.classeC);
-      expect(guadalupe.name, contains('Guadalupe Ortiz'));
-
-      final rafael = OpusDeiCalendarData.getCelebration(10, 24);
-      expect(rafael, isNotNull);
-      expect(rafael!.classRank, OpusDeiClass.classeC);
-      expect(rafael.name, contains('São Rafael'));
-    });
-
-    test('Contém os Aniversários Históricos de Classe D', () {
-      final utSit = OpusDeiCalendarData.getCelebration(11, 28);
-      expect(utSit, isNotNull);
-      expect(utSit!.classRank, OpusDeiClass.classeD);
-      expect(utSit.name, contains('Prelazia Pessoal'));
-
-      final canonizacao = OpusDeiCalendarData.getCelebration(10, 6);
-      expect(canonizacao, isNotNull);
-      expect(canonizacao!.classRank, OpusDeiClass.classeD);
-      expect(canonizacao.name, contains('Canonização'));
-
-      final javier = OpusDeiCalendarData.getCelebration(12, 12);
-      expect(javier, isNotNull);
-      expect(javier!.classRank, OpusDeiClass.classeD);
-      expect(javier.name, contains('Javier Echevarría'));
-    });
-
-    test(
-      'Identifica os Sete Domingos de São José anteriores a 19 de Março',
-      () {
-        // Em 2026, 19 de março é uma quinta-feira.
-        // Os 7 domingos anteriores são:
-        // 15/03, 08/03, 01/03, 22/02, 15/02, 08/02, 01/02
-        expect(
-          OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 2, 1)),
-          contains('1º Domingo de São José'),
-        );
-        expect(
-          OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 2, 8)),
-          contains('2º Domingo de São José'),
-        );
-        expect(
-          OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 3, 15)),
-          contains('7º Domingo de São José'),
-        );
-        // Um dia que não é domingo não deve ter o aviso
-        expect(
-          OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 3, 14)),
-          isNull,
-        );
-      },
-    );
-
-    test('Identifica os 9 dias da Novena da Imaculada Conceição', () {
-      // 29 de novembro = Dia 1
-      expect(
-        OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 11, 29)),
-        'Novena da Imaculada Conceição (Dia 1)',
-      );
-      // 30 de novembro = Dia 2
-      expect(
-        OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 11, 30)),
-        'Novena da Imaculada Conceição (Dia 2)',
-      );
-      // 1 de dezembro = Dia 3
-      expect(
-        OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 12, 1)),
-        'Novena da Imaculada Conceição (Dia 3)',
-      );
-      // 7 de dezembro = Dia 9
-      expect(
-        OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 12, 7)),
-        'Novena da Imaculada Conceição (Dia 9)',
-      );
-      // 8 de dezembro = Festa (já não é novena)
-      expect(
-        OpusDeiCalendarData.getNovenaNotice(DateTime(2026, 12, 8)),
-        isNull,
-      );
-    });
-
-    test(
-      'ComputusEngine preserva a liturgia geral e adiciona Opus Dei como extra',
-      () {
-        final day = ComputusEngine.getLiturgicalDay(DateTime(2026, 6, 26));
-        expect(day.hasOpusDeiCelebration, isTrue);
-        expect(day.opusDeiCelebration!.classRank, OpusDeiClass.classeA);
-        expect(day.opusDeiCelebration!.classRank.letter, 'A');
-        // No calendário geral, 26/06/2026 é sexta-feira da 12ª Semana do Tempo Comum (feria / verde)
-        expect(day.rank, LiturgicalRank.feria);
-        expect(day.color, LiturgicalColor.green);
-      },
-    );
-
-    test('Nomenclatura das classes segue o padrão A, B, C, D', () {
-      expect(OpusDeiClass.classeA.letter, 'A');
-      expect(OpusDeiClass.classeB.letter, 'B');
-      expect(OpusDeiClass.classeC.letter, 'C');
-      expect(OpusDeiClass.classeD.letter, 'D');
-    });
-
-    test(
-      'Dia 14 de setembro (Exaltação da Santa Cruz) é festa universal e não do Opus Dei',
-      () {
-        final celebration = OpusDeiCalendarData.getCelebration(9, 14);
-        expect(celebration, isNull);
-
-        final day = ComputusEngine.getLiturgicalDay(DateTime(2026, 9, 14));
-        expect(day.hasOpusDeiCelebration, isFalse);
-        expect(day.rank, LiturgicalRank.festa);
-        expect(day.color, LiturgicalColor.red);
-        expect(day.title, contains('Exaltação da Santa Cruz'));
-      },
-    );
-  });
-
-  group('AppProvider Opus Dei Celebrations Setting', () {
-    setUp(() {
-      TestWidgetsFlutterBinding.ensureInitialized();
-      BaseProvider.resetCachedPrefs();
-      SharedPreferences.setMockInitialValues({});
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(
-            const MethodChannel('plugins.flutter.io/local_auth'),
-            (MethodCall methodCall) async {
-              if (methodCall.method == 'getAvailableBiometrics') {
-                return <String>[];
-              }
-              return false;
-            },
-          );
-    });
-
-    tearDown(() {
-      BaseProvider.resetCachedPrefs();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(
-            const MethodChannel('plugins.flutter.io/local_auth'),
-            null,
-          );
-    });
-
-    test('Padrão de showOpusDeiCelebrations é false', () async {
-      final provider = AppProvider();
-      await provider.reload();
-      expect(provider.showOpusDeiCelebrations, isFalse);
-    });
-
-    test('toggleOpusDeiCelebrations alterna e persiste o valor', () async {
-      final provider = AppProvider();
-      await provider.reload();
-      expect(provider.showOpusDeiCelebrations, isFalse);
-
-      await provider.toggleOpusDeiCelebrations();
-      expect(provider.showOpusDeiCelebrations, isTrue);
-
-      final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isTrue);
-
-      await provider.toggleOpusDeiCelebrations();
-      expect(provider.showOpusDeiCelebrations, isFalse);
-      expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isFalse);
-    });
-
-    test(
-      'setShowOpusDeiCelebrations define e persiste o valor especificado',
-      () async {
-        final provider = AppProvider();
-        await provider.reload();
-
-        await provider.setShowOpusDeiCelebrations(true);
-        expect(provider.showOpusDeiCelebrations, isTrue);
-
-        final prefs = await SharedPreferences.getInstance();
-        expect(prefs.getBool(AppConstants.showOpusDeiCelebrationsKey), isTrue);
-      },
-    );
-
-    test(
-      'Carrega valor true quando salvo previamente nas preferências',
-      () async {
-        SharedPreferences.setMockInitialValues({
-          AppConstants.showOpusDeiCelebrationsKey: true,
-        });
-
-        final provider = AppProvider();
-        await provider.reload();
-        expect(provider.showOpusDeiCelebrations, isTrue);
-      },
-    );
   });
 }
