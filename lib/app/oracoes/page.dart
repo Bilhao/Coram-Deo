@@ -11,25 +11,50 @@ class OracoesPage extends StatefulWidget {
 
 class _OracoesPageState extends State<OracoesPage> {
   final Map<String, String> routeToName = {
-    "oferecimento-de-obras": "Oferecimento de Obras",
-    "comentario-do-evangelho-do-dia": "Comentário do Evangelho do dia",
-    "falar-com-deus": "Meditação Diária do Falar com Deus",
+    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
+    "adoro-te-devote": "Adoro Te Devote",
     "angelus-regina-caeli": "Angelus/Regina Cæli",
-    "lembrai-vos": "Lembrai-Vos",
-    "preces": "Preces",
-    "credo": "Credo Niceno-Constantinopolitano",
+    "comentario-do-evangelho-do-dia": "Comentário do Evangelho do dia",
     "credo-atanasiano": "Credo Atanasiano",
+    "credo": "Credo Niceno-Constantinopolitano",
+    "estampa-josemaria": "Estampa de São Josemaría",
+    "exame-de-consciencia-oracao": "Exame de Consciência",
+    "gratias-tibi-ago": "Gratias tibi ago",
+    "lembrai-vos": "Lembrai-Vos",
+    "falar-com-deus": "Meditação Diária do Falar com Deus",
+    "oferecimento-de-obras": "Oferecimento de Obras",
+    "preces": "Preces",
+    "responso": "Responso",
+    "salmo-2": "Salmo 2",
     "santo-rosario": "Santo Rosário",
     "te-deum": "Te Deum",
     "visita-ao-santissimo": "Visita ao Santíssimo",
-    "adoro-te-devote": "Adoro Te Devote",
-    "salmo-2": "Salmo 2",
-    "exame-de-consciencia-oracao": "Exame de Consciência",
-    "estampa-josemaria": "Estampa de São Josemaría",
-    "gratias-tibi-ago": "Gratias tibi ago",
-    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
-    "responso": "Responso",
   };
+
+  static String _normalize(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(RegExp(r'[áàâãä]'), 'a')
+        .replaceAll(RegExp(r'[éèêë]'), 'e')
+        .replaceAll(RegExp(r'[íìîï]'), 'i')
+        .replaceAll(RegExp(r'[óòôõö]'), 'o')
+        .replaceAll(RegExp(r'[úùûü]'), 'u')
+        .replaceAll(RegExp(r'[ç]'), 'c');
+  }
+
+  List<String> get _sortedRoutes {
+    final list = routeToName.keys.toList();
+    list.sort((a, b) =>
+        _normalize(routeToName[a]!).compareTo(_normalize(routeToName[b]!)));
+    return list;
+  }
+
+  List<String> _sortedFavoritas(List<String> favoritas) {
+    final list = favoritas.where((r) => routeToName.containsKey(r)).toList();
+    list.sort((a, b) =>
+        _normalize(routeToName[a]!).compareTo(_normalize(routeToName[b]!)));
+    return list;
+  }
 
   Widget itembuild(String title, String route) {
     return Consumer<OracoesProvider>(
@@ -61,6 +86,7 @@ class _OracoesPageState extends State<OracoesPage> {
               children: [
                 Consumer<OracoesProvider>(
                   builder: (context, provider, child) {
+                    final favoritas = _sortedFavoritas(provider.favoritas);
                     return ExpansionTile(
                       title: Text(
                         "Favoritas",
@@ -69,7 +95,7 @@ class _OracoesPageState extends State<OracoesPage> {
                       initiallyExpanded: true,
                       shape: const Border(),
                       children: [
-                        for (String route in provider.favoritas)
+                        for (String route in favoritas)
                           itembuild(routeToName[route]!, route),
                       ],
                     );
@@ -80,7 +106,7 @@ class _OracoesPageState extends State<OracoesPage> {
                   initiallyExpanded: false,
                   shape: const Border(),
                   children: [
-                    for (String route in routeToName.keys)
+                    for (String route in _sortedRoutes)
                       itembuild(routeToName[route]!, route),
                   ],
                 ),

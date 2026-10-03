@@ -26,24 +26,24 @@ class SearchProvider extends BaseProvider {
 
   // Map of prayers (Route -> Title) - Copied from OracoesPage
   final Map<String, String> _prayers = {
-    "oferecimento-de-obras": "Oferecimento de Obras",
-    "comentario-do-evangelho-do-dia": "Comentário do Evangelho do dia",
-    "falar-com-deus": "Meditação Diária do Falar com Deus",
+    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
+    "adoro-te-devote": "Adoro Te Devote",
     "angelus-regina-caeli": "Angelus/Regina Cæli",
-    "lembrai-vos": "Lembrai-Vos",
-    "preces": "Preces",
-    "credo": "Credo Niceno-Constantinopolitano",
+    "comentario-do-evangelho-do-dia": "Comentário do Evangelho do dia",
     "credo-atanasiano": "Credo Atanasiano",
+    "credo": "Credo Niceno-Constantinopolitano",
+    "estampa-josemaria": "Estampa de São Josemaría",
+    "exame-de-consciencia-oracao": "Exame de Consciência",
+    "gratias-tibi-ago": "Gratias tibi ago",
+    "lembrai-vos": "Lembrai-Vos",
+    "falar-com-deus": "Meditação Diária do Falar com Deus",
+    "oferecimento-de-obras": "Oferecimento de Obras",
+    "preces": "Preces",
+    "responso": "Responso",
+    "salmo-2": "Salmo 2",
     "santo-rosario": "Santo Rosário",
     "te-deum": "Te Deum",
     "visita-ao-santissimo": "Visita ao Santíssimo",
-    "adoro-te-devote": "Adoro Te Devote",
-    "salmo-2": "Salmo 2",
-    "exame-de-consciencia-oracao": "Exame de Consciência",
-    "estampa-josemaria": "Estampa de São Josemaría",
-    "gratias-tibi-ago": "Gratias tibi ago",
-    "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
-    "responso": "Responso",
   };
 
   Future<void> search(String query) async {
