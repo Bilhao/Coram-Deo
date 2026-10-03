@@ -599,6 +599,59 @@ class _CalendarioPageState extends State<CalendarioPage> {
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ),
+                          if (day.opusDeiCelebration!.rubric != null ||
+                              day.opusDeiCelebration!.mass != null) ...[
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 6,
+                              runSpacing: 4,
+                              children: [
+                                if (day.opusDeiCelebration!.rubric != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.secondaryContainer,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      day.opusDeiCelebration!.rubric!,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.onSecondaryContainer,
+                                      ),
+                                    ),
+                                  ),
+                                if (day.opusDeiCelebration!.mass != null)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: colorScheme.surfaceContainerHighest,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: colorScheme.outlineVariant
+                                            .withValues(alpha: 0.5),
+                                        width: 0.8,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Missa: ${day.opusDeiCelebration!.mass!}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),

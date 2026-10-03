@@ -71,6 +71,8 @@ class ComputusEngine {
 
     final firstSundayOfAdvent = calculateFirstSundayOfAdvent(year);
     final christTheKing = _offset(firstSundayOfAdvent, -7);
+    final baptism = calculateBaptismOfLord(year);
+    final holyFamily = calculateHolyFamily(year);
 
     // Determinação do Tempo Litúrgico e Cor Canônica
     LiturgicalSeason season;
@@ -200,7 +202,6 @@ class ComputusEngine {
     else if (dateOnly.month == 12 && dateOnly.day >= 25) {
       season = LiturgicalSeason.natal;
       color = LiturgicalColor.white;
-      final holyFamily = calculateHolyFamily(year);
 
       if (dateOnly.day == 25) {
         rank = LiturgicalRank.solenidade;
@@ -230,7 +231,6 @@ class ComputusEngine {
         _isBeforeBaptismOfLord(dateOnly)) {
       season = LiturgicalSeason.natal;
       color = LiturgicalColor.white;
-      final baptism = calculateBaptismOfLord(year);
 
       if (dateOnly.day == 1) {
         rank = LiturgicalRank.solenidade;
@@ -342,6 +342,11 @@ class ComputusEngine {
     final opusDei = OpusDeiCalendarData.getCelebration(
       dateOnly.month,
       dateOnly.day,
+      date: dateOnly,
+      easter: easter,
+      baptism: baptism,
+      christTheKing: christTheKing,
+      holyFamily: holyFamily,
     );
 
     final novena = OpusDeiCalendarData.getNovenaNotice(dateOnly);
