@@ -302,19 +302,73 @@ def crop_letterbox_and_convert(src_path: str, dst_path: str) -> bool:
 
 def build_canonical_prompt(nome: str, subtitulo: str) -> str:
     """Gera um prompt canônico estrito seguindo as diretrizes de arte sacra barroca pura."""
-    return (
-        f"Direct digital illustration in pure baroque sacred oil painting style, filling 100% of the square image seamlessly edge-to-edge. "
-        f"CRITICAL: NOT a photograph of a painting, NOT a photo of a screen, NOT a canvas hanging on a wall, NO physical canvas thickness or edges, "
-        f"NO picture frame, NO wooden frame, NO margins, NO borders, NO easel, NO museum wall, NO drop shadow, NO perspective tilt, "
-        f"strictly no text, no letters, no words, no captions. "
-        f"Close-up upper-body portrait of {nome}, {subtitulo}. Wearing authentic historic religious vestments or habit. "
-        f"Hands with natural five fingers resting with profound reverence or holding sacred attributes. "
-        f"Looking with deep interior prayer, serenity, and spiritual holiness. "
-        f"Delicate translucent golden ethereal halo around the head. "
-        f"Dramatic chiaroscuro lighting, warm golden illumination highlighting face and hands against deep "
-        f"velvety dark background shadows, masterwork in the solemn style of Francisco de Zurbaran, Diego Velazquez and Caravaggio, "
-        f"rich oil paint textures."
+    base_prefix = (
+        "Direct digital illustration in pure baroque sacred oil painting style, filling 100% of the square image seamlessly edge-to-edge. "
+        "CRITICAL: NOT a photograph of a painting, NOT a photo of a screen, NOT a canvas hanging on a wall, NO physical canvas thickness or edges, "
+        "NO picture frame, NO wooden frame, NO margins, NO borders, NO easel, NO museum wall, NO drop shadow, NO perspective tilt, "
+        "strictly no text, no letters, no words, no captions. "
     )
+    base_suffix = (
+        " Delicately rendered hands with exactly five distinct, well-proportioned natural fingers on each hand. "
+        "Delicate translucent golden ethereal halo glowing softly around the head. "
+        "Dramatic chiaroscuro lighting, warm golden illumination highlighting face and hands against deep "
+        "velvety dark background shadows, masterwork in the solemn style of Francisco de Zurbaran, Diego Velazquez and Caravaggio, "
+        "rich oil paint textures."
+    )
+
+    nome_lower = nome.lower()
+    if "natal" in nome_lower and "senhor" in nome_lower:
+        subject = (
+            "Sacred depiction of the Nativity of Our Lord Jesus Christ (Natal do Senhor Jesus Cristo). "
+            "The Blessed Virgin Mary in deep celestial blue mantle and Saint Joseph beside her in amber cloak, "
+            "both gazing with infinite tenderness and adoration upon the newborn infant Jesus lying peacefully on straw in the wooden manger. "
+            "Divine celestial golden light radiating from the Christ Child illuminating their humble devout faces and folded hands in adoration."
+        )
+    elif "santos inocentes" in nome_lower:
+        subject = (
+            "Sacred composition of the Holy Innocents (Santos Inocentes, Mártires). "
+            "Holy infant martyrs in heaven, young cherubic child martyrs clothed in pure white baptismal tunics, "
+            "holding miniature green palm branches of martyrdom with five natural fingers, surrounded by soft celestial golden light and ethereal clouds."
+        )
+    elif "sagrada família" in nome_lower:
+        subject = (
+            "Sacred composition of the Holy Family (Sagrada Família: Jesus, Maria e José). "
+            "The child Jesus between the Virgin Mary and Saint Joseph in deep fraternal domestic holiness and love. "
+            "Warm golden chiaroscuro lighting in their Nazareth home."
+        )
+    elif "santo estêvão" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint Stephen (Santo Estêvão), the first deacon and martyr. "
+            "Wearing an authentic red dalmatic with gold embroidery over white alb. "
+            "Noble youthful face looking up to heaven with radiant faith and divine grace. "
+            "Holding a green palm branch of martyrdom and stones resting beside a leather Gospel book with five natural fingers."
+        )
+    elif "joão" in nome_lower and "evangelista" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint John the Evangelist (São João Apóstolo e Evangelista). "
+            "The beloved disciple, serene youthful face with soft curls, wearing dark green mantle over red tunic. "
+            "Holding a golden chalice with a subtle serpent and a closed Gospel book with five natural fingers."
+        )
+    elif "tomás becket" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint Thomas Becket (São Tomás Becket), Archbishop of Canterbury and martyr. "
+            "Wearing medieval episcopal vestments, chasuble, mitre and pallium with dark crosses. "
+            "Venerable resolute face of a martyr, holding an episcopal cross staff with five natural fingers."
+        )
+    elif "silvestre" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Pope Saint Sylvester I (São Silvestre I, Papa). "
+            "Venerable elderly Pope with noble white beard, wearing ancient white liturgical vestments, gold-embroidered cope and pallium. "
+            "Right hand raised in episcopal blessing with five natural fingers, left hand holding an apostolic cross staff with five natural fingers."
+        )
+    else:
+        subject = (
+            f"Close-up upper-body portrait of {nome}, {subtitulo}. Wearing authentic historic religious vestments or habit. "
+            f"Hands with natural five fingers resting with profound reverence or holding sacred attributes. "
+            f"Looking with deep interior prayer, serenity, and spiritual holiness."
+        )
+
+    return f"{base_prefix}{subject}{base_suffix}"
 
 
 def generate_single_image(client, saint: Dict, model: str = "") -> Optional[str]:
@@ -598,10 +652,10 @@ def check_and_validate_all():
         log("Todas as imagens existentes passaram no controle de qualidade técnico!")
 
 
-def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool = False):
+def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool = False, target_month: Optional[int] = None):
     """
     Loop de execução contínua que gera, valida e salva imagens sequencialmente
-    até completar todas as 366 imagens.
+    até completar todas as imagens pendentes (ou de um mês específico).
     """
     log("═" * 60)
     log("INICIANDO SAINT IMAGE DAEMON — CORAM DEO")
@@ -609,6 +663,7 @@ def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool =
     log(f"Modelo de validação: {VALIDATION_MODEL}")
     log(f"Máx. tentativas por santo: {MAX_RETRIES}")
     log(f"Cooldown entre gerações: {GENERATION_COOLDOWN_SECONDS}s")
+    log(f"Mês alvo: {MONTH_NAMES[target_month] if target_month else 'TODOS OS MESES'}")
     log(f"Validação visual: {'DESATIVADA' if skip_validation else 'ATIVADA'}")
     log("═" * 60)
 
@@ -617,10 +672,16 @@ def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool =
 
     while True:
         saints = get_all_saints_db()
-        pending = [s for s in saints if not image_exists_for(s["dia"], s["mes"])]
+        if target_month:
+            pending = [s for s in saints if s["mes"] == target_month and not image_exists_for(s["dia"], s["mes"])]
+        else:
+            pending = [s for s in saints if not image_exists_for(s["dia"], s["mes"])]
 
         if not pending:
-            log("🎉 Todas as 366 imagens dos santos do dia foram geradas!")
+            if target_month:
+                log(f"🎉 Todas as imagens de {MONTH_NAMES[target_month]} foram concluídas!")
+            else:
+                log("🎉 Todas as 366 imagens dos santos do dia foram geradas!")
             log(f"Geradas nesta sessão: {generated_count} | Puladas: {skipped_count}")
             break
 
@@ -850,6 +911,13 @@ def main():
         help="Inicia o loop contínuo de geração + validação",
     )
     parser.add_argument(
+        "--month",
+        type=int,
+        choices=range(1, 13),
+        default=None,
+        help="Filtra a geração contínua para um mês específico (1 a 12)",
+    )
+    parser.add_argument(
         "--skip-validation",
         action="store_true",
         help="Pula a validação visual com IA (gera sem verificar qualidade artística)",
@@ -904,7 +972,7 @@ def main():
         validate_existing_images(client)
     elif args.daemon:
         client = create_client(args.api_key)
-        daemon_loop(client, skip_validation=args.skip_validation)
+        daemon_loop(client, skip_validation=args.skip_validation, target_month=args.month)
     elif args.regenerate:
         dia, mes = args.regenerate
         client = create_client(args.api_key)

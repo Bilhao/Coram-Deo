@@ -1,7 +1,6 @@
 import 'package:coramdeo/app/app_provider.dart';
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/provider.dart';
-import 'package:coramdeo/app/calendario/widgets/opus_dei_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -226,97 +225,6 @@ class CalendarioHomeCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-
-                    // Linha 3: Celebração Opus Dei (se houver)
-                    if (showOpusDei && today.hasOpusDeiCelebration) ...[
-                      const SizedBox(height: 5),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: today.opusDeiCelebration!.classRank
-                                  .badgeColor(context)
-                                  .withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: today.opusDeiCelebration!.classRank
-                                    .badgeColor(context)
-                                    .withValues(alpha: 0.5),
-                                width: 0.8,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                OpusDeiIcon(
-                                  size: 10,
-                                  color: today.opusDeiCelebration!.classRank
-                                      .badgeColor(context),
-                                ),
-                                const SizedBox(width: 3),
-                                Text(
-                                  today
-                                      .opusDeiCelebration!
-                                      .classRank
-                                      .badgeLabel, // "Opus Dei - A" / "Opus Dei - B" / "Opus Dei - C"
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: today.opusDeiCelebration!.classRank
-                                        .badgeColor(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              today.opusDeiCelebration!.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: today.opusDeiCelebration!.classRank
-                                    .badgeColor(context),
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-
-                    // Linha 5: Novena ativa (se houver)
-                    if (today.hasNovena) ...[
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.event_note_rounded,
-                            size: 12,
-                            color: colorScheme.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              today.novenaNotice!,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.primary,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
                   ],
                 ),
               ),
