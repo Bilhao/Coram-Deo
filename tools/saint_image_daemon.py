@@ -165,22 +165,24 @@ def validate_image_visual(client, image_path: str, saint_name: str, saint_subtit
 Analise esta imagem que deveria representar: "{saint_name}" ({saint_subtitle}).
 
 Avalie os seguintes critérios com notas de 0 a 10:
-1. ESTILO: É uma pintura a óleo barroca clássica (estilo Caravaggio/Zurbarán/Velázquez)?
-2. MOLDURA: A imagem é full-bleed (preenche todo o canvas) SEM molduras, bordas, ou margens artificiais?
+1. ESTILO: É uma arte sacra barroca clássica (estilo Caravaggio/Zurbarán/Velázquez)?
+2. MOLDURA: A imagem é full-bleed (preenche 100% da área) SEM molduras, bordas ou margens artificiais?
 3. ANATOMIA: As mãos e o rosto estão anatomicamente corretos (5 dedos por mão, proporções faciais naturais)?
 4. ICONOGRAFIA: O santo está vestido com trajes autenticamente de sua época/ordem religiosa?
 5. ILUMINAÇÃO: Possui chiaroscuro quente com luz celestial dourada e sombras aveludadas?
 6. DIGNIDADE: A imagem transmite sacralidade, serenidade e devoção adequada?
 7. AURÉOLA: Possui uma auréola dourada translúcida e sutil ao redor da cabeça?
+8. ARTE_DIRETA: É uma ilustração direta digital e NÃO uma foto de um quadro físico, foto de tela de museu/computador, nem mostra bordas/espessura de tela de pintura (canvas edge), pregos ou parede de galeria ao fundo?
 
 Responda EXATAMENTE neste formato JSON (sem markdown, sem code fences):
-{{"aprovado": true/false, "nota_geral": 0.0, "motivo": "explicação breve", "detalhes": {{"estilo": 0, "moldura": 0, "anatomia": 0, "iconografia": 0, "iluminacao": 0, "dignidade": 0, "aureola": 0}}}}
+{{"aprovado": true/false, "nota_geral": 0.0, "motivo": "explicação breve", "detalhes": {{"estilo": 0, "moldura": 0, "anatomia": 0, "iconografia": 0, "iluminacao": 0, "dignidade": 0, "aureola": 0, "arte_direta": 0}}}}
 
 Regras de aprovação:
 - nota_geral >= 7.0 para aprovar
 - anatomia >= 6 é obrigatório (rejeitar se mãos deformadas)
 - moldura >= 7 é obrigatório (rejeitar se houver moldura/borda visível)
-- Se houver texto/letras na imagem, reprovar automaticamente"""
+- arte_direta >= 7 é obrigatório (REPROVAÇÃO AUTOMÁTICA OBRIGATÓRIA se parecer foto de tela, foto de quadro pendurado na parede ou mostrar bordas de tela física)
+- TEXTO: Inscrições e textos sacros legítimos (como latim "ECCE AGNUS DEI", "IESUS CHRISTUS", "INRI", "JHESUS MARIA", orações em pergaminhos/pílulas ou caligrafia litúrgica bíblica) são TOTALMENTE PERMITIDOS e aprovados se fizerem sentido litúrgico/histórico e estiverem corretos. Apenas reprove se o texto for sem sentido (gibberish/letras deformadas aleatórias), legendas artificiais modernas ou marcas d'água."""
 
         response = client.models.generate_content(
             model=VALIDATION_MODEL,
@@ -203,6 +205,16 @@ Regras de aprovação:
         nota = float(result.get("nota_geral", 0))
         motivo = result.get("motivo", "Sem motivo informado")
         detalhes = result.get("detalhes", {})
+
+        # Validação programática das notas parciais eliminatórias
+        if detalhes.get("arte_direta", 10) < 7:
+            aprovado = False
+            if not any(w in motivo.lower() for w in ["foto", "tela", "quadro", "canvas"]):
+                motivo = f"Aparência de fotografia de quadro/borda de tela visível ({motivo})"
+        if detalhes.get("moldura", 10) < 7:
+            aprovado = False
+        if detalhes.get("anatomia", 10) < 6:
+            aprovado = False
 
         detail_str = " | ".join(f"{k}:{v}" for k, v in detalhes.items())
         validation_log(
@@ -289,18 +301,18 @@ def crop_letterbox_and_convert(src_path: str, dst_path: str) -> bool:
 
 
 def build_canonical_prompt(nome: str, subtitulo: str) -> str:
-    """Gera um prompt canônico estrito seguindo as diretrizes de arte sacra barroca."""
+    """Gera um prompt canônico estrito seguindo as diretrizes de arte sacra barroca pura."""
     return (
-        f"Full-bleed edge-to-edge painting filling the entire square canvas, borderless, "
-        f"strictly no picture frame, no wooden frame, no gilded frame, no borders, no margins, "
-        f"no wall background, no drop shadow, no text, no letters, no words, no captions. "
-        f"Baroque sacred art oil painting, close-up upper-body "
-        f"portrait of {nome}, {subtitulo}. Wearing authentic historic religious vestments or habit. "
+        f"Direct digital illustration in pure baroque sacred oil painting style, filling 100% of the square image seamlessly edge-to-edge. "
+        f"CRITICAL: NOT a photograph of a painting, NOT a photo of a screen, NOT a canvas hanging on a wall, NO physical canvas thickness or edges, "
+        f"NO picture frame, NO wooden frame, NO margins, NO borders, NO easel, NO museum wall, NO drop shadow, NO perspective tilt, "
+        f"strictly no text, no letters, no words, no captions. "
+        f"Close-up upper-body portrait of {nome}, {subtitulo}. Wearing authentic historic religious vestments or habit. "
         f"Hands with natural five fingers resting with profound reverence or holding sacred attributes. "
         f"Looking with deep interior prayer, serenity, and spiritual holiness. "
         f"Delicate translucent golden ethereal halo around the head. "
         f"Dramatic chiaroscuro lighting, warm golden illumination highlighting face and hands against deep "
-        f"velvety shadows, masterwork in the solemn style of Francisco de Zurbaran, Diego Velazquez and Caravaggio, "
+        f"velvety dark background shadows, masterwork in the solemn style of Francisco de Zurbaran, Diego Velazquez and Caravaggio, "
         f"rich oil paint textures."
     )
 
