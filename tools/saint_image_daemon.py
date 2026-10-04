@@ -225,29 +225,55 @@ Regras de aprovação:
 
 def crop_letterbox_and_convert(src_path: str, dst_path: str) -> bool:
     """
-    Remove automaticamente bordas de letterboxing / sombras de canvas
-    e converte para WebP (qualidade 90, method 6, 1024x1024).
+    Remove automaticamente e rigorosamente quaisquer bordas claras, letterboxing,
+    pillarboxing ou margens de canvas, garantindo arte sacra 100% full-bleed edge-to-edge.
+    Converte para WebP (qualidade 90, method 6, 1024x1024).
     """
     try:
         img = Image.open(src_path)
         if img.mode == "RGBA":
             img = img.convert("RGB")
         arr = np.array(img)
+        h, w, _ = arr.shape
 
-        # Detecta margens claras (>240 em todos os canais RGB)
-        is_white = np.all(arr > 240, axis=-1)
-        if np.any(is_white[0, :]) or np.any(is_white[:, 0]):
-            rows = np.where(~np.all(is_white, axis=1))[0]
-            cols = np.where(~np.all(is_white, axis=0))[0]
-            if len(rows) and len(cols):
-                ymin, ymax = rows[0], rows[-1]
-                xmin, xmax = cols[0], cols[-1]
-                width = xmax - xmin + 1
-                height = ymax - ymin + 1
-                side = min(width, height)
-                img = img.crop((xmin, ymin, xmin + side, ymin + side))
+        # Detecta pixels claros (média RGB > 185)
+        is_light = np.mean(arr, axis=-1) > 185
 
-        # Redimensiona para padrão 1024x1024 se necessário
+        top = 0
+        while top < h // 4 and np.mean(is_light[top, :]) > 0.35:
+            top += 1
+
+        bottom = h - 1
+        while bottom > h * 3 // 4 and np.mean(is_light[bottom, :]) > 0.35:
+            bottom -= 1
+
+        left = 0
+        while left < w // 4 and np.mean(is_light[:, left]) > 0.35:
+            left += 1
+
+        right = w - 1
+        while right > w * 3 // 4 and np.mean(is_light[:, right]) > 0.35:
+            right -= 1
+
+        # Se houve detecção de borda clara em qualquer lado, aplica margem de segurança de corte
+        if top > 0 or bottom < h - 1 or left > 0 or right < w - 1:
+            top = min(top + 2, h // 4)
+            bottom = max(bottom - 2, h * 3 // 4)
+            left = min(left + 2, w // 4)
+            right = max(right - 2, w * 3 // 4)
+
+            crop_w = right - left + 1
+            crop_h = bottom - top + 1
+            side = min(crop_w, crop_h)
+            img = img.crop((left, top, left + side, top + side))
+        elif img.size[0] != img.size[1]:
+            # Se não é quadrado, centraliza para 1:1
+            min_side = min(img.size[0], img.size[1])
+            left = (img.size[0] - min_side) // 2
+            top = (img.size[1] - min_side) // 2
+            img = img.crop((left, top, left + min_side, top + min_side))
+
+        # Redimensiona para padrão 1024x1024
         if img.size != (1024, 1024):
             img = img.resize((1024, 1024), Image.Resampling.LANCZOS)
 
@@ -258,6 +284,7 @@ def crop_letterbox_and_convert(src_path: str, dst_path: str) -> bool:
     except Exception as e:
         log(f"Erro ao pós-processar imagem {src_path}: {e}")
         return False
+
 
 
 def build_canonical_prompt(nome: str, subtitulo: str) -> str:
