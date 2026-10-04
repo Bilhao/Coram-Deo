@@ -236,31 +236,32 @@ def crop_letterbox_and_convert(src_path: str, dst_path: str) -> bool:
         arr = np.array(img)
         h, w, _ = arr.shape
 
-        # Detecta pixels claros (média RGB > 185)
-        is_light = np.mean(arr, axis=-1) > 185
+        # Detecta pixels claros ou linhas de borda com limiar mais rigoroso (média RGB > 130 ou linha > 100)
+        pixel_brightness = np.mean(arr, axis=-1)
+        is_light = pixel_brightness > 130
 
         top = 0
-        while top < h // 4 and np.mean(is_light[top, :]) > 0.35:
+        while top < h // 4 and (np.mean(is_light[top, :]) > 0.15 or np.mean(arr[top, :, :]) > 100):
             top += 1
 
         bottom = h - 1
-        while bottom > h * 3 // 4 and np.mean(is_light[bottom, :]) > 0.35:
+        while bottom > h * 3 // 4 and (np.mean(is_light[bottom, :]) > 0.15 or np.mean(arr[bottom, :, :]) > 100):
             bottom -= 1
 
         left = 0
-        while left < w // 4 and np.mean(is_light[:, left]) > 0.35:
+        while left < w // 4 and (np.mean(is_light[:, left]) > 0.15 or np.mean(arr[:, left, :]) > 100):
             left += 1
 
         right = w - 1
-        while right > w * 3 // 4 and np.mean(is_light[:, right]) > 0.35:
+        while right > w * 3 // 4 and (np.mean(is_light[:, right]) > 0.15 or np.mean(arr[:, right, :]) > 100):
             right -= 1
 
-        # Se houve detecção de borda clara em qualquer lado, aplica margem de segurança de corte
+        # Se houve detecção de borda clara em qualquer lado, aplica margem de segurança de corte (+4px)
         if top > 0 or bottom < h - 1 or left > 0 or right < w - 1:
-            top = min(top + 2, h // 4)
-            bottom = max(bottom - 2, h * 3 // 4)
-            left = min(left + 2, w // 4)
-            right = max(right - 2, w * 3 // 4)
+            top = min(top + 4, h // 4)
+            bottom = max(bottom - 4, h * 3 // 4)
+            left = min(left + 4, w // 4)
+            right = max(right - 4, w * 3 // 4)
 
             crop_w = right - left + 1
             crop_h = bottom - top + 1
@@ -330,14 +331,17 @@ def generate_single_image(client, saint: Dict, model: str = "") -> Optional[str]
             # Procura a parte com dados de imagem na resposta
             for part in response.parts:
                 if part.inline_data is not None:
-                    image_data = base64.b64decode(part.inline_data.data)
-                    # Salva temporariamente como PNG
-                    tmp_path = os.path.join(IMAGES_DIR, f"_tmp_{mes:02d}_{dia:02d}.png")
+                    raw = part.inline_data.data
+                    image_data = raw if isinstance(raw, bytes) else base64.b64decode(raw)
+                    # Salva temporariamente
+                    ext = ".jpg" if "jpeg" in (part.inline_data.mime_type or "") else ".png"
+                    tmp_path = os.path.join(IMAGES_DIR, f"_tmp_{mes:02d}_{dia:02d}{ext}")
                     os.makedirs(IMAGES_DIR, exist_ok=True)
                     with open(tmp_path, "wb") as f:
                         f.write(image_data)
                     log(f"Imagem gerada com sucesso para {dia:02d}/{mes:02d} ({len(image_data)//1024} KB)")
                     return tmp_path
+
 
             log(f"Resposta sem imagem para {dia:02d}/{mes:02d} - {nome}")
             if response.text:
@@ -764,16 +768,30 @@ def watch_dashboard(interval_seconds: int = 3):
 
 
 def create_client(api_key: Optional[str] = None):
-    """Cria o cliente Gemini com a API key fornecida ou do ambiente."""
+    """Cria o cliente Gemini com a API key fornecida, do ambiente ou de ~/.env."""
     from google import genai
 
     key = api_key or os.environ.get("GEMINI_API_KEY")
     if not key:
+        env_path = os.path.expanduser("~/.env")
+        if os.path.isfile(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith("GEMINI_API_KEY="):
+                            key = line.split("=", 1)[1].strip("\"'")
+                            break
+            except Exception:
+                pass
+
+    if not key:
         print("ERRO: Nenhuma API key fornecida.")
-        print("Use --api-key <KEY> ou defina a variável de ambiente GEMINI_API_KEY")
+        print("Use --api-key <KEY> ou defina a variável de ambiente GEMINI_API_KEY em ~/.env")
         sys.exit(1)
 
     return genai.Client(api_key=key)
+
 
 
 def main():
