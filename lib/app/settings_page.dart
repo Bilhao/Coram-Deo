@@ -808,10 +808,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                   'Backup automático diário',
                                   style: TextStyle(fontSize: 15.0),
                                 ),
-                                subtitle: const Text(
-                                  'Salvar dados na nuvem 1x ao dia ao abrir o app',
-                                  style: TextStyle(fontSize: 13.0),
-                                ),
                                 value: appProvider.autoBackup,
                                 onChanged: _isSyncing
                                     ? null
