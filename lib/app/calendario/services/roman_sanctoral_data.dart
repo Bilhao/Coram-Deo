@@ -1810,9 +1810,9 @@ class RomanSanctoralData {
       color: LiturgicalColor.white,
     ),
     '12-24': (
-      name: 'Santos Adão e Eva, Antepassados de Jesus',
+      name: 'Vigília do Natal do Senhor',
       rank: LiturgicalRank.feria,
-      color: LiturgicalColor.green,
+      color: LiturgicalColor.purple,
     ),
     '12-25': (
       name: 'Natal de Nosso Senhor Jesus Cristo',
