@@ -230,8 +230,12 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                                                   : null,
                                               localPath:
                                                   provider
-                                                      .localImagePath
-                                                      .isNotEmpty
+                                                          .localImagePath
+                                                          .isNotEmpty &&
+                                                      !provider
+                                                          .localImagePath
+                                                          .toLowerCase()
+                                                          .endsWith('.jpg')
                                                   ? provider.localImagePath
                                                   : null,
                                               networkUrl:
@@ -253,7 +257,8 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                                               ? provider.assetImagePath
                                               : null,
                                           localPath:
-                                              provider.localImagePath.isNotEmpty
+                                              provider.localImagePath.isNotEmpty &&
+                                              !provider.localImagePath.toLowerCase().endsWith('.jpg')
                                               ? provider.localImagePath
                                               : null,
                                           networkUrl:
@@ -279,6 +284,10 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                                               : provider
                                                         .localImagePath
                                                         .isNotEmpty &&
+                                                    !provider
+                                                        .localImagePath
+                                                        .toLowerCase()
+                                                        .endsWith('.jpg') &&
                                                     File(
                                                       provider.localImagePath,
                                                     ).existsSync()

@@ -22,8 +22,10 @@ class SaintImageService {
     required String? networkUrl,
   }) async {
     try {
-      // 1. Imagem local já persistida no disco
-      if (localPath != null && localPath.isNotEmpty) {
+      // 1. Imagem local já persistida no disco (ignora arquivos legados em .jpg)
+      if (localPath != null &&
+          localPath.isNotEmpty &&
+          !localPath.toLowerCase().endsWith('.jpg')) {
         final file = File(localPath);
         if (await file.exists()) {
           return file;

@@ -181,16 +181,20 @@ class SantoDoDiaProvider extends BaseProvider {
     _todayItalicText = List.from(_italicText);
   }
 
+  static const int _currentCacheVersion = 2;
+  static const String _cacheVersionKey = 'santo_image_cache_version_v2';
+
   static const String githubImagesBaseUrl =
       'https://raw.githubusercontent.com/Bilhao/Coram-Deo/main/assets/images/santos';
 
   /// Resolve o caminho ou URL da imagem do Santo:
-  /// 1. Se for uma URL externa ou customizada (http:// ou https://), retorna a URL;
+  /// 1. Se for uma URL externa ou customizada (http:// ou https://) e NÃO for do antigo A12, retorna a URL;
   /// 2. Caso contrário, retorna a URL raw do GitHub para download sob demanda e cache permanente em disco.
   static String resolvePortraitUrl(String? dbUrl, int day, int month) {
     if (dbUrl != null &&
         dbUrl.isNotEmpty &&
-        (dbUrl.startsWith('http://') || dbUrl.startsWith('https://'))) {
+        (dbUrl.startsWith('http://') || dbUrl.startsWith('https://')) &&
+        !dbUrl.contains('a12.com')) {
       return dbUrl;
     }
     return '$githubImagesBaseUrl/santo_${month.toString().padLeft(2, '0')}_${day.toString().padLeft(2, '0')}.webp';
@@ -200,8 +204,59 @@ class SantoDoDiaProvider extends BaseProvider {
     return resolvePortraitUrl(dbUrl, day, month);
   }
 
+  /// Limpa arquivos residuais em .jpg e chaves de SharedPreferences do antigo sistema de scraping do A12.
+  Future<void> _cleanLegacyCache() async {
+    try {
+      final dir = await getApplicationDocumentsDirectory();
+      final saintsDir = Directory('${dir.path}/santos');
+
+      await safePrefOperation((prefs) async {
+        final currentVersion = prefs.getInt(_cacheVersionKey) ?? 0;
+        final cachedPortrait = prefs.getString('santoDoDiaPortrait') ?? '';
+        final cachedLocalPath =
+            prefs.getString('santoDoDiaLocalImagePath') ?? '';
+
+        final hasA12Reference = cachedPortrait.contains('a12.com') ||
+            cachedLocalPath.toLowerCase().endsWith('.jpg');
+
+        if (currentVersion < _currentCacheVersion || hasA12Reference) {
+          // Remove todos os arquivos legados .jpg da época do scraping do A12
+          if (await saintsDir.exists()) {
+            final entities = await saintsDir.list().toList();
+            for (final entity in entities) {
+              if (entity is File) {
+                final lower = entity.path.toLowerCase();
+                if (lower.endsWith('.jpg') || lower.endsWith('.jpeg')) {
+                  try {
+                    await entity.delete();
+                  } catch (_) {}
+                }
+              }
+            }
+          }
+
+          // Invalida chaves antigas que apontavam para o A12 ou arquivos .jpg
+          if (cachedPortrait.contains('a12.com')) {
+            await prefs.remove('santoDoDiaPortrait');
+          }
+          if (cachedLocalPath.toLowerCase().endsWith('.jpg')) {
+            await prefs.remove('santoDoDiaLocalImagePath');
+          }
+
+          await prefs.setInt(_cacheVersionKey, _currentCacheVersion);
+        }
+        return true;
+      });
+    } catch (_) {
+      // Falhas no cleanup de cache não devem travar a inicialização
+    }
+  }
+
   Future<void> _initialize() async {
     setLoading(true);
+
+    // 0. Remove cache legado e arquivos .jpg do antigo scraper A12
+    await _cleanLegacyCache();
 
     // 1. Tenta carregar do banco de dados local SQLite (prioridade offline autoritativa)
     final localSaint = await _repository.getSanto(_day, _month);
@@ -214,6 +269,12 @@ class SantoDoDiaProvider extends BaseProvider {
       _portrait = _resolvePortrait(localSaint.imagemUrl, _day, _month);
       _boldText = [];
       _italicText = [];
+      if (_localImagePath.toLowerCase().endsWith('.jpg')) {
+        _localImagePath = '';
+      }
+      if (_todayLocalImagePath.toLowerCase().endsWith('.jpg')) {
+        _todayLocalImagePath = '';
+      }
       if (_isToday(_day, _month)) {
         _syncTodayFields();
       }
@@ -229,11 +290,22 @@ class SantoDoDiaProvider extends BaseProvider {
 
       if (storedDay == _day && storedMonth == _month) {
         // Load cached data
-        _portrait = prefs.getString('santoDoDiaPortrait') ?? '';
-        if (_portrait.isEmpty) {
+        final cachedPortrait = prefs.getString('santoDoDiaPortrait') ?? '';
+        if (cachedPortrait.contains('a12.com') || cachedPortrait.isEmpty) {
           _portrait = _resolvePortrait(null, _day, _month);
+        } else {
+          _portrait = cachedPortrait;
         }
-        _localImagePath = prefs.getString('santoDoDiaLocalImagePath') ?? '';
+
+        final cachedLocalPath =
+            prefs.getString('santoDoDiaLocalImagePath') ?? '';
+        if (cachedLocalPath.toLowerCase().endsWith('.jpg') ||
+            !File(cachedLocalPath).existsSync()) {
+          _localImagePath = '';
+        } else {
+          _localImagePath = cachedLocalPath;
+        }
+
         _name = prefs.getString('santoDoDiaName') ?? '';
         _subtitulo = prefs.getString('santoDoDiaSubtitulo') ?? '';
         _oracao = prefs.getString('santoDoDiaOracao') ?? '';
@@ -245,16 +317,14 @@ class SantoDoDiaProvider extends BaseProvider {
           _syncTodayFields();
         }
 
-        // Check if image file exists on disk
-        if (_localImagePath.isNotEmpty && !File(_localImagePath).existsSync()) {
-          _localImagePath = '';
-        }
-
         // If local image is missing but URL exists, cache in background
         if (_localImagePath.isEmpty && _portrait.isNotEmpty) {
-          _cacheImageLocally(_portrait).then((path) {
+          _cacheImageLocally(_portrait, day: _day, month: _month).then((path) {
             if (path.isNotEmpty) {
               _localImagePath = path;
+              if (_isToday(_day, _month)) {
+                _todayLocalImagePath = path;
+              }
               prefs.setString('santoDoDiaLocalImagePath', _localImagePath);
               notifyListeners();
             }
@@ -320,7 +390,8 @@ class SantoDoDiaProvider extends BaseProvider {
     }, errorContext: 'Fetching saint of the day data');
   }
 
-  Future<String> _cacheImageLocally(String portraitUrl) async {
+  Future<String> _cacheImageLocally(String portraitUrl,
+      {int? day, int? month}) async {
     if (portraitUrl.isEmpty || portraitUrl.startsWith('assets/')) return '';
     try {
       final dir = await getApplicationDocumentsDirectory();
@@ -328,17 +399,45 @@ class SantoDoDiaProvider extends BaseProvider {
       if (!await saintsDir.exists()) {
         await saintsDir.create(recursive: true);
       }
-      final file = File('${saintsDir.path}/santo_${_day}_$_month.jpg');
-      if (await file.exists() && (await file.length()) > 0) {
-        return file.path;
+
+      final d = day ?? _day;
+      final m = month ?? _month;
+      final dayStr = d.toString().padLeft(2, '0');
+      final monthStr = m.toString().padLeft(2, '0');
+
+      // 1. Remove qualquer arquivo legado em .jpg se ainda existir
+      final legacyJpg1 = File('${saintsDir.path}/santo_${d}_$m.jpg');
+      if (await legacyJpg1.exists()) {
+        try {
+          await legacyJpg1.delete();
+        } catch (_) {}
       }
+      final legacyJpg2 =
+          File('${saintsDir.path}/santo_${monthStr}_$dayStr.jpg');
+      if (await legacyJpg2.exists()) {
+        try {
+          await legacyJpg2.delete();
+        } catch (_) {}
+      }
+
+      // 2. Arquivo oficial em WebP com padLeft de 2 dígitos
+      final webpFile = File('${saintsDir.path}/santo_${monthStr}_$dayStr.webp');
+      if (await webpFile.exists() && (await webpFile.length()) > 1024) {
+        return webpFile.path;
+      }
+
+      // 3. Se a URL apontar para o antigo A12, usa GitHub
+      final resolvedUrl = portraitUrl.contains('a12.com')
+          ? resolvePortraitUrl(null, d, m)
+          : portraitUrl;
+
       final response = await http.get(
-        Uri.parse(portraitUrl),
-        headers: {'User-Agent': 'CoramDeo/1.0.1 (Android)'},
+        Uri.parse(resolvedUrl),
+        headers: {'User-Agent': 'CoramDeo/1.0.5 (Android)'},
       );
       if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
-        await file.writeAsBytes(response.bodyBytes);
-        return file.path;
+        await webpFile.writeAsBytes(response.bodyBytes);
+        return webpFile.path;
       }
     } catch (_) {
       // Ignore download failures, fallback to network URL
@@ -348,9 +447,16 @@ class SantoDoDiaProvider extends BaseProvider {
 
   Future<void> _cacheData() async {
     if (_portrait.isNotEmpty && !_portrait.startsWith('assets/')) {
-      _localImagePath = await _cacheImageLocally(_portrait);
+      _localImagePath =
+          await _cacheImageLocally(_portrait, day: _day, month: _month);
     } else {
       _localImagePath = '';
+    }
+
+    if (_isToday(_day, _month)) {
+      _todayLocalImagePath = _localImagePath;
+      _todayPortrait = _portrait;
+      notifyListeners();
     }
 
     await safePrefOperation((prefs) async {
@@ -366,22 +472,6 @@ class SantoDoDiaProvider extends BaseProvider {
       await prefs.setStringList('santoDoDiaItalicText', _italicText);
       return true;
     }, errorContext: 'Caching saint data');
-    if (_isToday(_day, _month)) {
-      _syncTodayFields();
-      await safePrefOperation((prefs) async {
-        await prefs.setInt('santoDoDiaDay', _day);
-        await prefs.setInt('santoDoDiaMonth', _month);
-        await prefs.setString('santoDoDiaPortrait', _portrait);
-        await prefs.setString('santoDoDiaLocalImagePath', _localImagePath);
-        await prefs.setString('santoDoDiaName', _name);
-        await prefs.setString('santoDoDiaSubtitulo', _subtitulo);
-        await prefs.setString('santoDoDiaOracao', _oracao);
-        await prefs.setStringList('santoDoDiaText', _text);
-        await prefs.setStringList('santoDoDiaBoldText', _boldText);
-        await prefs.setStringList('santoDoDiaItalicText', _italicText);
-        return true;
-      }, errorContext: 'Caching saint data');
-    }
   }
 
   void resetToToday() {
