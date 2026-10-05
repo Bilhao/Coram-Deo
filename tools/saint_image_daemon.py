@@ -20,6 +20,7 @@ Padrões de Arte Sacra (Conforme guidelines_santos_arte_sacra.md):
 
 import argparse
 import base64
+import concurrent.futures
 import datetime
 import io
 import json
@@ -27,6 +28,7 @@ import os
 import re
 import sqlite3
 import sys
+import threading
 import time
 import traceback
 from typing import Dict, List, Optional, Tuple
@@ -39,6 +41,9 @@ DB_PATH = os.path.join(PROJECT_DIR, "assets", "santos.db")
 IMAGES_DIR = os.path.join(PROJECT_DIR, "assets", "images", "santos")
 LOG_PATH = os.path.join(PROJECT_DIR, "tools", "saint_generator.log")
 VALIDATION_LOG_PATH = os.path.join(PROJECT_DIR, "tools", "saint_validation.log")
+
+db_lock = threading.Lock()
+log_lock = threading.Lock()
 
 # Modelos para geração de imagens (todos requerem Paid Tier / billing ativo)
 # gemini-3.1-flash-image (Nano Banana 2) — ~$0.067/imagem 1K — MELHOR QUALIDADE
@@ -53,12 +58,12 @@ VALIDATION_MODEL = "gemini-3.5-flash-lite"
 # Máximo de tentativas de geração por santo antes de pular
 MAX_RETRIES = 3
 
-# Intervalo entre gerações (segundos) — respeita rate limit
-GENERATION_COOLDOWN_SECONDS = 10
+# Intervalo entre gerações (segundos) — reduzido para acelerar o processo
+GENERATION_COOLDOWN_SECONDS = 1
 
 # Retry com backoff exponencial quando rate limited
 MAX_API_RETRIES = 5
-INITIAL_BACKOFF_SECONDS = 30
+INITIAL_BACKOFF_SECONDS = 10
 
 MONTH_NAMES = [
     "",
@@ -80,25 +85,27 @@ MONTH_NAMES = [
 def log(msg: str):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     formatted = f"[{timestamp}] {msg}"
-    print(formatted)
-    try:
-        os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-        with open(LOG_PATH, "a", encoding="utf-8") as f:
-            f.write(formatted + "\n")
-    except Exception:
-        pass
+    with log_lock:
+        print(formatted)
+        try:
+            os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+            with open(LOG_PATH, "a", encoding="utf-8") as f:
+                f.write(formatted + "\n")
+        except Exception:
+            pass
 
 
 def validation_log(msg: str):
     """Log separado para resultados de validação visual."""
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     formatted = f"[{timestamp}] {msg}"
-    try:
-        os.makedirs(os.path.dirname(VALIDATION_LOG_PATH), exist_ok=True)
-        with open(VALIDATION_LOG_PATH, "a", encoding="utf-8") as f:
-            f.write(formatted + "\n")
-    except Exception:
-        pass
+    with log_lock:
+        try:
+            os.makedirs(os.path.dirname(VALIDATION_LOG_PATH), exist_ok=True)
+            with open(VALIDATION_LOG_PATH, "a", encoding="utf-8") as f:
+                f.write(formatted + "\n")
+        except Exception:
+            pass
 
 
 def get_all_saints_db() -> List[Dict]:
@@ -361,6 +368,129 @@ def build_canonical_prompt(nome: str, subtitulo: str) -> str:
             "Venerable elderly Pope with noble white beard, wearing ancient white liturgical vestments, gold-embroidered cope and pallium. "
             "Right hand raised in episcopal blessing with five natural fingers, left hand holding an apostolic cross staff with five natural fingers."
         )
+    elif "gabriel" in nome_lower and "dores" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint Gabriel of Our Lady of Sorrows (São Gabriel de Nossa Senhora das Dores), young 19th-century Italian Passionist religious. "
+            "Wearing authentic black Passionist clerical habit with the white Passionist heart badge ('Jesu XPI Passio') over his chest. "
+            "Youthful, handsome, noble ascetic face radiant with pure devotion and interior holiness, "
+            "both hands with natural five fingers tenderly embracing a wooden crucifix close to his heart in contemplation of Christ's Passion. "
+            "Delicate translucent golden halo. Warm golden chiaroscuro illumination against deep dark background."
+        )
+    elif "joão josé da cruz" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint John Joseph of the Cross (São João José da Cruz), 17th century Franciscan Alcantarine priest. "
+            "Wearing humble patched brown Franciscan habit with cord cincture, venerable elderly ascetic face with white beard, "
+            "holding a wooden cross with profound veneration with natural five fingers."
+        )
+    elif "teresa benedita da cruz" in nome_lower or "edith stein" in nome_lower:
+        subject = (
+            "Close-up upper-body portrait of Saint Teresa Benedicta of the Cross (Edith Stein), Discalced Carmelite nun, philosopher and martyr. "
+            "Wearing brown Carmelite habit, black veil and white mantle, serene intellectual noble face filled with quiet martyr's courage and contemplation, "
+            "hands with natural five fingers holding a crucifix and the palm of martyrdom."
+        )
+    elif "conversão de são paulo" in nome_lower:
+        subject = (
+            "Sacred composition of the Conversion of Saint Paul (Conversão de São Paulo no caminho de Damasco). "
+            "Saul fallen to his knees in sacred awe and trembling on the road, struck by a blaze of celestial golden light from heaven. "
+            "Hands with natural five fingers raised to shield his face or clasped over his heart in sudden profound faith. "
+            "Roman soldier traveler cloak and armor, gazing upward toward the blinding divine glory of the risen Christ."
+        )
+    elif "apresentação do senhor" in nome_lower:
+        subject = (
+            "Sacred composition of the Presentation of the Lord in the Temple (Apresentação do Senhor no Templo). "
+            "The aged prophet Simeon holding the infant Jesus with infinite tenderness and veneration, "
+            "the Blessed Virgin Mary and Saint Joseph standing devoutly beside him. "
+            "Sacred candlelight illuminating their holy faces in the temple, chiaroscuro golden light."
+        )
+    elif "nossa senhora de lourdes" in nome_lower:
+        subject = (
+            "Sacred portrait of Our Lady of Lourdes (Nossa Senhora de Lourdes). "
+            "The Blessed Virgin Mary standing in the rocky grotto of Massabielle, wearing pure white robe with a celestial blue sash. "
+            "Hands with five natural fingers joined in prayer holding a delicate white rosary, golden yellow roses resting gently upon her bare feet. "
+            "Ethereal divine golden light glowing around her against the dark cavern shadows."
+        )
+    elif "cátedra de são pedro" in nome_lower:
+        subject = (
+            "Sacred depiction of the Chair of Saint Peter (Cátedra de São Pedro). "
+            "Pope Saint Peter seated in apostolic majesty wearing ancient liturgical vestments and pallium, "
+            "holding the golden and silver keys of the Kingdom of Heaven in his right hand with five natural fingers, "
+            "and the pastoral cross staff in his left hand. Divine golden light of the Holy Spirit pouring from above."
+        )
+    elif "são josé" in nome_lower and ("esposo" in subtitulo.lower() or "padroeiro" in subtitulo.lower() or "carpinteiro" in subtitulo.lower()):
+        subject = (
+            "Close-up upper-body portrait of Saint Joseph (São José, Esposo da Virgem Maria e Patrono da Igreja). "
+            "Noble, gentle, righteous bearded face, wearing earth-toned tunic and golden-brown mantle. "
+            "Holding the Child Jesus lovingly against his chest or holding a flowering white lily staff with natural five fingers. "
+            "Warm golden chiaroscuro lighting, deep tenderness and fatherly holiness."
+        )
+    elif "anunciação do senhor" in nome_lower:
+        subject = (
+            "Sacred composition of the Annunciation of the Lord (Anunciação do Senhor à Virgem Maria). "
+            "The Archangel Gabriel bowing reverently before the young Virgin Mary, holding a pristine white lily. "
+            "The Blessed Virgin Mary kneeling in humble prayer before a lectern with hands folded over her heart with five natural fingers, saying 'Fiat'. "
+            "The Holy Spirit in the form of a radiant dove descending in beams of celestial golden light."
+        )
+    elif "nossa senhora de fátima" in nome_lower:
+        subject = (
+            "Sacred portrait of Our Lady of Fatima (Nossa Senhora de Fátima). "
+            "The Blessed Virgin Mary appearing above the gentle foliage of the holm oak, clothed in dazzling pure white mantle embroidered with delicate gold. "
+            "Hands with five natural fingers joined in prayer holding a glowing white pearl rosary. "
+            "Countenance of maternal sweetness and solemn love, radiant celestial golden aura illuminating the scene."
+        )
+    elif "nossa senhora auxiliadora" in nome_lower:
+        subject = (
+            "Sacred portrait of Our Lady Help of Christians (Nossa Senhora Auxiliadora). "
+            "The Blessed Virgin Mary crowned with a golden royal crown, holding a golden sceptre in her right hand with five natural fingers, "
+            "and holding the Child Jesus in her left arm. "
+            "Both wearing regal robes, surrounded by an ethereal golden celestial halo and gentle chiaroscuro clouds."
+        )
+    elif "visitação de nossa senhora" in nome_lower:
+        subject = (
+            "Sacred composition of the Visitation of the Blessed Virgin Mary (Visitação de Nossa Senhora a Santa Isabel). "
+            "The Virgin Mary and elderly Saint Elizabeth embracing with holy joy and deep veneration outside Elizabeth's stone home. "
+            "Hands with natural five fingers clasped in maternal embrace, faces glowing with spiritual joy and the Magnificat."
+        )
+    elif "nossa senhora do carmo" in nome_lower:
+        subject = (
+            "Sacred portrait of Our Lady of Mount Carmel (Nossa Senhora do Carmo). "
+            "The Blessed Virgin Mary wearing the brown Carmelite habit and white mantle, holding the brown Scapular of Mount Carmel in her hand with five natural fingers. "
+            "Cradling the infant Jesus in her other arm, delicate golden crown upon her head, glowing with maternal mercy and divine golden light."
+        )
+    elif "transfiguração do senhor" in nome_lower:
+        subject = (
+            "Sacred composition of the Transfiguration of the Lord (Transfiguração de Nosso Senhor Jesus Cristo no Monte Tabor). "
+            "Jesus Christ standing in divine majesty and dazzling celestial white robes radiant as the sun atop Mount Tabor. "
+            "Moses and Elijah appearing in luminous clouds beside Him, golden divine rays illuminating the mountaintop in dramatic chiaroscuro."
+        )
+    elif "assunção de nossa senhora" in nome_lower:
+        subject = (
+            "Sacred composition of the Assumption of the Blessed Virgin Mary into Heaven (Assunção de Nossa Senhora). "
+            "The Virgin Mary ascending body and soul into the heavens, draped in pure white tunic and sky-blue mantle, "
+            "hands with natural five fingers open in ecstatic praise, surrounded by ethereal angels in golden celestial light."
+        )
+    elif "nossa senhora rainha" in nome_lower:
+        subject = (
+            "Sacred portrait of the Queenship of Mary (Nossa Senhora Rainha). "
+            "The Blessed Virgin Mary seated in celestial majesty as Queen of Heaven and Earth, wearing a royal golden crown of twelve stars, "
+            "holding a golden sceptre with natural five fingers, draped in deep blue and gold royal robes, surrounded by warm golden chiaroscuro glory."
+        )
+    elif "exaltação da santa cruz" in nome_lower:
+        subject = (
+            "Sacred composition of the Exaltation of the Holy Cross (Exaltação da Santa Cruz). "
+            "The true wood of the Holy Cross of Christ elevated with profound reverence, bathed in rays of divine golden light and incense against deep dramatic shadows."
+        )
+    elif "nossa senhora das dores" in nome_lower:
+        subject = (
+            "Sacred portrait of Our Lady of Sorrows (Nossa Senhora das Dores, Mater Dolorosa). "
+            "The Blessed Virgin Mary in deep dark mourning veil and mantle, hands clasped tightly over her chest with five natural fingers in holy grief, "
+            "countenance filled with sublime sorrow and faith, looking upward toward heaven, warm dramatic chiaroscuro light."
+        )
+    elif "arcanjos" in nome_lower or "são miguel" in nome_lower:
+        subject = (
+            "Sacred portrait of Saint Michael the Archangel (São Miguel Arcanjo). "
+            "Mighty celestial warrior archangel in ornate Roman armor, majestic feathered wings, holding a flaming sword of divine justice in his right hand with five natural fingers, "
+            "and golden scales of judgment in his left. Noble heroic countenance illuminated by divine celestial light."
+        )
     else:
         subject = (
             f"Close-up upper-body portrait of {nome}, {subtitulo}. Wearing authentic historic religious vestments or habit. "
@@ -444,18 +574,19 @@ def generate_single_image(client, saint: Dict, model: str = "") -> Optional[str]
 
 def update_db_image_url(dia: int, mes: int):
     """Atualiza a URL da imagem no banco de dados SQLite."""
-    try:
-        conn = sqlite3.connect(DB_PATH)
-        url = f"santo_{mes:02d}_{dia:02d}.webp"
-        conn.cursor().execute(
-            "UPDATE santos SET imagem_url = ? WHERE dia = ? AND mes = ?",
-            (url, dia, mes),
-        )
-        conn.commit()
-        conn.close()
-        log(f"Banco de dados atualizado para {dia:02d}/{mes:02d}: {url}")
-    except Exception as e:
-        log(f"Erro ao atualizar BD para {dia:02d}/{mes:02d}: {e}")
+    with db_lock:
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            url = f"santo_{mes:02d}_{dia:02d}.webp"
+            conn.cursor().execute(
+                "UPDATE santos SET imagem_url = ? WHERE dia = ? AND mes = ?",
+                (url, dia, mes),
+            )
+            conn.commit()
+            conn.close()
+            log(f"Banco de dados atualizado para {dia:02d}/{mes:02d}: {url}")
+        except Exception as e:
+            log(f"Erro ao atualizar BD para {dia:02d}/{mes:02d}: {e}")
 
 
 def process_single_saint(client, saint: Dict, skip_validation: bool = False) -> bool:
@@ -652,15 +783,16 @@ def check_and_validate_all():
         log("Todas as imagens existentes passaram no controle de qualidade técnico!")
 
 
-def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool = False, target_month: Optional[int] = None):
+def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool = False, target_month: Optional[int] = None, concurrency: int = 4):
     """
-    Loop de execução contínua que gera, valida e salva imagens sequencialmente
+    Loop de execução contínua com paralelismo para acelerar a geração e validação
     até completar todas as imagens pendentes (ou de um mês específico).
     """
     log("═" * 60)
-    log("INICIANDO SAINT IMAGE DAEMON — CORAM DEO")
+    log("INICIANDO SAINT IMAGE DAEMON (MULTITHREAD) — CORAM DEO")
     log(f"Modelo de geração: {IMAGE_GEN_MODEL}")
     log(f"Modelo de validação: {VALIDATION_MODEL}")
+    log(f"Workers simultâneos: {concurrency}")
     log(f"Máx. tentativas por santo: {MAX_RETRIES}")
     log(f"Cooldown entre gerações: {GENERATION_COOLDOWN_SECONDS}s")
     log(f"Mês alvo: {MONTH_NAMES[target_month] if target_month else 'TODOS OS MESES'}")
@@ -692,16 +824,26 @@ def daemon_loop(client, poll_interval_minutes: int = 15, skip_validation: bool =
         log(f"Geradas nesta sessão: {generated_count} | Puladas: {skipped_count}")
         log(f"{'─' * 40}")
 
-        next_saint = pending[0]
-        success = process_single_saint(client, next_saint, skip_validation=skip_validation)
+        batch = pending[:concurrency]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=concurrency) as executor:
+            future_to_saint = {
+                executor.submit(process_single_saint, client, s, skip_validation): s
+                for s in batch
+            }
+            for future in concurrent.futures.as_completed(future_to_saint):
+                s = future_to_saint[future]
+                try:
+                    success = future.result()
+                    if success:
+                        generated_count += 1
+                    else:
+                        skipped_count += 1
+                except Exception as e:
+                    log(f"Erro na thread para {s['dia']:02d}/{s['mes']:02d}: {e}")
+                    skipped_count += 1
 
-        if success:
-            generated_count += 1
-        else:
-            skipped_count += 1
-
-        # Cooldown entre santos
-        time.sleep(GENERATION_COOLDOWN_SECONDS)
+        if GENERATION_COOLDOWN_SECONDS > 0:
+            time.sleep(GENERATION_COOLDOWN_SECONDS)
 
 
 def watch_dashboard(interval_seconds: int = 3):
@@ -948,6 +1090,12 @@ def main():
         help="Recorta e converte imagem avulsa",
     )
     parser.add_argument(
+        "--concurrency",
+        type=int,
+        default=4,
+        help="Número de gerações simultâneas em paralelo (padrão: 4)",
+    )
+    parser.add_argument(
         "--regenerate",
         nargs=2,
         type=int,
@@ -972,7 +1120,7 @@ def main():
         validate_existing_images(client)
     elif args.daemon:
         client = create_client(args.api_key)
-        daemon_loop(client, skip_validation=args.skip_validation, target_month=args.month)
+        daemon_loop(client, skip_validation=args.skip_validation, target_month=args.month, concurrency=args.concurrency)
     elif args.regenerate:
         dia, mes = args.regenerate
         client = create_client(args.api_key)
