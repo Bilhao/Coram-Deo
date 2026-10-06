@@ -45,23 +45,21 @@ FLAWED_IMAGES_REGISTRY = {
     "05_27": {"nome": "Santo Agostinho de Cantuária", "status": "CONCLUIDO"},
     "06_06": {"nome": "São Norberto", "status": "CONCLUIDO"},
     "06_11": {"nome": "São Barnabé", "status": "CONCLUIDO"},
+    "06_16": {"nome": "São João Francisco Régis", "status": "CONCLUIDO"},
+    "06_28": {"nome": "Santo Irineu", "status": "CONCLUIDO"},
+    "12_16": {"nome": "Santa Adelaide", "status": "CONCLUIDO"},
+    "12_20": {"nome": "São Domingos de Silos", "status": "CONCLUIDO"},
+    "04_17": {"nome": "São Roberto de Molesme", "status": "CONCLUIDO"},
+    "01_01": {"nome": "Santa Maria, Mãe de Deus", "status": "CONCLUIDO"},
+    "02_14": {"nome": "Santos Cirilo e Metódio", "status": "CONCLUIDO"},
+    "06_02": {"nome": "Santos Marcelino e Pedro", "status": "CONCLUIDO"},
+    "04_20": {"nome": "Santa Inês de Montepulciano", "status": "CONCLUIDO"},
+    "06_13": {"nome": "Santo Antônio de Pádua", "status": "CONCLUIDO"},
+    "06_26": {"nome": "São Josemaria Escrivá", "status": "CONCLUIDO"},
+    "08_10": {"nome": "São Lourenço", "status": "CONCLUIDO"},
 
-    # RESTANTES NA FILA (Aguardando reset de cota ou chave dedicada):
-    # 3 Mãos:
-    "06_16": {"nome": "São João Francisco Régis", "defeito": "3 mãos"},
-    "06_28": {"nome": "Santo Irineu", "defeito": "3 mãos"},
-    "12_16": {"nome": "Santa Adelaide", "defeito": "3 mãos"},
-    "12_20": {"nome": "São Domingos de Silos", "defeito": "3 mãos"},
-    "01_01": {"nome": "Santa Maria, Mãe de Deus", "defeito": "3 mãos"},
-    "02_14": {"nome": "Santos Cirilo e Metódio", "defeito": "3 mãos"},
-    "06_02": {"nome": "Santos Marcelino e Pedro", "defeito": "3 mãos"},
-    "04_17": {"nome": "São Roberto de Molesme", "defeito": "3 mãos"},
-
+    # RESTANTES NA FILA (Aguardando geração em lotes):
     # Estranhas / A refazer:
-    "04_20": {"nome": "Santa Inês de Montepulciano", "defeito": "Estranha"},
-    "06_13": {"nome": "Santo Antônio de Pádua", "defeito": "Estranha"},
-    "06_26": {"nome": "São Josemaria Escrivá", "defeito": "Estranha / Fisionomia incorreta"},
-    "08_10": {"nome": "São Lourenço", "defeito": "Estranha / Mão na grelha"},
     "08_28": {"nome": "Santo Agostinho", "defeito": "Estranha"},
     "11_16": {"nome": "Santa Margarida da Escócia", "defeito": "Estranha"},
     "12_07": {"nome": "Santo Ambrósio", "defeito": "Estranha"},
