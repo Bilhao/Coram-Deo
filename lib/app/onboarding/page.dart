@@ -23,6 +23,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   int _current = 0;
   bool _hasPermission = false;
   bool _isRestoring = false;
+  bool _isRestored = false;
   bool _backupChecked = false;
   Map<String, dynamic>? _cloudBackupInfo;
 
@@ -61,9 +62,11 @@ class _OnboardingPageState extends State<OnboardingPage>
   Future<void> _checkCloudBackup() async {
     if (_authService.currentUser != null) {
       final info = await _cloudSyncService.getLastBackupInfo();
+      final hasLocalData = await _cloudSyncService.hasLocalUserData();
       if (mounted) {
         setState(() {
           _cloudBackupInfo = info;
+          _isRestored = hasLocalData;
           _backupChecked = true;
         });
       }
@@ -78,6 +81,9 @@ class _OnboardingPageState extends State<OnboardingPage>
     try {
       final restored = await _cloudSyncService.restoreBackup();
       if (restored && mounted) {
+        setState(() {
+          _isRestored = true;
+        });
         await Provider.of<AppProvider>(context, listen: false).reload();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -518,7 +524,60 @@ class _OnboardingPageState extends State<OnboardingPage>
               textAlign: TextAlign.center,
             ),
           ] else ...[
-            if (_cloudBackupInfo != null) ...[
+            if (_isRestored) ...[
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.green.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      color: Colors.green,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        "Backup restaurado com sucesso! Seus dados e práticas foram sincronizados.",
+                        style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _isRestoring ? null : _restoreFromCloud,
+                icon: const Icon(Icons.refresh_rounded),
+                label: _isRestoring
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text("Restaurar Novamente"),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ] else if (_cloudBackupInfo != null) ...[
               Text(
                 "Encontramos um backup na nuvem para sua conta.",
                 style: TextStyle(

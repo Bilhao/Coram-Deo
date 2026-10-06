@@ -37,17 +37,78 @@ void main() {
       expect(restored, isFalse);
     });
 
-    test('Safeguard logic: empty local planoData does not overwrite cloud with items', () {
-      final localPlano = <Map<String, dynamic>>[];
+    test('hasUserDataInPlano accurately detects factory default vs user data', () {
+      final service = CloudSyncService();
+
+      // Caso 1: Lista vazia
+      expect(service.hasUserDataInPlano([]), isFalse);
+
+      // Caso 2: 15 linhas de fábrica do plano_de_vida.db (virgens: nada selecionado, sem datas, sem custom)
+      final factoryDefaultPlano = List.generate(
+        15,
+        (i) => {
+          'id': i,
+          'title': 'Prática $i',
+          'isCustom': 0,
+          'isSelected': 0,
+          'isCompleted': 0,
+          'isNotification': 0,
+          'notificationTimes': null,
+          'completedDates': null,
+        },
+      );
+      expect(service.hasUserDataInPlano(factoryDefaultPlano), isFalse);
+
+      // Caso 3: Usuário marcou uma prática como selecionada
+      final withSelected = List<Map<String, dynamic>>.from(factoryDefaultPlano);
+      withSelected[0] = Map<String, dynamic>.from(withSelected[0])..['isSelected'] = 1;
+      expect(service.hasUserDataInPlano(withSelected), isTrue);
+
+      // Caso 4: Usuário rezou em algum dia (tem completedDates)
+      final withHistory = List<Map<String, dynamic>>.from(factoryDefaultPlano);
+      withHistory[1] = Map<String, dynamic>.from(withHistory[1])..['completedDates'] = '06/10/2026';
+      expect(service.hasUserDataInPlano(withHistory), isTrue);
+
+      // Caso 5: Usuário adicionou uma prática personalizada
+      final withCustom = List<Map<String, dynamic>>.from(factoryDefaultPlano);
+      withCustom[2] = Map<String, dynamic>.from(withCustom[2])..['isCustom'] = 1;
+      expect(service.hasUserDataInPlano(withCustom), isTrue);
+
+      // Caso 6: Usuário agendou alarme de oração
+      final withNotification = List<Map<String, dynamic>>.from(factoryDefaultPlano);
+      withNotification[3] = Map<String, dynamic>.from(withNotification[3])
+        ..['isNotification'] = 1
+        ..['notificationTimes'] = '08:00';
+      expect(service.hasUserDataInPlano(withNotification), isTrue);
+    });
+
+    test('Safeguard logic: factory default local planoData does not overwrite cloud with items', () {
+      final service = CloudSyncService();
+      final factoryDefaultPlano = List.generate(
+        15,
+        (i) => {
+          'id': i,
+          'title': 'Prática $i',
+          'isCustom': 0,
+          'isSelected': 0,
+          'isCompleted': 0,
+          'isNotification': 0,
+          'notificationTimes': null,
+          'completedDates': null,
+        },
+      );
       const cloudCount = 15;
 
-      // When local is empty and cloud has data, condition to prevent overwrite must be true
-      final shouldPreventOverwrite = localPlano.isEmpty && cloudCount > 0;
+      // When local has no user data (factory default) and cloud has data, overwrite MUST be blocked
+      final localHasData = service.hasUserDataInPlano(factoryDefaultPlano);
+      final shouldPreventOverwrite = !localHasData && cloudCount > 0;
       expect(shouldPreventOverwrite, isTrue);
 
-      // When local has data, normal backup proceeds
-      final localWithData = [{'id': 1, 'titulo': 'Oração Mental'}];
-      final allowBackupWithData = !(localWithData.isEmpty && cloudCount > 0);
+      // When local has real user data, backup is permitted
+      final localWithRealData = List<Map<String, dynamic>>.from(factoryDefaultPlano);
+      localWithRealData[0] = Map<String, dynamic>.from(localWithRealData[0])..['isSelected'] = 1;
+      final localWithDataHasUserData = service.hasUserDataInPlano(localWithRealData);
+      final allowBackupWithData = !(!localWithDataHasUserData && cloudCount > 0);
       expect(allowBackupWithData, isTrue);
     });
 
