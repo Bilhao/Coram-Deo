@@ -499,6 +499,7 @@ class _OnboardingPageState extends State<OnboardingPage>
               onPressed: () => AuthBottomSheet.show(
                 context,
                 onSuccess: () {
+                  Provider.of<AppProvider>(context, listen: false).reload();
                   setState(() {});
                   _checkCloudBackup();
                 },
@@ -530,8 +531,9 @@ class _OnboardingPageState extends State<OnboardingPage>
                 decoration: BoxDecoration(
                   color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color: Colors.green.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: Colors.green.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -544,7 +546,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(
-                        "Backup restaurado com sucesso! Seus dados e práticas foram sincronizados.",
+                        "Backup restaurado com sucesso!",
                         style: TextStyle(
                           color: colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
