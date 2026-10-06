@@ -39,9 +39,14 @@ class CloudSyncService {
       }
 
       final data = snapshot.data()!;
+      final planoList = (data['plano_de_vida'] as List?)
+              ?.map((e) => Map<String, dynamic>.from(e as Map))
+              .toList() ??
+          [];
       return {
         'timestamp': data['timestamp'],
-        'planoCount': (data['plano_de_vida'] as List?)?.length ?? 0,
+        'planoCount': planoList.length,
+        'hasUserData': hasUserDataInPlano(planoList),
         'version': data['version'] ?? 1,
       };
     } catch (e) {
@@ -50,8 +55,44 @@ class CloudSyncService {
     }
   }
 
-  /// Verifica se a nuvem possui dados de backup e a base local está vazia.
-  /// Em caso afirmativo, restaura automaticamente para evitar perda de dados no primeiro login.
+  /// Verifica se uma lista de registros do Plano de Vida contém dados reais de uso
+  /// (práticas selecionadas, histórico de conclusões, orações customizadas ou lembretes).
+  /// Caso contrário, trata-se apenas do modelo padrão de fábrica inicial.
+  bool hasUserDataInPlano(List<Map<String, dynamic>> rows) {
+    if (rows.isEmpty) return false;
+    for (var row in rows) {
+      final isCustom = row['isCustom'];
+      if (isCustom == 1 || isCustom == true) return true;
+
+      final isSelected = row['isSelected'];
+      if (isSelected == 1 || isSelected == true) return true;
+
+      final completedDates = row['completedDates']?.toString().trim();
+      if (completedDates != null && completedDates.isNotEmpty) return true;
+
+      final notificationTimes = row['notificationTimes']?.toString().trim();
+      if (notificationTimes != null && notificationTimes.isNotEmpty) return true;
+
+      final isNotification = row['isNotification'];
+      if (isNotification == 1 || isNotification == true) return true;
+    }
+    return false;
+  }
+
+  /// Verifica se o banco local possui dados ativos do usuário.
+  Future<bool> hasLocalUserData() async {
+    try {
+      final db = await _planoDeVidaDb.initDb();
+      final rows = await db.query('data');
+      return hasUserDataInPlano(rows);
+    } catch (e) {
+      debugPrint('CloudSyncService: Erro ao verificar dados locais: $e');
+      return false;
+    }
+  }
+
+  /// Verifica se a nuvem possui dados de backup e a base local está virgem (sem uso).
+  /// Em caso afirmativo, restaura automaticamente para evitar perda de dados no login.
   Future<bool> checkAndRestoreOnLogin() async {
     try {
       final user = _authService.currentUser;
@@ -61,19 +102,16 @@ class CloudSyncService {
       if (cloudInfo == null) return false;
 
       final cloudCount = (cloudInfo['planoCount'] as int?) ?? 0;
-      if (cloudCount <= 0) return false;
+      final cloudHasUserData = (cloudInfo['hasUserData'] as bool?) ?? false;
+      if (cloudCount <= 0 && !cloudHasUserData) return false;
 
-      // Verificar se a base local do Plano de Vida está vazia
-      List<Map<String, dynamic>> localPlano = [];
-      try {
-        final db = await _planoDeVidaDb.initDb();
-        localPlano = await db.query('data');
-      } catch (e) {
-        debugPrint('CloudSyncService: Erro ao verificar dados locais: $e');
-      }
+      // Verificar se a base local possui dados reais de uso do usuário
+      final localHasData = await hasLocalUserData();
 
-      if (localPlano.isEmpty) {
-        debugPrint('CloudSyncService: Restaurando automaticamente dados da nuvem ($cloudCount itens)...');
+      if (!localHasData) {
+        debugPrint(
+            'CloudSyncService: Base local virgem e nuvem possui backup ($cloudCount itens). '
+            'Restaurando automaticamente dados da nuvem...');
         final success = await restoreBackup();
         return success;
       }
@@ -103,21 +141,22 @@ class CloudSyncService {
       }
 
       // Trava de segurança: verificar se os dados locais estão vazios mas a nuvem possui backup
-      List<Map<String, dynamic>> localPlano = [];
-      try {
-        final db = await _planoDeVidaDb.initDb();
-        localPlano = await db.query('data');
-      } catch (e) {
-        debugPrint('CloudSyncService: Erro ao verificar dados locais no auto backup: $e');
-      }
-
+      final localHasData = await hasLocalUserData();
       final cloudInfo = await getLastBackupInfo();
       final cloudCount = (cloudInfo?['planoCount'] as int?) ?? 0;
+      final cloudHasUserData = (cloudInfo?['hasUserData'] as bool?) ?? false;
 
-      if (localPlano.isEmpty && cloudCount > 0) {
-        debugPrint('CloudSyncService: Base local vazia e nuvem possui $cloudCount itens. Restaurando em vez de sobrescrever...');
+      if (!localHasData && (cloudHasUserData || cloudCount > 0)) {
+        debugPrint(
+            'CloudSyncService: Base local sem dados e nuvem possui backup. '
+            'Restaurando em vez de sobrescrever...');
         await restoreBackup();
         await prefs.setString(AppConstants.lastAutoBackupDateKey, todayStr);
+        return;
+      }
+
+      // Se a base local não possui dados de usuário e a nuvem também não tem nada, não faz upload de template
+      if (!localHasData && cloudInfo == null) {
         return;
       }
 
@@ -195,13 +234,21 @@ class CloudSyncService {
       debugPrint('Erro ao ler plano_de_vida.db: $e');
     }
 
-    // Trava de segurança: não sobrescrever dados existentes na nuvem se a base local estiver vazia
-    if (!force && planoData.isEmpty) {
-      final cloudInfo = await getLastBackupInfo();
-      final cloudCount = (cloudInfo?['planoCount'] as int?) ?? 0;
-      if (cloudCount > 0) {
-        debugPrint('CloudSyncService: Abortando upload de backup vazio pois existem $cloudCount itens na nuvem.');
-        return;
+    // Trava de segurança absoluta: NUNCA sobrescrever backup na nuvem com dados locais virgens/vazios
+    if (!force) {
+      final localHasData = hasUserDataInPlano(planoData);
+      if (!localHasData) {
+        final cloudInfo = await getLastBackupInfo();
+        if (cloudInfo != null) {
+          final cloudCount = (cloudInfo['planoCount'] as int?) ?? 0;
+          final cloudHasUserData = (cloudInfo['hasUserData'] as bool?) ?? false;
+          if (cloudHasUserData || cloudCount > 0) {
+            debugPrint(
+                'CloudSyncService: TRAVA DE SEGURANÇA ATIVADA! '
+                'Abortando upload de dados locais padrão para evitar sobrescrever o backup existente na nuvem.');
+            return;
+          }
+        }
       }
     }
 
