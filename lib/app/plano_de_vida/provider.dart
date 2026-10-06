@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/plano_de_vida/data.dart';
+import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,17 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   PlanoDeVidaProvider() {
     _initialize();
+    CloudSyncService.onDataRestored.addListener(_onDataRestored);
+  }
+
+  void _onDataRestored() {
+    update();
+  }
+
+  @override
+  void dispose() {
+    CloudSyncService.onDataRestored.removeListener(_onDataRestored);
+    super.dispose();
   }
 
   Future<void> _initialize() async {

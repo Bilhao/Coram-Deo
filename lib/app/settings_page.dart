@@ -709,6 +709,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   onPressed: () => AuthBottomSheet.show(
                                     context,
                                     onSuccess: () {
+                                      appProvider.reload();
                                       _loadLastBackupInfo();
                                       setState(() {});
                                     },

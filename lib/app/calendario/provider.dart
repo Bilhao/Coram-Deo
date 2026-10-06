@@ -1,10 +1,26 @@
 import 'package:coramdeo/app/calendario/models/liturgical_day.dart';
 import 'package:coramdeo/app/calendario/services/computus_engine.dart';
+import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class CalendarioLiturgicoProvider extends BaseProvider {
   CalendarioLiturgicoProvider() {
     _initPreferences();
+    CloudSyncService.onDataRestored.addListener(_onDataRestored);
+  }
+
+  void _onDataRestored() {
+    reload();
+  }
+
+  Future<void> reload() async {
+    await _initPreferences();
+  }
+
+  @override
+  void dispose() {
+    CloudSyncService.onDataRestored.removeListener(_onDataRestored);
+    super.dispose();
   }
 
   DateTime _selectedDate = DateTime.now();
