@@ -7,6 +7,17 @@ import 'package:coramdeo/utils/constants.dart';
 class AppProvider extends BaseProvider {
   AppProvider() {
     _initialize();
+    CloudSyncService.onDataRestored.addListener(_onDataRestored);
+  }
+
+  void _onDataRestored() {
+    reload();
+  }
+
+  @override
+  void dispose() {
+    CloudSyncService.onDataRestored.removeListener(_onDataRestored);
+    super.dispose();
   }
 
   // Variables related to font size
@@ -79,9 +90,7 @@ class AppProvider extends BaseProvider {
     return result ?? false;
   }
 
-  Future<void> _initialize() async {
-    setLoading(true);
-
+  Future<void> _loadPreferences() async {
     await safePrefOperation((prefs) async {
       _fontSize = prefs.getDouble(AppConstants.fontSizeKey) ?? AppConstants.defaultFontSize;
 
@@ -108,6 +117,12 @@ class AppProvider extends BaseProvider {
 
       return true;
     }, errorContext: 'Loading user preferences');
+  }
+
+  Future<void> _initialize() async {
+    setLoading(true);
+
+    await _loadPreferences();
 
     _canAuthenticate = await checkBiometric();
 
@@ -115,7 +130,10 @@ class AppProvider extends BaseProvider {
 
     if (!_showOnboarding) {
       final restored = await CloudSyncService().checkAndRestoreOnLogin();
-      if (!restored) {
+      if (restored) {
+        await _loadPreferences();
+        notifyListeners();
+      } else {
         CloudSyncService().triggerDailyAutoBackup();
       }
     }
@@ -123,7 +141,8 @@ class AppProvider extends BaseProvider {
 
   // Renamed from 'load' to avoid confusion with Flutter's load methods
   Future<void> reload() async {
-    await _initialize();
+    await _loadPreferences();
+    notifyListeners();
   }
 
   // Onboarding
@@ -136,7 +155,10 @@ class AppProvider extends BaseProvider {
       await prefs.setBool(AppConstants.onboardingKey, false);
       notifyListeners();
       final restored = await CloudSyncService().checkAndRestoreOnLogin();
-      if (!restored) {
+      if (restored) {
+        await _loadPreferences();
+        notifyListeners();
+      } else {
         CloudSyncService().triggerDailyAutoBackup();
       }
       return true;

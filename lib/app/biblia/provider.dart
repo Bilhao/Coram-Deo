@@ -1,11 +1,27 @@
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/services/bible_download_service.dart';
+import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
 
 class BibleProvider extends BaseProvider {
   BibleProvider() {
     _initialize();
+    CloudSyncService.onDataRestored.addListener(_onDataRestored);
+  }
+
+  void _onDataRestored() {
+    reload();
+  }
+
+  Future<void> reload() async {
+    await _initialize();
+  }
+
+  @override
+  void dispose() {
+    CloudSyncService.onDataRestored.removeListener(_onDataRestored);
+    super.dispose();
   }
 
   Biblia dbHelper = Biblia();

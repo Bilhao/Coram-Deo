@@ -138,5 +138,180 @@ void main() {
       expect(defaultSettings.containsKey(AppConstants.fontSizeKey), isTrue);
       expect(defaultSettings.containsKey(AppConstants.themeKey), isTrue);
     });
+
+    test('hasUserDataInPreferences accurately detects default vs customized preferences', () {
+      final service = CloudSyncService();
+
+      // Factory defaults
+      final defaultPrefs = <String, dynamic>{
+        AppConstants.fontSizeKey: AppConstants.defaultFontSize,
+        AppConstants.themeKey: AppConstants.defaultTheme,
+        AppConstants.colorSeedKey: AppConstants.defaultColorSeed,
+        AppConstants.favoritePrayersKey: <String>[],
+        'exame.itensExame': '{}',
+        AppConstants.bibleChapterKey: 1,
+        AppConstants.bibleBookIdKey: 1,
+      };
+      expect(service.hasUserDataInPreferences(defaultPrefs), isFalse);
+
+      // Modified font size
+      expect(
+        service.hasUserDataInPreferences({...defaultPrefs, AppConstants.fontSizeKey: 22.0}),
+        isTrue,
+      );
+
+      // Favorite prayers added
+      expect(
+        service.hasUserDataInPreferences({
+          ...defaultPrefs,
+          AppConstants.favoritePrayersKey: ['Oração da Manhã'],
+        }),
+        isTrue,
+      );
+
+      // Exame de consciência items added (Map or JSON string)
+      expect(
+        service.hasUserDataInPreferences({
+          ...defaultPrefs,
+          'exame.itensExame': {'Pecado': 'Descrição'},
+        }),
+        isTrue,
+      );
+      expect(
+        service.hasUserDataInPreferences({
+          ...defaultPrefs,
+          'exame.itensExame': '{"Pecado": "Descrição"}',
+        }),
+        isTrue,
+      );
+
+      // Bible reading progress
+      expect(
+        service.hasUserDataInPreferences({...defaultPrefs, AppConstants.bibleChapterKey: 5}),
+        isTrue,
+      );
+
+      // Book reading progress
+      expect(
+        service.hasUserDataInPreferences({
+          ...defaultPrefs,
+          'livros.caminho.currentChapterId': 12,
+        }),
+        isTrue,
+      );
+    });
+
+    test('sanitizePlanoRows converts booleans, handles nulls, and enforces SQLite constraints', () {
+      final service = CloudSyncService();
+
+      final rawRows = [
+        // Row with booleans and null strings
+        {
+          'id': 1,
+          'title': 'Oração Diária',
+          'isCustom': false,
+          'isSelected': true,
+          'isCompleted': false,
+          'isNotification': true,
+          'notificationTimes': '07:30',
+          'completedDates': null,
+          'extraColumnThatDoesNotExistInSqlite': 'ignored_value',
+        },
+        // Row with missing/null boolean values
+        {
+          'id': 2,
+          'title': 'Santo Rosário',
+          'isCustom': null,
+          'isSelected': 1,
+          'isCompleted': null,
+          'isNotification': 0,
+        },
+        // Row with empty title (should be skipped)
+        {
+          'id': 3,
+          'title': '   ',
+          'isCustom': 0,
+          'isSelected': 1,
+        },
+      ];
+
+      final sanitized = service.sanitizePlanoRows(rawRows);
+      expect(sanitized.length, equals(2));
+
+      // Row 1 assertions
+      expect(sanitized[0]['id'], equals(1));
+      expect(sanitized[0]['title'], equals('Oração Diária'));
+      expect(sanitized[0]['isCustom'], equals(0));
+      expect(sanitized[0]['isSelected'], equals(1));
+      expect(sanitized[0]['isCompleted'], equals(0));
+      expect(sanitized[0]['isNotification'], equals(1));
+      expect(sanitized[0]['notificationTimes'], equals('07:30'));
+      expect(sanitized[0]['completedDates'], isNull);
+      expect(sanitized[0]['weekdays'], equals('1,2,3,4,5,6,7'));
+      expect(sanitized[0].containsKey('extraColumnThatDoesNotExistInSqlite'), isFalse);
+
+      // Row 2 assertions
+      expect(sanitized[1]['id'], equals(2));
+      expect(sanitized[1]['title'], equals('Santo Rosário'));
+      expect(sanitized[1]['isCustom'], equals(0));
+      expect(sanitized[1]['isSelected'], equals(1));
+      expect(sanitized[1]['isCompleted'], equals(0));
+      expect(sanitized[1]['isNotification'], equals(0));
+    });
+
+    test('restorePreferencesFromMap safely coerces and restores all data types', () async {
+      final service = CloudSyncService();
+
+      final restoredPrefs = {
+        // Font size as num/int should become double
+        AppConstants.fontSizeKey: 20,
+        // Color seed as double should become int
+        AppConstants.colorSeedKey: 4278213005.0,
+        // Bible IDs as double should become int
+        AppConstants.bibleBookIdKey: 2.0,
+        AppConstants.bibleChapterKey: 15.0,
+        // Boolean values as num and bool
+        AppConstants.dynamicColorKey: 1,
+        AppConstants.blockExameKey: true,
+        // Exame items as Map should become JSON string
+        'exame.itensExame': {'Pecado da Ira': 'Fiquei impaciente hoje'},
+        // Favorite prayers as List
+        AppConstants.favoritePrayersKey: ['Oração a São Miguel', 'Ângelus'],
+        // Book progress as num should become int
+        'livros.caminho.currentChapterId': 45.0,
+      };
+
+      await service.restorePreferencesFromMap(restoredPrefs);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getDouble(AppConstants.fontSizeKey), equals(20.0));
+      expect(prefs.getInt(AppConstants.colorSeedKey), equals(4278213005));
+      expect(prefs.getInt(AppConstants.bibleBookIdKey), equals(2));
+      expect(prefs.getInt(AppConstants.bibleChapterKey), equals(15));
+      expect(prefs.getBool(AppConstants.dynamicColorKey), isTrue);
+      expect(prefs.getBool(AppConstants.blockExameKey), isTrue);
+      expect(
+        prefs.getString('exame.itensExame'),
+        equals('{"Pecado da Ira":"Fiquei impaciente hoje"}'),
+      );
+      expect(
+        prefs.getStringList(AppConstants.favoritePrayersKey),
+        equals(['Oração a São Miguel', 'Ângelus']),
+      );
+      expect(prefs.getInt('livros.caminho.currentChapterId'), equals(45));
+    });
+
+    test('CloudSyncService.onDataRestored triggers listeners when restored', () {
+      int notifyCount = 0;
+      void listener() {
+        notifyCount++;
+      }
+
+      CloudSyncService.onDataRestored.addListener(listener);
+      CloudSyncService.onDataRestored.value++;
+
+      expect(notifyCount, equals(1));
+      CloudSyncService.onDataRestored.removeListener(listener);
+    });
   });
 }
