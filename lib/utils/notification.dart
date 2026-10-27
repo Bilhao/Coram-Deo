@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:coramdeo/utils/routes.dart';
@@ -31,6 +32,7 @@ class Notifier {
   static final _notification = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    if (kIsWeb) return;
     await _notification.initialize(
       settings: const InitializationSettings(android: AndroidInitializationSettings('@mipmap/ic_notification'), iOS: DarwinInitializationSettings()),
       onDidReceiveNotificationResponse: _onSelectNotification,
@@ -40,6 +42,7 @@ class Notifier {
   }
 
   static Future<void> scheduledNotification(CustomNotification notification, TimeOfDay time) async {
+    if (kIsWeb) return;
     try {
       final date = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, time.hour, time.minute);
 
@@ -65,6 +68,7 @@ class Notifier {
   }
 
   static Future<void> stopNotification(int id) async {
+    if (kIsWeb) return;
     try {
       await _notification.cancel(id: id);
     } catch (e) {

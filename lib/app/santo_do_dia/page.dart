@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:provider/provider.dart';
@@ -281,7 +282,8 @@ class _SantoDoDiaPageState extends State<SantoDoDiaPage> {
                                                   errorBuilder: (_, _, _) =>
                                                       const SizedBox.shrink(),
                                                 )
-                                              : provider
+                                              : !kIsWeb &&
+                                                    provider
                                                         .localImagePath
                                                         .isNotEmpty &&
                                                     !provider

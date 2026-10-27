@@ -4,6 +4,7 @@ import 'package:coramdeo/app/santo_do_dia/model.dart';
 import 'package:coramdeo/app/santo_do_dia/repository.dart';
 import 'package:coramdeo/services/home_widget_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -207,6 +208,7 @@ class SantoDoDiaProvider extends BaseProvider {
 
   /// Limpa arquivos residuais em .jpg e chaves de SharedPreferences do antigo sistema de scraping do A12.
   Future<void> _cleanLegacyCache() async {
+    if (kIsWeb) return;
     try {
       final dir = await getApplicationDocumentsDirectory();
       final saintsDir = Directory('${dir.path}/santos');
@@ -300,7 +302,8 @@ class SantoDoDiaProvider extends BaseProvider {
 
         final cachedLocalPath =
             prefs.getString('santoDoDiaLocalImagePath') ?? '';
-        if (cachedLocalPath.toLowerCase().endsWith('.jpg') ||
+        if (kIsWeb ||
+            cachedLocalPath.toLowerCase().endsWith('.jpg') ||
             !File(cachedLocalPath).existsSync()) {
           _localImagePath = '';
         } else {
@@ -377,7 +380,9 @@ class SantoDoDiaProvider extends BaseProvider {
 
   Future<String> _cacheImageLocally(String portraitUrl,
       {int? day, int? month}) async {
-    if (portraitUrl.isEmpty || portraitUrl.startsWith('assets/')) return '';
+    if (kIsWeb || portraitUrl.isEmpty || portraitUrl.startsWith('assets/')) {
+      return '';
+    }
     try {
       final dir = await getApplicationDocumentsDirectory();
       final saintsDir = Directory('${dir.path}/santos');
