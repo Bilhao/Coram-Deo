@@ -1,6 +1,7 @@
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/app/livros/data.dart';
 import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
+import 'package:coramdeo/app/oracoes/custom_prayer_model.dart';
 import 'package:coramdeo/app/search/model.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
@@ -147,8 +148,9 @@ class SearchProvider extends BaseProvider {
   }
 
   Future<void> _searchPrayers(String query) async {
+    final q = query.toLowerCase();
     _prayers.forEach((route, title) {
-      if (title.toLowerCase().contains(query.toLowerCase())) {
+      if (title.toLowerCase().contains(q)) {
         _results.add(
           SearchResult(
             title: title,
@@ -159,6 +161,29 @@ class SearchProvider extends BaseProvider {
         );
       }
     });
+
+    try {
+      final prefs = await BaseProvider.getPrefs();
+      final customList = CustomPrayer.decodeList(
+        prefs.getString(AppConstants.customPrayersKey),
+      );
+      for (final p in customList) {
+        if (p.title.toLowerCase().contains(q) ||
+            p.subtitle.toLowerCase().contains(q) ||
+            p.text.toLowerCase().contains(q)) {
+          _results.add(
+            SearchResult(
+              title: p.title,
+              subtitle: p.subtitle.isNotEmpty
+                  ? p.subtitle
+                  : "Minha Oração Pessoal",
+              type: 'Oração',
+              data: {'route': p.route},
+            ),
+          );
+        }
+      }
+    } catch (_) {}
   }
 
   String _formatBookName(String name) {

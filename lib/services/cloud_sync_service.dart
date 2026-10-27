@@ -94,9 +94,21 @@ class CloudSyncService {
   bool hasUserDataInPreferences(Map<String, dynamic>? prefs) {
     if (prefs == null || prefs.isEmpty) return false;
 
-    // Orações favoritas
+    // Orações favoritas e personalizadas
     final favs = prefs[AppConstants.favoritePrayersKey];
     if (favs is List && favs.isNotEmpty) return true;
+    final customPrayers = prefs[AppConstants.customPrayersKey];
+    if (customPrayers is String &&
+        customPrayers.trim().isNotEmpty &&
+        customPrayers != '[]') {
+      return true;
+    }
+    final normLinks = prefs[AppConstants.normPrayerLinksKey];
+    if (normLinks is String &&
+        normLinks.trim().isNotEmpty &&
+        normLinks != '{}') {
+      return true;
+    }
 
     // Exame de consciência
     final exame = prefs['exame.itensExame'];
@@ -137,6 +149,20 @@ class CloudSyncService {
 
       final favs = prefs.getStringList(AppConstants.favoritePrayersKey);
       if (favs != null && favs.isNotEmpty) return true;
+
+      final customPrayers = prefs.getString(AppConstants.customPrayersKey);
+      if (customPrayers != null &&
+          customPrayers.trim().isNotEmpty &&
+          customPrayers != '[]') {
+        return true;
+      }
+
+      final normLinks = prefs.getString(AppConstants.normPrayerLinksKey);
+      if (normLinks != null &&
+          normLinks.trim().isNotEmpty &&
+          normLinks != '{}') {
+        return true;
+      }
 
       final exame = prefs.getString('exame.itensExame');
       if (exame != null && exame.trim().isNotEmpty && exame != '{}') return true;
@@ -267,6 +293,23 @@ class CloudSyncService {
       debugPrint('CloudSyncService: Backup automático diário concluído com sucesso.');
     } catch (e) {
       debugPrint('CloudSyncService: Falha silenciosa no backup automático: $e');
+    }
+  }
+
+  /// Sincroniza silenciosamente com o Firestore quando há alterações em dados do usuário
+  Future<void> syncInBackground() async {
+    try {
+      final user = _authService.currentUser;
+      if (user == null) return;
+
+      final prefs = await SharedPreferences.getInstance();
+      final isAutoBackupEnabled =
+          prefs.getBool(AppConstants.autoBackupKey) ?? AppConstants.defaultAutoBackup;
+      if (!isAutoBackupEnabled) return;
+
+      await uploadBackup();
+    } catch (e) {
+      debugPrint('CloudSyncService: Sincronização em segundo plano ignorada: $e');
     }
   }
 

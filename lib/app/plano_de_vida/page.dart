@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:coramdeo/app/oracoes/page.dart';
 import 'package:coramdeo/app/plano_de_vida/provider.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:provider/provider.dart';
@@ -159,8 +160,19 @@ class Selecionados extends StatelessWidget {
     'Salmo 2': '/salmo-2',
   };
 
-  static String? getRouteForNorm(String title) {
-    return _normRoutes[title.trim()];
+  static String? getRouteForNorm(
+    String title, {
+    Map<String, String>? customLinks,
+  }) {
+    final trimmed = title.trim();
+    if (customLinks != null && customLinks.containsKey(trimmed)) {
+      final linked = customLinks[trimmed];
+      if (linked == null || linked.isEmpty || linked == 'none') {
+        return null;
+      }
+      return linked.startsWith('/') ? linked : '/$linked';
+    }
+    return _normRoutes[trimmed];
   }
 
   @override
@@ -177,7 +189,10 @@ class Selecionados extends StatelessWidget {
                 itemCount: todaysItems.length,
                 itemBuilder: (context, index) {
                   String title = todaysItems[index];
-                  final String? route = getRouteForNorm(title);
+                  final String? route = getRouteForNorm(
+                    title,
+                    customLinks: provider.normPrayerLinks,
+                  );
                   final bool isCompleted = provider.titlesIsCompletedToday.contains(title);
 
                   return ListTile(
@@ -306,6 +321,16 @@ class InfoAlertDialog extends StatelessWidget {
                   ],
                 ),
                 ListTile(
+                  title: const Text("Vincular oração ou leitura"),
+                  subtitle: Text(
+                    _describeLinkedPrayer(provider, title),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  leading: const Icon(Icons.link),
+                  onTap: () => _showLinkPrayerDialog(context, provider, title),
+                ),
+                ListTile(
                   title: const Text("Excluir"),
                   leading: const Icon(Icons.delete),
                   onTap: () {
@@ -319,6 +344,91 @@ class InfoAlertDialog extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _describeLinkedPrayer(PlanoDeVidaProvider provider, String normTitle) {
+    final route = Selecionados.getRouteForNorm(
+      normTitle,
+      customLinks: provider.normPrayerLinks,
+    );
+    if (route == null) return "Nenhum vínculo configurado";
+    final cleanKey = route.replaceFirst(RegExp(r'^/'), '');
+    if (cleanKey == 'livros') return "Estante de Livros Espirituais";
+    if (cleanKey == 'santo-rosario-livro') return "Livro Santo Rosário";
+    if (cleanKey == 'via-sacra-reading') return "Via Sacra";
+    for (final p in provider.customPrayers) {
+      if (p.route == cleanKey) return "${p.title} (Pessoal)";
+    }
+    return OracoesPage.officialRouteToName[cleanKey] ?? cleanKey;
+  }
+
+  Future<void> _showLinkPrayerDialog(
+    BuildContext context,
+    PlanoDeVidaProvider provider,
+    String normTitle,
+  ) async {
+    final currentRoute = Selecionados.getRouteForNorm(
+      normTitle,
+      customLinks: provider.normPrayerLinks,
+    );
+    final currentKey = currentRoute?.replaceFirst(RegExp(r'^/'), '') ?? 'none';
+
+    final officialMap = OracoesPage.officialRouteToName;
+    final options = <MapEntry<String, String>>[
+      const MapEntry('none', 'Sem vínculo (apenas marcar como concluído)'),
+      const MapEntry('livros', 'Estante de Livros Espirituais'),
+      const MapEntry('via-sacra-reading', 'Via Sacra'),
+      for (final p in provider.customPrayers)
+        MapEntry(p.route, '${p.title} (Minha Oração)'),
+    ];
+    final sortedOfficial = officialMap.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+    options.addAll(sortedOfficial);
+
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text(
+          "Vincular Oração ou Leitura",
+          style: TextStyle(fontSize: 19.0),
+          textAlign: TextAlign.center,
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 360,
+          child: ListView.builder(
+            itemCount: options.length,
+            itemBuilder: (ctx, idx) {
+              final entry = options[idx];
+              final isSelected = entry.key == currentKey;
+              return ListTile(
+                dense: true,
+                leading: Icon(
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_off,
+                  color: isSelected
+                      ? Theme.of(ctx).colorScheme.primary
+                      : null,
+                ),
+                title: Text(entry.value),
+                onTap: () => Navigator.pop(ctx, entry.key),
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Cancelar"),
+          ),
+        ],
+      ),
+    );
+
+    if (selected != null) {
+      await provider.setNormPrayerLink(normTitle.trim(), selected);
+    }
   }
 }
 

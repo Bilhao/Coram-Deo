@@ -25,6 +25,8 @@ class AppConstants {
 
   // Prayer preferences
   static const String favoritePrayersKey = 'oracoes.favoritas';
+  static const String customPrayersKey = 'oracoes.custom_prayers';
+  static const String normPrayerLinksKey = 'plano.norm_prayer_links';
   static const String bilingualModeKey = 'oracoes.bilingual_mode';
   static const String prayerLanguageKey = 'oracoes.language';
   static const String bilingualOrderKey = 'oracoes.bilingual_order';
