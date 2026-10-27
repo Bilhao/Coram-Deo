@@ -110,7 +110,10 @@ class HomePage extends StatelessWidget {
                     route: '/exame-de-consciencia',
                     requireAuth: appProvider.blockExame,
                   ),
-                  // HomePageButtons(text: "Missal Romano", route: '/missal-romano'),
+                  const HomePageButtons(
+                    text: "Missal Romano",
+                    route: '/missal-romano',
+                  ),
                 ],
               ),
             ),
