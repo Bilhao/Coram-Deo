@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:coramdeo/app/oracoes/falar_com_deus/provider.dart';
+import 'package:coramdeo/app/diario/page.dart';
 import 'package:provider/provider.dart';
 
 import '../../app_provider.dart';
@@ -118,6 +119,25 @@ class _FalarComDeusPageState extends State<FalarComDeusPage> {
                             for (String reference in provider.reference) Text(reference),
                             const Divider(height: 15, color: Colors.transparent),
                             Text("Fonte: https://www.hablarcondios.org/pt/meditacaodiaria.aspx", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w300)),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: FilledButton.tonalIcon(
+                                onPressed: () {
+                                  final medTitle = provider.title.isNotEmpty
+                                      ? "Meditação: ${provider.title.first}"
+                                      : "Luz da Meditação Diária";
+                                  JournalEntryDialog.showQuickReflectionDialog(
+                                    context,
+                                    defaultTitle: medTitle,
+                                  );
+                                },
+                                icon: const Icon(Icons.edit_note),
+                                label: const Text(
+                                  "Registrar reflexão em Luzes de Oração",
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
                           ],
                         ),
                       ),

@@ -109,6 +109,12 @@ class CloudSyncService {
         normLinks != '{}') {
       return true;
     }
+    final journal = prefs[AppConstants.spiritualJournalKey];
+    if (journal is String &&
+        journal.trim().isNotEmpty &&
+        journal != '[]') {
+      return true;
+    }
 
     // Exame de consciência
     final exame = prefs['exame.itensExame'];
@@ -161,6 +167,13 @@ class CloudSyncService {
       if (normLinks != null &&
           normLinks.trim().isNotEmpty &&
           normLinks != '{}') {
+        return true;
+      }
+
+      final journal = prefs.getString(AppConstants.spiritualJournalKey);
+      if (journal != null &&
+          journal.trim().isNotEmpty &&
+          journal != '[]') {
         return true;
       }
 

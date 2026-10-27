@@ -38,6 +38,13 @@ class HomePage extends StatelessWidget {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.edit_note),
+            tooltip: "Luzes de Oração",
+            onPressed: () {
+              Navigator.pushNamed(context, '/diario');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.calendar_month_outlined),
             tooltip: "Calendário Litúrgico",
             onPressed: () {

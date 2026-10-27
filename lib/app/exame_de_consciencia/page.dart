@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:coramdeo/app/exame_de_consciencia/provider.dart';
 import 'package:coramdeo/app/app_provider.dart';
+import 'package:coramdeo/app/diario/page.dart';
 
 class ExameDeConscienciaPage extends StatefulWidget {
   const ExameDeConscienciaPage({super.key});
@@ -493,6 +494,20 @@ Descuidei a minha responsabilidade de aproximar de Deus os outros, com o meu exe
                   style: TextStyle(fontSize: appProvider.fontSize, fontWeight: FontWeight.bold),
                 ),
               ),
+              const SizedBox(height: 20),
+              Center(
+                child: FilledButton.tonalIcon(
+                  onPressed: () {
+                    JournalEntryDialog.showQuickReflectionDialog(
+                      context,
+                      defaultTitle: "Propósito do Exame de Consciência",
+                    );
+                  },
+                  icon: const Icon(Icons.edit_note),
+                  label: const Text("Registrar reflexão em Luzes de Oração"),
+                ),
+              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
