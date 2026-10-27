@@ -83,9 +83,10 @@ class _AddItemDialogState extends State<AddItemDialog> {
             decoration: InputDecoration(
               filled: true,
               labelText: "Título",
-              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(8))),
-              errorStyle: const TextStyle(fontSize: 13, color: Colors.red),
+              errorStyle: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.error,
+              ),
               errorText: titleErrorText,
             ),
             onTap: () {
@@ -101,9 +102,10 @@ class _AddItemDialogState extends State<AddItemDialog> {
             decoration: InputDecoration(
               filled: true,
               labelText: "Descrição",
-              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(8))),
-              errorStyle: const TextStyle(fontSize: 13, color: Colors.red),
+              errorStyle: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.error,
+              ),
               errorText: descriptionErrorText,
             ),
             maxLines: null,
@@ -225,9 +227,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
             decoration: InputDecoration(
               filled: true,
               labelText: "Título",
-              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(8))),
-              errorStyle: const TextStyle(fontSize: 13, color: Colors.red),
+              errorStyle: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.error,
+              ),
               errorText: titleErrorText,
             ),
             onTap: () {
@@ -243,9 +246,10 @@ class _EditItemDialogState extends State<EditItemDialog> {
             decoration: InputDecoration(
               filled: true,
               labelText: "Descrição",
-              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
-              enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none, borderRadius: BorderRadius.all(Radius.circular(8))),
-              errorStyle: const TextStyle(fontSize: 13, color: Colors.red),
+              errorStyle: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.error,
+              ),
               errorText: descriptionErrorText,
             ),
             maxLines: null,

@@ -45,6 +45,38 @@ void main() async {
 class CoramDeoApp extends StatelessWidget {
   const CoramDeoApp({super.key});
 
+  static InputDecorationTheme _buildInputDecorationTheme(
+    ColorScheme colorScheme,
+  ) {
+    final borderRadius = BorderRadius.circular(10.0);
+    return InputDecorationTheme(
+      filled: true,
+      fillColor: colorScheme.surfaceContainerHighest,
+      labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      border: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: BorderSide(color: colorScheme.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: borderRadius,
+        borderSide: BorderSide(color: colorScheme.error, width: 1.5),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -71,34 +103,45 @@ class CoramDeoApp extends StatelessWidget {
                 );
               }
 
+              final lightColorScheme =
+                  provider.dynamicColor && lightDynamic != null
+                  ? lightDynamic.harmonized()
+                  : ColorScheme.fromSeed(
+                      dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                      seedColor: Color(provider.colorSeed),
+                      primary: Color(provider.colorSeed),
+                      brightness: Brightness.light,
+                    );
+
+              final darkColorScheme =
+                  provider.dynamicColor && darkDynamic != null
+                  ? darkDynamic.harmonized()
+                  : (provider.dynamicColor && lightDynamic != null
+                        ? ColorScheme.fromSeed(
+                            seedColor: lightDynamic.primary,
+                            brightness: Brightness.dark,
+                          )
+                        : ColorScheme.fromSeed(
+                            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
+                            seedColor: Color(provider.colorSeed),
+                            brightness: Brightness.dark,
+                          ));
+
               MaterialApp app = MaterialApp(
                 debugShowCheckedModeBanner: false,
                 themeMode: provider.themeMode,
                 theme: ThemeData(
-                  colorScheme: provider.dynamicColor && lightDynamic != null
-                      ? lightDynamic.harmonized()
-                      : ColorScheme.fromSeed(
-                          dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-                          seedColor: Color(provider.colorSeed),
-                          primary: Color(provider.colorSeed),
-                          brightness: Brightness.light,
-                        ),
+                  colorScheme: lightColorScheme,
+                  inputDecorationTheme: _buildInputDecorationTheme(
+                    lightColorScheme,
+                  ),
                   useMaterial3: true,
                 ),
                 darkTheme: ThemeData(
-                  colorScheme: provider.dynamicColor && darkDynamic != null
-                      ? darkDynamic.harmonized()
-                      : (provider.dynamicColor && lightDynamic != null
-                            ? ColorScheme.fromSeed(
-                                seedColor: lightDynamic.primary,
-                                brightness: Brightness.dark,
-                              )
-                            : ColorScheme.fromSeed(
-                                dynamicSchemeVariant:
-                                    DynamicSchemeVariant.fidelity,
-                                seedColor: Color(provider.colorSeed),
-                                brightness: Brightness.dark,
-                              )),
+                  colorScheme: darkColorScheme,
+                  inputDecorationTheme: _buildInputDecorationTheme(
+                    darkColorScheme,
+                  ),
                   useMaterial3: true,
                 ),
                 initialRoute: provider.showOnboarding
