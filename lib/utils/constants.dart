@@ -32,8 +32,9 @@ class AppConstants {
   static const String bilingualOrderKey = 'oracoes.bilingual_order';
   static const String openInBilingualModeKey = 'oracoes.open_bilingual';
 
-  // Calendar preferences
+  // Calendar & Journal preferences
   static const String showOpusDeiCelebrationsKey = 'calendario.show_opus_dei';
+  static const String spiritualJournalKey = 'diario.luzes_oracao';
 
   // Default values
   static const double defaultFontSize = 16.0;

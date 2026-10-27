@@ -52,6 +52,7 @@ import 'package:coramdeo/app/santo_do_dia/page.dart';
 import 'package:coramdeo/app/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/onboarding/page.dart';
 import 'package:coramdeo/app/calendario/page.dart';
+import 'package:coramdeo/app/diario/page.dart';
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -92,6 +93,9 @@ class Routes {
 
       case "/calendario":
         return MaterialPageRoute(builder: (context) => const CalendarioPage());
+
+      case "/diario":
+        return MaterialPageRoute(builder: (context) => const DiarioPage());
 
       case "/liturgia":
         final dateArg = settings.arguments is DateTime
