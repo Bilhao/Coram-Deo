@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/oracoes/comentario_evangelho/data.dart';
+import 'package:coramdeo/services/daily_content_cloud_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class ComentarioDoEvangelhoProvider extends BaseProvider {
@@ -54,6 +55,30 @@ class ComentarioDoEvangelhoProvider extends BaseProvider {
 
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
+      final now = DateTime.now();
+      final cloudData =
+          await DailyContentCloudService.instance.fetchComentarioEvangelho(
+        day: now.day,
+        month: now.month,
+        year: now.year,
+      );
+      if (cloudData != null) {
+        _evangelho = (cloudData['evangelho'] ?? '').toString();
+        _comentario = (cloudData['comentario'] ?? '').toString();
+        _evangelhoText =
+            (cloudData['evangelhoText'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+        _comentarioText =
+            (cloudData['comentarioText'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+        await _cacheData();
+        return true;
+      }
+
       await data.initCE();
       if (data.data == null) {
         setError('Erro ao carregar comentário do evangelho');

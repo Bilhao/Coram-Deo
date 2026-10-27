@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 
 class SantoDoDiaRepository {
   static Database? _db;
-  static const int _currentDbVersion = 13;
+  static const int _currentDbVersion = 14;
 
   Future<Database> get database async {
     if (_db != null && _db!.isOpen) {

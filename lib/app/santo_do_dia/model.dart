@@ -22,8 +22,28 @@ class SantoModel {
   bool get isAssetImage =>
       imagemUrl != null && imagemUrl!.startsWith('assets/');
 
+  static String cleanBiographicalText(String raw) {
+    var text = raw;
+    const replacements = <String, String>{
+      'veterotestamentárias': 'do Antigo Testamento',
+      'veterotestamentária': 'do Antigo Testamento',
+      'veterotestamentários': 'do Antigo Testamento',
+      'veterotestamentário': 'do Antigo Testamento',
+      'neotestamentárias': 'do Novo Testamento',
+      'neotestamentária': 'do Novo Testamento',
+      'no ano da graça de ': 'no ano de ',
+      'da era cristã': '',
+    };
+    replacements.forEach((oldStr, newStr) {
+      text = text.replaceAll(oldStr, newStr);
+    });
+    text = text.replaceAll(RegExp(r' +([,.;:])'), r'$1');
+    text = text.replaceAll(RegExp(r' {2,}'), ' ');
+    return text.trim();
+  }
+
   List<String> get paragraphs {
-    return biografia
+    return cleanBiographicalText(biografia)
         .split(RegExp(r'\n\s*\n'))
         .map((p) => p.trim())
         .where((p) => p.isNotEmpty)

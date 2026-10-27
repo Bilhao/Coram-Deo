@@ -349,7 +349,7 @@ class SantoDoDiaProvider extends BaseProvider {
 
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
-      // 1. Tenta carregar do banco de dados local SQLite (100% offline)
+      // Carrega 100% offline a partir do banco de dados local curado (santos.db)
       final localSaint = await _repository.getSanto(_day, _month);
       if (localSaint != null) {
         _currentSaint = localSaint;
@@ -368,25 +368,9 @@ class SantoDoDiaProvider extends BaseProvider {
         return true;
       }
 
-      // 2. Fallback temporário para webscraping se ainda não houver entrada no banco
       _currentSaint = null;
-      await data.initSDD(day: _day, month: _month);
-      if (data.data == null) {
-        setError('Erro ao carregar santo do dia');
-        return false;
-      } else {
-        _portrait = data.getPortrait();
-        _name = data.getName();
-        _subtitulo = '';
-        _oracao = '';
-        _text = data.getText();
-        _boldText = data.getBoldText();
-        _italicText = data.getItalicText();
-
-        // Cache the data and image
-        await _cacheData();
-        return true;
-      }
+      setError('Erro ao carregar santo do dia');
+      return false;
     }, errorContext: 'Fetching saint of the day data');
   }
 
