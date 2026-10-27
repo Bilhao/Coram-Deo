@@ -12,9 +12,19 @@ import java.io.FileInputStream
 
 class MainActivity: FlutterFragmentActivity() {
     private val CHANNEL = "com.bilhao.coramdeo/media_saver"
+    private val WIDGET_CHANNEL = "com.bilhao.coramdeo/home_widgets"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, WIDGET_CHANNEL).setMethodCallHandler { call, result ->
+            if (call.method == "updateHomeWidgets") {
+                SantoLiturgiaWidgetProvider.updateAllWidgets(applicationContext)
+                PlanoDeVidaWidgetProvider.updateAllWidgets(applicationContext)
+                result.success(true)
+            } else {
+                result.notImplemented()
+            }
+        }
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
             if (call.method == "saveImageToGallery") {
                 val filePath = call.argument<String>("filePath")

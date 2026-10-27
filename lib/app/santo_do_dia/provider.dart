@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:coramdeo/app/santo_do_dia/data.dart';
 import 'package:coramdeo/app/santo_do_dia/model.dart';
 import 'package:coramdeo/app/santo_do_dia/repository.dart';
+import 'package:coramdeo/services/home_widget_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -454,8 +455,21 @@ class SantoDoDiaProvider extends BaseProvider {
       await prefs.setStringList('santoDoDiaText', _text);
       await prefs.setStringList('santoDoDiaBoldText', _boldText);
       await prefs.setStringList('santoDoDiaItalicText', _italicText);
+      // If today, also update legacy keys for backward compatibility
       return true;
     }, errorContext: 'Caching saint data');
+
+    if (_isToday(_day, _month)) {
+      HomeWidgetService.instance.syncSaintAndLiturgyWidget(
+        saintName: _todayName.isNotEmpty ? _todayName : _name,
+        saintSubtitle: _todaySubtitulo.isNotEmpty
+            ? _todaySubtitulo
+            : _subtitulo,
+        localImagePath: _todayLocalImagePath.isNotEmpty
+            ? _todayLocalImagePath
+            : _localImagePath,
+      );
+    }
   }
 
   void resetToToday() {
