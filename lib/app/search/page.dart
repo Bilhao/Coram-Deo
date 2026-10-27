@@ -31,12 +31,20 @@ class _GlobalSearchPageState extends State<GlobalSearchPage> {
               title: TextField(
                 controller: _searchController,
                 autofocus: true,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
+                  filled: false,
                   hintText: 'Pesquisar...',
                   border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.white70),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
-                style: const TextStyle(color: Colors.white, fontSize: 18),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 18,
+                ),
                 onSubmitted: (value) {
                   provider.search(value);
                 },
