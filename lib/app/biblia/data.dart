@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:coramdeo/utils/lru_cache.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -101,6 +102,24 @@ class BibleVersion {
 class Biblia {
   static const String dbAveMaria = 'biblia_ave_maria.db';
 
+  static final Map<String, Database> _openDbs = {};
+  static final LruCache<String, List<String>> _booksCache = LruCache(
+    maxEntries: 16,
+  );
+  static final LruCache<String, List<int>> _chaptersCache = LruCache(
+    maxEntries: 150,
+  );
+  static final LruCache<String, List<String>> _versesIdCache = LruCache(
+    maxEntries: 32,
+  );
+  static final LruCache<String, List<String>> _versesCache = LruCache(
+    maxEntries: 32,
+  );
+  static final LruCache<String, int> _lastChapterCache = LruCache(
+    maxEntries: 150,
+  );
+  static final LruCache<String, int> _bookIdCache = LruCache(maxEntries: 150);
+
   BibleVersion _currentVersion = BibleVersion.defaultVersion;
 
   BibleVersion get currentVersion => _currentVersion;
@@ -121,6 +140,8 @@ class Biblia {
   Future<bool> deleteVersion(BibleVersion version) async {
     if (version.isBundled) return false;
     try {
+      final existingDb = _openDbs.remove(version.dbFileName);
+      await existingDb?.close();
       final dbPath = await getDatabasesPath();
       final path = join(dbPath, version.dbFileName);
       final file = File(path);
@@ -138,8 +159,14 @@ class Biblia {
   }
 
   Future<Database> initDb() async {
+    final activeFile = _currentVersion.dbFileName;
+    final cachedDb = _openDbs[activeFile];
+    if (cachedDb != null && cachedDb.isOpen) {
+      return cachedDb;
+    }
+
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, _currentVersion.dbFileName);
+    final path = join(dbPath, activeFile);
 
     final exist = await databaseExists(path);
 
@@ -181,55 +208,81 @@ class Biblia {
       }
     }
 
-    return await openDatabase(path);
+    final db = await openDatabase(path);
+    _openDbs[_currentVersion.dbFileName] = db;
+    return db;
   }
 
   Future<List<String>> getBooks(String testament) async {
+    final cacheKey = '${_currentVersion.id}:books:$testament';
+    final cached = _booksCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       'SELECT DISTINCT book FROM bible WHERE testament = ? ORDER BY book_id',
       [testament],
     );
 
-    return List.generate(maps.length, (i) {
+    final list = List.generate(maps.length, (i) {
       return maps[i]['book'] as String;
     });
+    _booksCache.put(cacheKey, list);
+    return list;
   }
 
   Future<List<int>> getChapters(String book) async {
+    final cacheKey = '${_currentVersion.id}:chapters:$book';
+    final cached = _chaptersCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       'SELECT DISTINCT chapter FROM bible WHERE book = ? ORDER BY chapter',
       [book],
     );
 
-    return List.generate(maps.length, (i) {
+    final list = List.generate(maps.length, (i) {
       return maps[i]['chapter'] as int;
     });
+    _chaptersCache.put(cacheKey, list);
+    return list;
   }
 
   Future<List<String>> getVersesId(String book, int chapter) async {
+    final cacheKey = '${_currentVersion.id}:$book:$chapter';
+    final cached = _versesIdCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       'SELECT verse_id FROM bible WHERE book = ? AND chapter = ? ORDER BY verse_id',
       [book, chapter],
     );
 
-    return List.generate(maps.length, (i) {
+    final list = List.generate(maps.length, (i) {
       return maps[i]['verse_id'].toString();
     });
+    _versesIdCache.put(cacheKey, list);
+    return list;
   }
 
   Future<List<String>> getVerses(String book, int chapter) async {
+    final cacheKey = '${_currentVersion.id}:$book:$chapter';
+    final cached = _versesCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final maps = await db.rawQuery(
       'SELECT verse FROM bible WHERE book = ? AND chapter = ? ORDER BY verse_id',
       [book, chapter],
     );
 
-    return List.generate(maps.length, (i) {
+    final list = List.generate(maps.length, (i) {
       return maps[i]['verse'] as String;
     });
+    _versesCache.put(cacheKey, list);
+    return list;
   }
 
   Future<String> getBookById(int bookId) async {
@@ -247,6 +300,10 @@ class Biblia {
   }
 
   Future<int> getLastChapterOfBook(String book) async {
+    final cacheKey = '${_currentVersion.id}:lastCh:$book';
+    final cached = _lastChapterCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final maps = await db.rawQuery(
       'SELECT MAX(chapter) as max_ch FROM bible WHERE book = ?',
@@ -257,10 +314,16 @@ class Biblia {
       return 1;
     }
 
-    return maps[0]['max_ch'] as int;
+    final maxCh = maps[0]['max_ch'] as int;
+    _lastChapterCache.put(cacheKey, maxCh);
+    return maxCh;
   }
 
   Future<int> getBookId(String book) async {
+    final cacheKey = '${_currentVersion.id}:bookId:$book';
+    final cached = _bookIdCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final maps = await db.rawQuery(
       'SELECT book_id FROM bible WHERE book = ? LIMIT 1',
@@ -271,6 +334,8 @@ class Biblia {
       return 1;
     }
 
-    return maps[0]['book_id'] as int;
+    final id = maps[0]['book_id'] as int;
+    _bookIdCache.put(cacheKey, id);
+    return id;
   }
 }
