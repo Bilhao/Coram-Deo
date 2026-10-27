@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'package:coramdeo/app/oracoes/custom_prayer_model.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/services/cloud_sync_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
+import 'package:coramdeo/utils/constants.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +20,8 @@ class PlanoDeVidaProvider extends BaseProvider {
   Map<String, dynamic> _completedDates = {};
   Map<String, dynamic> _weekdays = {};
   Map<String, int> _notificationId = {};
+  Map<String, String> _normPrayerLinks = {};
+  List<CustomPrayer> _customPrayers = [];
   int _year = DateTime.now().year;
   int _month = DateTime.now().month;
   int _day = DateTime.now().day;
@@ -32,6 +37,8 @@ class PlanoDeVidaProvider extends BaseProvider {
   Map<String, dynamic> get completedDates => _completedDates;
   Map<String, dynamic> get weekdays => _weekdays;
   Map<String, int> get notificationId => _notificationId;
+  Map<String, String> get normPrayerLinks => Map.unmodifiable(_normPrayerLinks);
+  List<CustomPrayer> get customPrayers => List.unmodifiable(_customPrayers);
   int get year => _year;
   int get month => _month;
   int get day => _day;
@@ -66,12 +73,51 @@ class PlanoDeVidaProvider extends BaseProvider {
       _completedDates = await pdvDb.getTitleAndCompletedDates();
       _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
+      await _loadPrayerLinksAndCustomPrayers();
 
       return true;
     }, errorContext: 'Loading life plan data');
 
     _updateDateTime();
     setLoading(false);
+  }
+
+  Future<void> _loadPrayerLinksAndCustomPrayers() async {
+    await safePrefOperation((prefs) async {
+      final rawLinks = prefs.getString(AppConstants.normPrayerLinksKey);
+      if (rawLinks != null && rawLinks.trim().isNotEmpty) {
+        try {
+          final decoded = json.decode(rawLinks);
+          if (decoded is Map) {
+            _normPrayerLinks = decoded.map(
+              (k, v) => MapEntry(k.toString(), v.toString()),
+            );
+          }
+        } catch (_) {}
+      } else {
+        _normPrayerLinks = {};
+      }
+      final rawCustom = prefs.getString(AppConstants.customPrayersKey);
+      _customPrayers = CustomPrayer.decodeList(rawCustom);
+      return true;
+    }, errorContext: 'Loading norm prayer links');
+  }
+
+  Future<void> setNormPrayerLink(String normTitle, String? route) async {
+    await safePrefOperation((prefs) async {
+      if (route == null || route.isEmpty) {
+        _normPrayerLinks.remove(normTitle);
+      } else {
+        _normPrayerLinks[normTitle] = route;
+      }
+      await prefs.setString(
+        AppConstants.normPrayerLinksKey,
+        json.encode(_normPrayerLinks),
+      );
+      notifyListeners();
+      return true;
+    }, errorContext: 'Saving norm prayer link');
+    CloudSyncService().syncInBackground();
   }
 
   void _updateDateTime() {
@@ -96,6 +142,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       _completedDates = await pdvDb.getTitleAndCompletedDates();
       _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
+      await _loadPrayerLinksAndCustomPrayers();
       notifyListeners();
       return true;
     }, errorContext: 'Updating life plan data');

@@ -43,6 +43,7 @@ import 'package:coramdeo/app/oracoes/adoracao_bencao_santissimo/page.dart';
 import 'package:coramdeo/app/oracoes/responso/page.dart';
 import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
 import 'package:coramdeo/app/oracoes/catalogo_oracoes/page.dart';
+import 'package:coramdeo/app/oracoes/custom_prayer_page.dart';
 
 // Other feature pages
 import 'package:coramdeo/app/liturgia_diaria/page.dart';
@@ -236,6 +237,12 @@ class Routes {
 
       default:
         final routeKey = (settings.name ?? '').replaceFirst(RegExp(r'^/'), '');
+        if (routeKey.startsWith('custom-oracao:')) {
+          final id = routeKey.substring('custom-oracao:'.length);
+          return MaterialPageRoute(
+            builder: (context) => CustomPrayerPage(prayerId: id),
+          );
+        }
         final catalogPrayer = OfficialPrayersCatalog.byRoute[routeKey];
         if (catalogPrayer != null) {
           return MaterialPageRoute(

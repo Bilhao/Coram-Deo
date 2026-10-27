@@ -1,7 +1,8 @@
+import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
+import 'package:coramdeo/app/oracoes/custom_prayer_page.dart';
+import 'package:coramdeo/app/oracoes/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:coramdeo/app/oracoes/provider.dart';
-import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
 
 class OracaoCategory {
   final String title;
@@ -20,16 +21,7 @@ class OracaoCategory {
 class OracoesPage extends StatefulWidget {
   const OracoesPage({super.key});
 
-  @override
-  State<OracoesPage> createState() => _OracoesPageState();
-}
-
-class _OracoesPageState extends State<OracoesPage> {
-  static const double _kPrayerItemExtent = 56.0;
-
-  int _selectedTabIndex = 0;
-
-  late final Map<String, String> routeToName = {
+  static Map<String, String> get officialRouteToName => {
     "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
     "adoro-te-devote": "Adoro Te Devote",
     "angelus-regina-caeli": "Angelus/Regina Cæli",
@@ -51,6 +43,17 @@ class _OracoesPageState extends State<OracoesPage> {
     for (final entry in OfficialPrayersCatalog.byRoute.entries)
       entry.key: entry.value.title,
   };
+
+  @override
+  State<OracoesPage> createState() => _OracoesPageState();
+}
+
+class _OracoesPageState extends State<OracoesPage> {
+  static const double _kPrayerItemExtent = 56.0;
+
+  int _selectedTabIndex = 0;
+
+  final Map<String, String> _baseRouteToName = OracoesPage.officialRouteToName;
 
   static const List<OracaoCategory> _categories = [
     OracaoCategory(
@@ -164,30 +167,57 @@ class _OracoesPageState extends State<OracoesPage> {
         .replaceAll(RegExp(r'[ç]'), 'c');
   }
 
-  List<String> get _sortedRoutes {
-    final list = routeToName.keys.toList();
+  Map<String, String> _allRouteToName(OracoesProvider provider) {
+    return {
+      ..._baseRouteToName,
+      for (final p in provider.customPrayers) p.route: p.title,
+    };
+  }
+
+  List<String> _sortedRoutes(Map<String, String> routeMap) {
+    final list = routeMap.keys.toList();
     list.sort(
-      (a, b) =>
-          _normalize(routeToName[a]!).compareTo(_normalize(routeToName[b]!)),
+      (a, b) => _normalize(routeMap[a]!).compareTo(_normalize(routeMap[b]!)),
     );
     return list;
   }
 
-  List<String> _sortedFavoritas(List<String> favoritas) {
-    final list = favoritas.where((r) => routeToName.containsKey(r)).toList();
+  List<String> _sortedFavoritas(
+    List<String> favoritas,
+    Map<String, String> routeMap,
+  ) {
+    final list = favoritas.where((r) => routeMap.containsKey(r)).toList();
     list.sort(
-      (a, b) =>
-          _normalize(routeToName[a]!).compareTo(_normalize(routeToName[b]!)),
+      (a, b) => _normalize(routeMap[a]!).compareTo(_normalize(routeMap[b]!)),
     );
     return list;
+  }
+
+  Future<void> _showAddCustomPrayerDialog(
+    BuildContext context,
+    OracoesProvider provider,
+  ) async {
+    await showDialog(
+      context: context,
+      builder: (ctx) => CustomPrayerFormDialog(
+        onSave: (title, subtitle, text) {
+          return provider.addCustomPrayer(
+            title: title,
+            subtitle: subtitle,
+            text: text,
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildPrayerItem(
     BuildContext context,
     OracoesProvider provider,
+    Map<String, String> routeMap,
     String route,
   ) {
-    final title = routeToName[route] ?? route;
+    final title = routeMap[route] ?? route;
     final isFav = provider.favoritas.contains(route);
     return ListTile(
       title: Text(
@@ -196,7 +226,12 @@ class _OracoesPageState extends State<OracoesPage> {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontSize: 17.0),
       ),
-      onTap: () => Navigator.pushNamed(context, '/$route'),
+      onTap: () async {
+        await Navigator.pushNamed(context, '/$route');
+        if (context.mounted) {
+          await provider.reload();
+        }
+      },
       leading: const Icon(Icons.chevron_right),
       trailing: IconButton(
         onPressed: () {
@@ -210,8 +245,9 @@ class _OracoesPageState extends State<OracoesPage> {
   }
 
   Widget _buildTodasTab(BuildContext context, OracoesProvider provider) {
-    final favoritas = _sortedFavoritas(provider.favoritas);
-    final sortedAll = _sortedRoutes;
+    final routeMap = _allRouteToName(provider);
+    final favoritas = _sortedFavoritas(provider.favoritas, routeMap);
+    final sortedAll = _sortedRoutes(routeMap);
 
     return SingleChildScrollView(
       child: Column(
@@ -245,6 +281,7 @@ class _OracoesPageState extends State<OracoesPage> {
                     return _buildPrayerItem(
                       context,
                       provider,
+                      routeMap,
                       favoritas[index],
                     );
                   },
@@ -262,7 +299,12 @@ class _OracoesPageState extends State<OracoesPage> {
                 itemExtent: _kPrayerItemExtent,
                 itemCount: sortedAll.length,
                 itemBuilder: (context, index) {
-                  return _buildPrayerItem(context, provider, sortedAll[index]);
+                  return _buildPrayerItem(
+                    context,
+                    provider,
+                    routeMap,
+                    sortedAll[index],
+                  );
                 },
               ),
             ],
@@ -276,14 +318,29 @@ class _OracoesPageState extends State<OracoesPage> {
   Widget _buildCategoriasTab(BuildContext context, OracoesProvider provider) {
     final colorScheme = Theme.of(context).colorScheme;
     final cardBorderRadius = BorderRadius.circular(10.0);
+    final routeMap = _allRouteToName(provider);
+
+    final customRoutes = provider.customPrayers.map((p) => p.route).toList();
+    final allCategories = [
+      OracaoCategory(
+        title: "Minhas Orações",
+        subtitle: customRoutes.isEmpty
+            ? "Cadastre suas orações pessoais no botão +"
+            : "Orações pessoais (${customRoutes.length})",
+        icon: Icons.person_outline,
+        routes: customRoutes,
+      ),
+      ..._categories,
+    ];
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-      itemCount: _categories.length,
+      itemCount: allCategories.length,
       itemBuilder: (context, catIndex) {
-        final category = _categories[catIndex];
+        final category = allCategories[catIndex];
+        final isCustomCategory = catIndex == 0;
         final validRoutes = category.routes
-            .where((r) => routeToName.containsKey(r))
+            .where((r) => routeMap.containsKey(r))
             .toList();
 
         return Padding(
@@ -324,18 +381,41 @@ class _OracoesPageState extends State<OracoesPage> {
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemExtent: _kPrayerItemExtent,
-                  itemCount: validRoutes.length,
-                  itemBuilder: (context, index) {
-                    return _buildPrayerItem(
-                      context,
-                      provider,
-                      validRoutes[index],
-                    );
-                  },
+                child: Column(
+                  children: [
+                    if (validRoutes.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemExtent: _kPrayerItemExtent,
+                        itemCount: validRoutes.length,
+                        itemBuilder: (context, index) {
+                          return _buildPrayerItem(
+                            context,
+                            provider,
+                            routeMap,
+                            validRoutes[index],
+                          );
+                        },
+                      ),
+                    if (isCustomCategory)
+                      ListTile(
+                        leading: Icon(
+                          Icons.add_circle_outline,
+                          color: colorScheme.primary,
+                        ),
+                        title: Text(
+                          "Cadastrar nova oração pessoal",
+                          style: TextStyle(
+                            fontSize: 15.5,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        onTap: () =>
+                            _showAddCustomPrayerDialog(context, provider),
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -354,6 +434,14 @@ class _OracoesPageState extends State<OracoesPage> {
           return Scaffold(
             appBar: AppBar(
               title: const Text('Orações', style: TextStyle(fontSize: 20)),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  tooltip: "Nova oração pessoal",
+                  onPressed: () =>
+                      _showAddCustomPrayerDialog(context, provider),
+                ),
+              ],
             ),
             bottomNavigationBar: NavigationBar(
               selectedIndex: _selectedTabIndex,
