@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Coram Deo — Aplicativo católico de Plano de Vida, Bíblia Sagrada, Missal Romano, Liturgia Diária, Santo do Dia e Devocionário.">
+  <meta name="theme-color" content="#1E1B16">
+
+  <!-- iOS / PWA meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Coram Deo">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Coram Deo</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      background-color: #1E1B16;
+      color: #ECE1D4;
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+    }
+    .splash-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #1E1B16;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+    .splash-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .splash-title {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #D9C4A0;
+    }
+  </style>
+</head>
+<body>
+  <div id="coram-deo-splash" class="splash-container">
+    <img class="splash-logo" src="icons/Icon-192.png" alt="Coram Deo" />
+    <div class="splash-title">Coram Deo</div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('coram-deo-splash');
+      if (splash) {
+        splash.style.opacity = '0';
+        setTimeout(function () { splash.remove(); }, 300);
+      }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

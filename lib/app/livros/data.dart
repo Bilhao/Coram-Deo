@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coramdeo/utils/lru_cache.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -40,14 +41,18 @@ class Livros {
       _openBookDbs[bookName] = db;
       return db;
     } else {
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (_) {}
-
       ByteData data = await rootBundle.load(join("assets", "books/$bookName.db"));
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      Uint8List bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
 
-      await File(path).writeAsBytes(bytes, flush: true);
+      if (kIsWeb) {
+        await databaseFactory.writeDatabaseBytes(path, bytes);
+      } else {
+        try {
+          await Directory(dirname(path)).create(recursive: true);
+        } catch (_) {}
+
+        await File(path).writeAsBytes(bytes, flush: true);
+      }
       await prefs.setInt('books.$bookName.db_version', currentDbVersion);
 
       final db = await openDatabase(path);

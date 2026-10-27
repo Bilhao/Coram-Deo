@@ -4,6 +4,7 @@ import 'package:coramdeo/app/biblia/provider.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
 import 'package:coramdeo/app/livros/random_provider.dart';
 import 'package:coramdeo/app/santo_do_dia/provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -18,9 +19,49 @@ import 'package:coramdeo/app/calendario/widgets/calendario_home_card.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  List<Widget> _buildMenuButtons(BuildContext context, AppProvider appProvider) {
+    return [
+      const HomePageButtons(
+        text: "Bíblia",
+        route: '/biblia-page-1',
+      ),
+      const HomePageButtons(text: "Livros", route: '/livros'),
+      const HomePageButtons(text: "Orações", route: '/oracoes'),
+      const HomePageButtons(
+        text: "Liturgia diária",
+        route: '/liturgia',
+      ),
+      HomePageButtons(
+        text: "Santo do Dia",
+        route: '/santo-do-dia',
+        onTap: () {
+          Provider.of<SantoDoDiaProvider>(
+            context,
+            listen: false,
+          ).resetToToday();
+        },
+      ),
+      const HomePageButtons(
+        text: "Plano de vida",
+        route: '/plano-de-vida',
+      ),
+      HomePageButtons(
+        text: "Exame de consciência",
+        route: '/exame-de-consciencia',
+        requireAuth: appProvider.blockExame,
+      ),
+      const HomePageButtons(
+        text: "Missal Romano",
+        route: '/missal-romano',
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     AppProvider appProvider = Provider.of<AppProvider>(context);
+    final menuButtons = _buildMenuButtons(context, appProvider);
+
     return Scaffold(
       appBar: AppBar(
         leading: Theme.of(context).brightness == Brightness.dark
@@ -60,64 +101,140 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: ListView(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 720;
+            if (!isWide) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Divider(height: 15, color: Colors.transparent),
-                  const Text(
-                    "Destaques",
-                    style: TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Divider(height: 15, color: Colors.transparent),
-                  const HomePageCardCarusel(),
-                  const Divider(height: 15, color: Colors.transparent),
-                  const Text(
-                    "Menu",
-                    style: TextStyle(fontSize: 20),
-                    textAlign: TextAlign.center,
-                  ),
-                  const Divider(height: 10, color: Colors.transparent),
-                  const HomePageButtons(
-                    text: "Bíblia",
-                    route: '/biblia-page-1',
-                  ),
-                  const HomePageButtons(text: "Livros", route: '/livros'),
-                  const HomePageButtons(text: "Orações", route: '/oracoes'),
-                  const HomePageButtons(
-                    text: "Liturgia diária",
-                    route: '/liturgia',
-                  ),
-                  HomePageButtons(
-                    text: "Santo do Dia",
-                    route: '/santo-do-dia',
-                    onTap: () {
-                      Provider.of<SantoDoDiaProvider>(
-                        context,
-                        listen: false,
-                      ).resetToToday();
-                    },
-                  ),
-                  const HomePageButtons(
-                    text: "Plano de vida",
-                    route: '/plano-de-vida',
-                  ),
-                  HomePageButtons(
-                    text: "Exame de consciência",
-                    route: '/exame-de-consciencia',
-                    requireAuth: appProvider.blockExame,
-                  ),
-                  const HomePageButtons(
-                    text: "Missal Romano",
-                    route: '/missal-romano',
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        const Divider(height: 15, color: Colors.transparent),
+                        const Text(
+                          "Destaques",
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
+                        const Divider(height: 15, color: Colors.transparent),
+                        const HomePageCardCarusel(),
+                        const Divider(height: 15, color: Colors.transparent),
+                        const Text(
+                          "Menu",
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
+                        const Divider(height: 10, color: Colors.transparent),
+                        ...menuButtons,
+                      ],
+                    ),
                   ),
                 ],
-              ),
-            ),
-          ],
+              );
+            }
+
+            // Layout Responsivo Material Design 3 para Desktop, Tablet e Web (v1.2.0)
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NavigationRail(
+                  selectedIndex: 0,
+                  labelType: NavigationRailLabelType.all,
+                  onDestinationSelected: (index) {
+                    switch (index) {
+                      case 0:
+                        break;
+                      case 1:
+                        Navigator.pushNamed(context, '/biblia-page-1');
+                        break;
+                      case 2:
+                        Navigator.pushNamed(context, '/oracoes');
+                        break;
+                      case 3:
+                        Navigator.pushNamed(context, '/missal-romano');
+                        break;
+                      case 4:
+                        Navigator.pushNamed(context, '/liturgia');
+                        break;
+                      case 5:
+                        Navigator.pushNamed(context, '/plano-de-vida');
+                        break;
+                    }
+                  },
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home_outlined),
+                      selectedIcon: Icon(Icons.home),
+                      label: Text('Início'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.menu_book_outlined),
+                      selectedIcon: Icon(Icons.menu_book),
+                      label: Text('Bíblia'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.self_improvement_outlined),
+                      selectedIcon: Icon(Icons.self_improvement),
+                      label: Text('Orações'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.church_outlined),
+                      selectedIcon: Icon(Icons.church),
+                      label: Text('Missal'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.wb_sunny_outlined),
+                      selectedIcon: Icon(Icons.wb_sunny),
+                      label: Text('Liturgia'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.checklist_outlined),
+                      selectedIcon: Icon(Icons.checklist),
+                      label: Text('Plano'),
+                    ),
+                  ],
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 880),
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
+                        children: [
+                          const Text(
+                            "Destaques",
+                            style: TextStyle(fontSize: 22),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          const HomePageCardCarusel(),
+                          const SizedBox(height: 24),
+                          const Text(
+                            "Menu",
+                            style: TextStyle(fontSize: 22),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 12),
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            childAspectRatio: 4.5,
+                            children: menuButtons,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -228,7 +345,8 @@ class SantoDoDiaCard extends StatelessWidget {
       );
     }
 
-    if (provider.todayLocalImagePath.isNotEmpty &&
+    if (!kIsWeb &&
+        provider.todayLocalImagePath.isNotEmpty &&
         File(provider.todayLocalImagePath).existsSync()) {
       return Image.file(
         File(provider.todayLocalImagePath),

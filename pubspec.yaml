@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.1.1+51
+version: 1.2.0+52
 
 homepage: https://github.com/Bilhao/Coram-Deo
 repository: https://github.com/Bilhao/Coram-Deo
@@ -63,7 +63,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.1
   flutter_carousel_widget: ^3.0.1
   flex_color_picker: ^3.5.1
-  dynamic_color: ^1.8.1
+  dynamic_color: 1.8.1
   fl_chart: ^1.0.0
 
   # Rede e utilidades
@@ -81,6 +81,7 @@ dependencies:
   firebase_auth: ^5.5.1
   cloud_firestore: ^5.6.5
   google_sign_in: ^6.2.2
+  sqflite_common_ffi_web: ^1.2.0
 
 dev_dependencies:
   flutter_test:

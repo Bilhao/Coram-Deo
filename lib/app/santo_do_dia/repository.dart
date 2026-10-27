@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coramdeo/app/santo_do_dia/model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,17 +27,21 @@ class SantoDoDiaRepository {
     final savedVersion = prefs.getInt('santos.db_version') ?? 0;
 
     if (!exists || savedVersion < _currentDbVersion) {
-      try {
-        await Directory(dirname(path)).create(recursive: true);
-      } catch (_) {}
-
       ByteData data = await rootBundle.load(join('assets', 'santos.db'));
-      List<int> bytes = data.buffer.asUint8List(
+      Uint8List bytes = data.buffer.asUint8List(
         data.offsetInBytes,
         data.lengthInBytes,
       );
 
-      await File(path).writeAsBytes(bytes, flush: true);
+      if (kIsWeb) {
+        await databaseFactory.writeDatabaseBytes(path, bytes);
+      } else {
+        try {
+          await Directory(dirname(path)).create(recursive: true);
+        } catch (_) {}
+
+        await File(path).writeAsBytes(bytes, flush: true);
+      }
       await prefs.setInt('santos.db_version', _currentDbVersion);
     }
 

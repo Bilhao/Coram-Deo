@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:coramdeo/utils/lru_cache.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -172,34 +173,38 @@ class Biblia {
 
     if (!exist) {
       if (_currentVersion.isBundled) {
-        try {
-          await Directory(dirname(path)).create(recursive: true);
-        } catch (_) {}
-
         ByteData data = await rootBundle.load(
           join("assets", _currentVersion.dbFileName),
         );
-        List<int> bytes = data.buffer.asUint8List(
+        Uint8List bytes = data.buffer.asUint8List(
           data.offsetInBytes,
           data.lengthInBytes,
         );
 
-        await File(path).writeAsBytes(bytes, flush: true);
-
-        // Limpeza de bases protestantes antigas de 66 livros para liberar armazenamento no dispositivo
-        final legacyDatabases = [
-          'biblia_nvi.db',
-          'biblia_acf.db',
-          'biblia_kjv.db',
-          'biblia_rvr.db',
-        ];
-        for (final legacy in legacyDatabases) {
+        if (kIsWeb) {
+          await databaseFactory.writeDatabaseBytes(path, bytes);
+        } else {
           try {
-            final legacyFile = File(join(dbPath, legacy));
-            if (await legacyFile.exists()) {
-              await legacyFile.delete();
-            }
+            await Directory(dirname(path)).create(recursive: true);
           } catch (_) {}
+
+          await File(path).writeAsBytes(bytes, flush: true);
+
+          // Limpeza de bases protestantes antigas de 66 livros para liberar armazenamento no dispositivo
+          final legacyDatabases = [
+            'biblia_nvi.db',
+            'biblia_acf.db',
+            'biblia_kjv.db',
+            'biblia_rvr.db',
+          ];
+          for (final legacy in legacyDatabases) {
+            try {
+              final legacyFile = File(join(dbPath, legacy));
+              if (await legacyFile.exists()) {
+                await legacyFile.delete();
+              }
+            } catch (_) {}
+          }
         }
       } else {
         // Se a versão solicitada não estiver baixada no disco, reverte com segurança para a versão embutida

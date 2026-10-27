@@ -4,9 +4,12 @@ import 'package:coramdeo/app/santo_do_dia/provider.dart';
 import 'package:coramdeo/app/liturgia_diaria/provider.dart';
 import 'package:coramdeo/app/livros/random_provider.dart';
 import 'package:coramdeo/app/calendario/provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'utils/notification.dart';
 import 'utils/routes.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -17,7 +20,11 @@ void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
 
   // Carrega o splashscreen
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  if (!kIsWeb) {
+    FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  } else {
+    databaseFactory = databaseFactoryFfiWeb;
+  }
 
   // Inicializa o Firebase com tratamento de erro resiliente
   try {
@@ -151,7 +158,9 @@ class CoramDeoApp extends StatelessWidget {
                 navigatorKey: Routes.navigatorKey,
               );
 
-              FlutterNativeSplash.remove();
+              if (!kIsWeb) {
+                FlutterNativeSplash.remove();
+              }
 
               return app;
             },
