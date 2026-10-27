@@ -8,6 +8,7 @@ import 'package:coramdeo/app/contribuicao/page.dart';
 // Bible pages
 import 'package:coramdeo/app/biblia/page_1.dart';
 import 'package:coramdeo/app/biblia/page_2.dart';
+import 'package:coramdeo/app/biblia/bookmarks_page.dart';
 
 // Books pages
 import 'package:coramdeo/app/livros/livros_page.dart';
@@ -76,6 +77,11 @@ class Routes {
 
       case "/biblia-page-2":
         return MaterialPageRoute(builder: (context) => const BibliaPage2());
+
+      case "/biblia-marcacoes":
+        return MaterialPageRoute(
+          builder: (context) => const BibliaBookmarksPage(),
+        );
 
       case "/livros":
         return MaterialPageRoute(builder: (context) => const LivrosPage());

@@ -115,6 +115,12 @@ class CloudSyncService {
         journal != '[]') {
       return true;
     }
+    final bibleAnn = prefs[AppConstants.bibleAnnotationsKey];
+    if (bibleAnn is String &&
+        bibleAnn.trim().isNotEmpty &&
+        bibleAnn != '[]') {
+      return true;
+    }
 
     // Exame de consciência
     final exame = prefs['exame.itensExame'];
@@ -174,6 +180,13 @@ class CloudSyncService {
       if (journal != null &&
           journal.trim().isNotEmpty &&
           journal != '[]') {
+        return true;
+      }
+
+      final bibleAnn = prefs.getString(AppConstants.bibleAnnotationsKey);
+      if (bibleAnn != null &&
+          bibleAnn.trim().isNotEmpty &&
+          bibleAnn != '[]') {
         return true;
       }
 

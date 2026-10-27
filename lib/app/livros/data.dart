@@ -1,10 +1,18 @@
 import 'dart:io';
+import 'package:coramdeo/utils/lru_cache.dart';
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Livros {
+  static final Map<String, Database> _openBookDbs = {};
+  static final LruCache<String, List<int>> _contentIdsCache = LruCache(
+    maxEntries: 32,
+  );
+  static final LruCache<String, List<Map<String, dynamic>>> _fullContentCache =
+      LruCache(maxEntries: 32);
+
   Livros({required this.bookName}) {
     initDb();
   }
@@ -12,6 +20,11 @@ class Livros {
   String bookName;
 
   Future<Database> initDb() async {
+    final cachedDb = _openBookDbs[bookName];
+    if (cachedDb != null && cachedDb.isOpen) {
+      return cachedDb;
+    }
+
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'books/$bookName.db');
 
@@ -23,7 +36,9 @@ class Livros {
     final savedVersion = prefs.getInt('books.$bookName.db_version') ?? 1;
 
     if (exist && savedVersion >= currentDbVersion) {
-      return await openDatabase(path);
+      final db = await openDatabase(path);
+      _openBookDbs[bookName] = db;
+      return db;
     } else {
       try {
         await Directory(dirname(path)).create(recursive: true);
@@ -35,7 +50,9 @@ class Livros {
       await File(path).writeAsBytes(bytes, flush: true);
       await prefs.setInt('books.$bookName.db_version', currentDbVersion);
 
-      return await openDatabase(path);
+      final db = await openDatabase(path);
+      _openBookDbs[bookName] = db;
+      return db;
     }
   }
 
@@ -72,11 +89,17 @@ class Livros {
   }
 
   Future<List<int>> getContentIds({required int chapterId}) async {
+    final cacheKey = '$bookName:ch:$chapterId';
+    final cached = _contentIdsCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     final List<Map<String, dynamic>> maps = await db.rawQuery('SELECT DISTINCT content_id FROM book WHERE chapter_id = ?', [chapterId]);
-    return List.generate(maps.length, (i) {
-      return maps[i]['content_id'];
+    final list = List.generate(maps.length, (i) {
+      return maps[i]['content_id'] as int;
     });
+    _contentIdsCache.put(cacheKey, list);
+    return list;
   }
 
   Future<List<String>> getContentByIds({required List<int> contentIds}) async {
@@ -90,6 +113,10 @@ class Livros {
   }
 
   Future<List<Map<String, dynamic>>> getFullContentByIds({required List<int> contentIds, int? chapterId}) async {
+    final cacheKey = '$bookName:full:${chapterId ?? "any"}:${contentIds.join(",")}';
+    final cached = _fullContentCache.get(cacheKey);
+    if (cached != null) return cached;
+
     final db = await initDb();
     List<Map<String, dynamic>> results = [];
 
@@ -128,6 +155,7 @@ class Livros {
         results.add({'title': titleVal, 'content': maps[0]['content']});
       }
     }
+    _fullContentCache.put(cacheKey, results);
     return results;
   }
 

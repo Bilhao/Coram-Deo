@@ -1,3 +1,4 @@
+import 'package:coramdeo/app/biblia/annotation_model.dart';
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/services/bible_download_service.dart';
 import 'package:coramdeo/services/cloud_sync_service.dart';
@@ -35,6 +36,7 @@ class BibleProvider extends BaseProvider {
   final Map<String, List<int>> _bookChapters = {};
   List<String> _versesId = [];
   List<String> _verses = [];
+  Map<String, BibleVerseAnnotation> _annotations = {};
 
   String get testament => _testament;
   int get bookId => _bookId;
@@ -45,6 +47,93 @@ class BibleProvider extends BaseProvider {
   Map<String, List<int>> get bookChapters => _bookChapters;
   List<String> get versesId => _versesId;
   List<String> get verses => _verses;
+
+  List<BibleVerseAnnotation> get allAnnotations {
+    final list = _annotations.values.toList();
+    list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+    return list;
+  }
+
+  BibleVerseAnnotation? getAnnotationForCurrentVerse(String verseId) {
+    final key = BibleVerseAnnotation.buildKey(
+      currentVersion.id,
+      _book,
+      _chapter,
+      verseId,
+    );
+    return _annotations[key];
+  }
+
+  Future<void> saveVerseAnnotation({
+    required String verseId,
+    required String verseText,
+    String? colorKey,
+    String? note,
+  }) async {
+    final cleanNote = (note ?? '').trim();
+    final key = BibleVerseAnnotation.buildKey(
+      currentVersion.id,
+      _book,
+      _chapter,
+      verseId,
+    );
+
+    await safePrefOperation((prefs) async {
+      if ((colorKey == null || colorKey.isEmpty) && cleanNote.isEmpty) {
+        _annotations.remove(key);
+      } else {
+        _annotations[key] = BibleVerseAnnotation(
+          versionId: currentVersion.id,
+          versionName: currentVersion.name,
+          testament: _testament,
+          book: _book,
+          chapter: _chapter,
+          verseId: verseId,
+          verseText: verseText,
+          colorKey: colorKey,
+          note: cleanNote,
+          updatedAt: DateTime.now().toIso8601String(),
+        );
+      }
+      await prefs.setString(
+        AppConstants.bibleAnnotationsKey,
+        BibleVerseAnnotation.encodeMap(_annotations),
+      );
+      notifyListeners();
+      return true;
+    }, errorContext: 'Saving Bible verse annotation');
+    CloudSyncService().syncInBackground();
+  }
+
+  Future<void> removeVerseAnnotationByKey(String key) async {
+    await safePrefOperation((prefs) async {
+      if (_annotations.remove(key) != null) {
+        await prefs.setString(
+          AppConstants.bibleAnnotationsKey,
+          BibleVerseAnnotation.encodeMap(_annotations),
+        );
+        notifyListeners();
+      }
+      return true;
+    }, errorContext: 'Removing Bible verse annotation');
+    CloudSyncService().syncInBackground();
+  }
+
+  void _prefetchAdjacentChapters(String book, int chapter) {
+    Future.microtask(() async {
+      try {
+        if (chapter > 1) {
+          await dbHelper.getVersesId(book, chapter - 1);
+          await dbHelper.getVerses(book, chapter - 1);
+        }
+        final lastCh = await dbHelper.getLastChapterOfBook(book);
+        if (chapter < lastCh) {
+          await dbHelper.getVersesId(book, chapter + 1);
+          await dbHelper.getVerses(book, chapter + 1);
+        }
+      } catch (_) {}
+    });
+  }
 
   String _bibleVersion = AppConstants.defaultBibleVersion;
 
@@ -168,6 +257,9 @@ class BibleProvider extends BaseProvider {
       }
 
       dbHelper.setVersion(_bibleVersion);
+      _annotations = BibleVerseAnnotation.decodeMap(
+        prefs.getString(AppConstants.bibleAnnotationsKey),
+      );
 
       return true;
     }, errorContext: 'Loading Bible preferences');
@@ -194,6 +286,7 @@ class BibleProvider extends BaseProvider {
       _verses =
           prefs.getStringList(AppConstants.bibleVersesKey) ??
           await dbHelper.getVerses(_book, _chapter);
+      _prefetchAdjacentChapters(_book, _chapter);
 
       return true;
     }, errorContext: 'Loading Bible data');
@@ -330,6 +423,7 @@ class BibleProvider extends BaseProvider {
       _chapter = chapter;
       _versesId = await dbHelper.getVersesId(book, chapter);
       _verses = await dbHelper.getVerses(book, chapter);
+      _prefetchAdjacentChapters(book, chapter);
 
       await save();
       return true;

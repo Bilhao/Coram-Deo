@@ -19,6 +19,13 @@ class BibliaPage1 extends StatelessWidget {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.bookmarks_outlined),
+            tooltip: 'Meus Versículos e Destaques',
+            onPressed: () {
+              Navigator.pushNamed(context, '/biblia-marcacoes');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.translate),
             tooltip: 'Mudar Versão',
             onPressed: () {
