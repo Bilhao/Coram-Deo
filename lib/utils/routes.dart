@@ -41,6 +41,8 @@ import 'package:coramdeo/app/oracoes/te_deum/page.dart';
 import 'package:coramdeo/app/oracoes/visita_ao_santissimo/page.dart';
 import 'package:coramdeo/app/oracoes/adoracao_bencao_santissimo/page.dart';
 import 'package:coramdeo/app/oracoes/responso/page.dart';
+import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
+import 'package:coramdeo/app/oracoes/catalogo_oracoes/page.dart';
 
 // Other feature pages
 import 'package:coramdeo/app/liturgia_diaria/page.dart';
@@ -233,6 +235,14 @@ class Routes {
         );
 
       default:
+        final routeKey = (settings.name ?? '').replaceFirst(RegExp(r'^/'), '');
+        final catalogPrayer = OfficialPrayersCatalog.byRoute[routeKey];
+        if (catalogPrayer != null) {
+          return MaterialPageRoute(
+            builder: (context) =>
+                OfficialCatalogPrayerPage(prayer: catalogPrayer),
+          );
+        }
         // Return home page for any unrecognized route
         return MaterialPageRoute(builder: (_) => const HomePage());
     }
