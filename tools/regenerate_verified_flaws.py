@@ -57,28 +57,21 @@ FLAWED_IMAGES_REGISTRY = {
     "06_13": {"nome": "Santo Antônio de Pádua", "status": "CONCLUIDO"},
     "06_26": {"nome": "São Josemaria Escrivá", "status": "CONCLUIDO"},
     "08_10": {"nome": "São Lourenço", "status": "CONCLUIDO"},
-
-    # RESTANTES NA FILA (Aguardando geração em lotes):
-    # Estranhas / A refazer:
-    "08_28": {"nome": "Santo Agostinho", "defeito": "Estranha"},
-    "11_16": {"nome": "Santa Margarida da Escócia", "defeito": "Estranha"},
-    "12_07": {"nome": "Santo Ambrósio", "defeito": "Estranha"},
-    "12_08": {"nome": "Imaculada Conceição de Nossa Senhora", "defeito": "Estranha"},
-    "12_13": {"nome": "Santa Luzia", "defeito": "Estranha"},
-    "12_27": {"nome": "São João Evangelista", "defeito": "Estranha"},
-    "12_28": {"nome": "Santos Inocentes", "defeito": "Estranha"},
-
-    # Clones / Duas pessoas iguais:
-    "05_12": {"nome": "Santos Nereu e Aquiles", "defeito": "Duas pessoas iguais (clones)"},
-    "06_14": {"nome": "Santos Rufino e Valério", "defeito": "Duas pessoas iguais (clones)"},
-    "11_09": {"nome": "Dedicação da Basílica de Latrão", "defeito": "Clone do Papa Leão Magno"},
-    "11_10": {"nome": "São Leão Magno", "defeito": "Clone de 11_09"},
-
-    # Ausentes / Banco corrigido:
-    "05_29": {"nome": "São Paulo VI", "defeito": "Ausente"},
-    "08_16": {"nome": "Santo Estêvão da Hungria", "defeito": "Ausente"},
-    "08_29": {"nome": "Martírio de São João Batista", "defeito": "Ausente"},
-    "12_24": {"nome": "Vigília do Natal do Senhor", "defeito": "Tema atualizado (Adão e Eva removidos)"},
+    "08_28": {"nome": "Santo Agostinho", "status": "CONCLUIDO"},
+    "05_29": {"nome": "São Paulo VI", "status": "CONCLUIDO"},
+    "08_16": {"nome": "Santo Estêvão da Hungria", "status": "CONCLUIDO"},
+    "08_29": {"nome": "Martírio de São João Batista", "status": "CONCLUIDO"},
+    "05_12": {"nome": "Santos Nereu e Aquiles", "status": "CONCLUIDO"},
+    "06_14": {"nome": "Santos Rufino e Valério", "status": "CONCLUIDO"},
+    "11_09": {"nome": "Dedicação da Basílica de Latrão", "status": "CONCLUIDO"},
+    "11_10": {"nome": "São Leão Magno", "status": "CONCLUIDO"},
+    "11_16": {"nome": "Santa Margarida da Escócia", "status": "CONCLUIDO"},
+    "12_07": {"nome": "Santo Ambrósio", "status": "CONCLUIDO"},
+    "12_08": {"nome": "Imaculada Conceição de Nossa Senhora", "status": "CONCLUIDO"},
+    "12_13": {"nome": "Santa Luzia", "status": "CONCLUIDO"},
+    "12_24": {"nome": "Vigília do Natal do Senhor", "status": "CONCLUIDO"},
+    "12_27": {"nome": "São João Evangelista", "status": "CONCLUIDO"},
+    "12_28": {"nome": "Santos Inocentes", "status": "CONCLUIDO"},
 }
 
 if __name__ == "__main__":

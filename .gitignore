@@ -71,3 +71,7 @@ tools/screenshots/
 
 # Python virtual environment
 tools/.venv/
+
+# Facial similarity analysis models & cache
+tools/models/
+tools/facial_clusters/
