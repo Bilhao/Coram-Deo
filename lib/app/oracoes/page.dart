@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:coramdeo/app/oracoes/provider.dart';
+import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
 
 class OracaoCategory {
   final String title;
@@ -28,7 +29,7 @@ class _OracoesPageState extends State<OracoesPage> {
 
   int _selectedTabIndex = 0;
 
-  final Map<String, String> routeToName = {
+  late final Map<String, String> routeToName = {
     "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
     "adoro-te-devote": "Adoro Te Devote",
     "angelus-regina-caeli": "Angelus/Regina Cæli",
@@ -37,7 +38,7 @@ class _OracoesPageState extends State<OracoesPage> {
     "credo": "Credo Niceno-Constantinopolitano",
     "estampa-josemaria": "Estampa de São Josemaría",
     "exame-de-consciencia-oracao": "Exame de Consciência",
-    "gratias-tibi-ago": "Gratias tibi ago",
+    "gratias-tibi-ago": "Gratias tibi ago (São Tomás)",
     "lembrai-vos": "Lembrai-Vos",
     "falar-com-deus": "Meditação Diária do Falar com Deus",
     "oferecimento-de-obras": "Oferecimento de Obras",
@@ -47,6 +48,8 @@ class _OracoesPageState extends State<OracoesPage> {
     "santo-rosario": "Santo Rosário",
     "te-deum": "Te Deum",
     "visita-ao-santissimo": "Visita ao Santíssimo",
+    for (final entry in OfficialPrayersCatalog.byRoute.entries)
+      entry.key: entry.value.title,
   };
 
   static const List<OracaoCategory> _categories = [
@@ -57,6 +60,10 @@ class _OracoesPageState extends State<OracoesPage> {
       routes: [
         "oferecimento-de-obras",
         "preces",
+        "atos-fe-esperanca-caridade",
+        "anjo-da-guarda",
+        "benedictus",
+        "nunc-dimittis",
         "gratias-tibi-ago",
         "exame-de-consciencia-oracao",
       ],
@@ -68,7 +75,13 @@ class _OracoesPageState extends State<OracoesPage> {
       routes: [
         "angelus-regina-caeli",
         "santo-rosario",
+        "consagracao-nossa-senhora",
         "lembrai-vos",
+        "sub-tuum-praesidium",
+        "salve-regina",
+        "alma-redemptoris-mater",
+        "ave-regina-caelorum",
+        "magnificat",
       ],
     ),
     OracaoCategory(
@@ -78,7 +91,28 @@ class _OracoesPageState extends State<OracoesPage> {
       routes: [
         "visita-ao-santissimo",
         "adoro-te-devote",
+        "pange-lingua",
         "adoracao-e-bencao-com-o-santissimo",
+      ],
+    ),
+    OracaoCategory(
+      title: "Santa Missa (Antes e Depois)",
+      subtitle: "Preparação e Ação de Graças",
+      icon: Icons.volunteer_activism_outlined,
+      routes: [
+        "oracao-sao-tomas-antes-missa",
+        "oracao-santo-ambrosio-antes-missa",
+        "oracao-nossa-senhora-antes-missa",
+        "oracao-sao-jose-antes-missa",
+        "gratias-tibi-ago",
+        "cantico-tres-jovens",
+        "anima-christi",
+        "oracao-jesus-crucificado",
+        "oracao-sao-boaventura",
+        "oracao-universal-clemente-xi",
+        "oracao-nossa-senhora-depois-missa",
+        "oracao-sao-jose-depois-missa",
+        "oracao-sao-miguel-arcanjo",
       ],
     ),
     OracaoCategory(
@@ -88,16 +122,23 @@ class _OracoesPageState extends State<OracoesPage> {
       routes: [
         "credo",
         "credo-atanasiano",
-        "salmo-2",
+        "trisagio-angelico",
+        "vinde-espirito-santo",
+        "veni-creator",
         "te-deum",
+        "salmo-2",
+        "salmo-50",
+        "salve-santa-cruz",
       ],
     ),
     OracaoCategory(
       title: "Santos e Intercessores",
-      subtitle: "São Josemaría e Sufrágios",
+      subtitle: "São Josemaría, Arcanjos e Sufrágios",
       icon: Icons.people_outline,
       routes: [
         "estampa-josemaria",
+        "oracao-sao-miguel-arcanjo",
+        "anjo-da-guarda",
         "responso",
       ],
     ),

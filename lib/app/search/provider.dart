@@ -1,5 +1,6 @@
 import 'package:coramdeo/app/biblia/data.dart';
 import 'package:coramdeo/app/livros/data.dart';
+import 'package:coramdeo/app/oracoes/catalogo_oracoes/data.dart';
 import 'package:coramdeo/app/search/model.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
@@ -24,8 +25,8 @@ class SearchProvider extends BaseProvider {
 
   Map<String, String> get prayers => Map.unmodifiable(_prayers);
 
-  // Map of prayers (Route -> Title) - Copied from OracoesPage
-  final Map<String, String> _prayers = {
+  // Map of prayers (Route -> Title)
+  late final Map<String, String> _prayers = {
     "adoracao-e-bencao-com-o-santissimo": "Adoração e Bênção com o Santíssimo",
     "adoro-te-devote": "Adoro Te Devote",
     "angelus-regina-caeli": "Angelus/Regina Cæli",
@@ -34,7 +35,7 @@ class SearchProvider extends BaseProvider {
     "credo": "Credo Niceno-Constantinopolitano",
     "estampa-josemaria": "Estampa de São Josemaría",
     "exame-de-consciencia-oracao": "Exame de Consciência",
-    "gratias-tibi-ago": "Gratias tibi ago",
+    "gratias-tibi-ago": "Gratias tibi ago (São Tomás)",
     "lembrai-vos": "Lembrai-Vos",
     "falar-com-deus": "Meditação Diária do Falar com Deus",
     "oferecimento-de-obras": "Oferecimento de Obras",
@@ -44,6 +45,8 @@ class SearchProvider extends BaseProvider {
     "santo-rosario": "Santo Rosário",
     "te-deum": "Te Deum",
     "visita-ao-santissimo": "Visita ao Santíssimo",
+    for (final entry in OfficialPrayersCatalog.byRoute.entries)
+      entry.key: entry.value.title,
   };
 
   Future<void> search(String query) async {
