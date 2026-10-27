@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'package:coramdeo/app/oracoes/custom_prayer_model.dart';
 import 'package:coramdeo/app/plano_de_vida/data.dart';
 import 'package:coramdeo/services/cloud_sync_service.dart';
+import 'package:coramdeo/services/home_widget_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 import 'package:coramdeo/utils/constants.dart';
 import 'package:coramdeo/utils/notification.dart';
 import 'package:flutter/material.dart';
 
-class PlanoDeVidaProvider extends BaseProvider {
+class PlanoDeVidaProvider extends BaseProvider with WidgetsBindingObserver {
   PlanoDeVida pdvDb = PlanoDeVida();
 
   List<String> _titles = [];
@@ -45,8 +46,16 @@ class PlanoDeVidaProvider extends BaseProvider {
   String get date => _date;
 
   PlanoDeVidaProvider() {
+    WidgetsBinding.instance.addObserver(this);
     _initialize();
     CloudSyncService.onDataRestored.addListener(_onDataRestored);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      update();
+    }
   }
 
   void _onDataRestored() {
@@ -55,6 +64,7 @@ class PlanoDeVidaProvider extends BaseProvider {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     CloudSyncService.onDataRestored.removeListener(_onDataRestored);
     super.dispose();
   }
@@ -79,6 +89,7 @@ class PlanoDeVidaProvider extends BaseProvider {
     }, errorContext: 'Loading life plan data');
 
     _updateDateTime();
+    HomeWidgetService.instance.refreshPlanoDeVidaWidget();
     setLoading(false);
   }
 
@@ -143,6 +154,7 @@ class PlanoDeVidaProvider extends BaseProvider {
       _weekdays = await pdvDb.getTitleAndWeekdays();
       _notificationId = await pdvDb.getTitleAndNotificationId();
       await _loadPrayerLinksAndCustomPrayers();
+      HomeWidgetService.instance.refreshPlanoDeVidaWidget();
       notifyListeners();
       return true;
     }, errorContext: 'Updating life plan data');

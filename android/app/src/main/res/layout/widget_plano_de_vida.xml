@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_pdv_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:id="@+id/widget_pdv_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Plano de Vida"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FFD9C4A0" />
+
+        <TextView
+            android:id="@+id/widget_pdv_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0%"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFECE1D4" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/widget_pdv_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="6dp"
+        android:max="100"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/widget_pdv_item_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp"
+        android:text="☐ Oração da manhã"
+        android:textSize="13sp"
+        android:textColor="#FFECE1D4"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/widget_pdv_item_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp"
+        android:text="☐ Santo Rosário"
+        android:textSize="13sp"
+        android:textColor="#FFECE1D4"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/widget_pdv_item_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp"
+        android:text="☐ Leitura Espiritual"
+        android:textSize="13sp"
+        android:textColor="#FFECE1D4"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/widget_pdv_item_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp"
+        android:text="☐ Exame de Consciência"
+        android:textSize="13sp"
+        android:textColor="#FFECE1D4"
+        android:maxLines="1"
+        android:ellipsize="end" />
+
+    <TextView
+        android:id="@+id/widget_pdv_item_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="3dp"
+        android:text=""
+        android:visibility="gone"
+        android:textSize="13sp"
+        android:textColor="#FFECE1D4"
+        android:maxLines="1"
+        android:ellipsize="end" />
+</LinearLayout>

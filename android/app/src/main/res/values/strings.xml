@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Coram Deo</string>
+    <string name="widget_santo_desc">Santo do Dia e Tempo Litúrgico com atualização automática à meia-noite</string>
+    <string name="widget_pdv_desc">Checklist interativo das normas diárias do Plano de Vida</string>
+</resources>
