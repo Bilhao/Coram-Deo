@@ -54,6 +54,7 @@ import 'package:coramdeo/app/exame_de_consciencia/page.dart';
 import 'package:coramdeo/app/onboarding/page.dart';
 import 'package:coramdeo/app/calendario/page.dart';
 import 'package:coramdeo/app/diario/page.dart';
+import 'package:coramdeo/app/missal_romano/page.dart';
 
 class Routes {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -117,6 +118,11 @@ class Routes {
       case "/exame-de-consciencia":
         return MaterialPageRoute(
           builder: (context) => const ExameDeConscienciaPage(),
+        );
+
+      case "/missal-romano":
+        return MaterialPageRoute(
+          builder: (context) => const MissalRomanoPage(),
         );
 
       // oracoes
