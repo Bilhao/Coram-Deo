@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:coramdeo/app/liturgia_diaria/data.dart';
+import 'package:coramdeo/services/daily_content_cloud_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class LiturgiaDiariaProvider extends BaseProvider {
@@ -156,6 +157,19 @@ class LiturgiaDiariaProvider extends BaseProvider {
 
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
+      // 1. Tenta carregar do JSON pré-processado na nuvem (Firebase / GitHub CDN - ~1s)
+      final cloudData = await DailyContentCloudService.instance.fetchLiturgia(
+        day: _day,
+        month: _month,
+        year: _year,
+      );
+      if (cloudData != null) {
+        _applyDataMap(cloudData);
+        await _cacheData();
+        return true;
+      }
+
+      // 2. Fallback para o parser direto caso o JSON do dia ainda não esteja publicado
       await data.initLD(day: _day, month: _month, year: _year);
       if (data.data == null) {
         setError('Erro ao carregar liturgia diária');

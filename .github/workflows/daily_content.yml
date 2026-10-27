@@ -1,0 +1,34 @@
+name: Daily Content Cloud Pipeline
+
+on:
+  schedule:
+    - cron: '5 3 * * *' # 00:05 BRT (UTC-3)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  preprocess-daily-content:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate pre-processed daily JSON
+        run: python3 scripts/generate_daily_content.py
+
+      - name: Publish JSON to daily-content branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan daily-content-temp
+          git rm -rf --cached .
+          git add api/hoje.json api/*.json
+          git commit -m "chore(daily-content): atualiza JSON diário pré-processado"
+          git push origin HEAD:refs/heads/daily-content --force

@@ -1,4 +1,5 @@
 import 'package:coramdeo/app/oracoes/falar_com_deus/data.dart';
+import 'package:coramdeo/services/daily_content_cloud_service.dart';
 import 'package:coramdeo/utils/base_provider.dart';
 
 class FalarComDeusProvider extends BaseProvider {
@@ -60,6 +61,42 @@ class FalarComDeusProvider extends BaseProvider {
 
   Future<void> _fetchFreshData() async {
     await safeAsync(() async {
+      final now = DateTime.now();
+      final cloudData =
+          await DailyContentCloudService.instance.fetchFalarComDeus(
+        day: now.day,
+        month: now.month,
+        year: now.year,
+      );
+      if (cloudData != null) {
+        _day =
+            (cloudData['day'] as List?)?.map((e) => e.toString()).toList() ??
+            [];
+        _title =
+            (cloudData['title'] as List?)?.map((e) => e.toString()).toList() ??
+            [];
+        _subtitle =
+            (cloudData['subtitle'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+        _note =
+            (cloudData['note'] as List?)?.map((e) => e.toString()).toList() ??
+            [];
+        _content =
+            (cloudData['content'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+        _reference =
+            (cloudData['reference'] as List?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [];
+        await _cacheData();
+        return true;
+      }
+
       await data.initFCD();
       if (data.data == null) {
         setError('Erro ao carregar Falar com Deus');
